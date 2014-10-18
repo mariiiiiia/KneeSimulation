@@ -1,43 +1,27 @@
 #include "ACLsimulator.h"
 
 
-class ACLController_ : public OpenSim::Controller
+void forwardsim(Model model, SimTK::State& si);
+
+class KneeController : public OpenSim::Controller 
 {
-    OpenSim_DECLARE_CONCRETE_OBJECT(ACLController_, Controller)
-
-    ACLController *controller;
-
-    vector<double> timesLog;
-    vector<KneeLigamentsActivations> activationLog;
+	OpenSim_DECLARE_CONCRETE_OBJECT(KneeController, Controller);
 
 public:
-    ACLController_ (ACLController *con) : controller(con)
-    {
-        setNumControls(6);
-    }
-
-    void reset () {timesLog.clear(); activationLog.clear();}
-
-    const vector<double> &getControlTimesLog() {return timesLog;}
-
-    const vector<KneeLigamentsActivations> &getControlLog() {return activationLog;}
+	KneeController() : Controller(){}
 
     void computeControls(const State &s, Vector &controls) const OVERRIDE_11
-    {
-        KneeLigamentsActivations activations;
+	{
+		// Get the current time in the simulation.
+		//double t = s.getTime();
+		// Get pointers to each of the muscles in the model.
+		const Actuator &act = static_cast<const Actuator&> (getActuatorSet().get("HAMSTRINGS"));
+		const Millard2012EquilibriumMuscle* muscle1 = static_cast<const Millard2012EquilibriumMuscle*>(&getActuatorSet().get("HAMSTRINGS"));
 
-        controller->control(s.getTime(),
-            s.getQ()[0], s.getQ()[1], s.getQ()[2],
-            s.getU()[0], s.getU()[1], s.getU()[2],
-            activations);
+		// Thelen muscle has only one control
+	    Vector muscleControl(1, 6.0);
 
-        for (int i=0; i<getNumControls(); ++i)
-            controls[i] = activations.act[i];
-
-        // Log activations (Need to drop const-ness)
-        ACLController_ *this_ = const_cast<ACLController_*>(this);
-        this_->timesLog.push_back(s.getTime());
-        this_->activationLog.push_back(activations);
-    }
-
+		// Add in the controls computed for this muscle to the set of all model controls
+		muscle1->addInControls(muscleControl, controls);
+	}
 };
