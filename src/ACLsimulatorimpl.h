@@ -1,5 +1,11 @@
-#include "ACLsimulator.h"
+#include <OpenSim/OpenSim.h>
 
+#include <string>
+#include <vector>
+
+using namespace std;
+using namespace OpenSim;
+using namespace SimTK;
 
 void forwardsim(Model model, SimTK::State& si);
 
