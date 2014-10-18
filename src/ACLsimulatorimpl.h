@@ -8,7 +8,10 @@ class KneeController : public OpenSim::Controller
 	OpenSim_DECLARE_CONCRETE_OBJECT(KneeController, Controller);
 
 public:
-	KneeController() : Controller(){}
+	KneeController() : Controller()
+	{
+		setNumControls(1);
+	}
 
     void computeControls(const State &s, Vector &controls) const OVERRIDE_11
 	{
