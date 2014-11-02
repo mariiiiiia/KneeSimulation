@@ -1,9 +1,8 @@
-//#include "ACLsimulator.h"
-#include "ACLsimulatorimpl.h"
 #include <QApplication>
+#include "ACLsimulatorimpl.h"
 
-#include <OpenSim/OpenSim.h>
-
+#include <string>
+#include <vector>
 
 using namespace OpenSim;
 using namespace SimTK;
@@ -12,7 +11,7 @@ int main(int argc, char *argv[])
 {
 	try {
 		// Create an OpenSim model and set its name
-		OpenSim::Model model("lower-limb(muscles millard13).osim");
+		OpenSim::Model model("lower-limb(muscles millard13).osim", false);
 
 		SimTK::State &state = model.initSystem();
 

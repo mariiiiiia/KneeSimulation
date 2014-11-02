@@ -19,7 +19,7 @@ FILE(GLOB SOURCE_FILES *.h *.cpp)
 SET(SOURCE ${SOURCE_FILES})
 
 # To add Debug feature add ";Debug" after Release on the line below
-SET(CMAKE_CONFIGURATION_TYPES "RelWithDebInfo;Release" 
+SET(CMAKE_CONFIGURATION_TYPES "RelWithDebInfo;Release;Debug" 
       CACHE STRING "Semicolon separated list of supported configuration types, only supports Debug, Release, MinSizeRel, and RelWithDebInfo, anything else will be ignored." FORCE )
 
 # Location of headers
