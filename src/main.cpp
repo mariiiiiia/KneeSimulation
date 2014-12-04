@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
 {
 	try {
 		// Create an OpenSim model and set its name
-		OpenSim::Model model("lower-limb(muscles millard13).osim", false);
+		OpenSim::Model model("lower-limb(muscles millard13).osim");
 
 		SimTK::State &state = model.initSystem();
 
@@ -24,11 +24,11 @@ int main(int argc, char *argv[])
 	}
 	catch (OpenSim::Exception ex)
     {
-        std::cout << ex.getMessage() << std::endl;
+        std::cout << "OpenSim exception\n" << ex.getMessage() << std::endl;
     }
     catch (std::exception ex)
     {
-		std::cout << ex.what() << std::endl;
+		std::cout << "std exception: " << ex.what() << std::endl;
     }
     catch (...)
     {
