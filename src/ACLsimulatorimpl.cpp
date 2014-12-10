@@ -2,31 +2,24 @@
 #include "osimutils.h"
 
 void forwardsim(Model model, SimTK::State& si){
-	Vector activations;
+	Vector activs_initial, activs_final;	
+	vector<OpenSim::Function*> controlFuncs;
 	double initialTime = 0.0;
-	double finalTime = 1.9;
-
-	Vector activs_initial, activs_final;
+	double finalTime = 2.0;
 
 	si = model.initSystem();
     //model.equilibrateMuscles(si);
-
-	calcSSact(model, activs_initial, si);
-	
-	//set movement parameters
-	const CustomJoint &knee_r_joint = static_cast<const CustomJoint&>(model.getJointSet().get("knee_r"));
-    knee_r_joint.get_CoordinateSet().get("knee_angle_r").setValue(si, -0.5);
-	//model.equilibrateMuscles(si);
-
-	calcSSact(model, activs_final, si);
 	
 	double duration = 0.5;
-	vector<OpenSim::Function*> controlFuncs;
 
 	// compute activations of specific knee angle
-	computeActivations(model, -0.5, controlFuncs, duration, false, activs_initial, activs_final);
+	double knee_angle = -0.8; 
+	computeActivations(model, knee_angle, controlFuncs, duration, false, activs_initial, activs_final, si);
+
 	// add controller to the model after adding the control function
 	KneeController *knee_controller = new KneeController( activs_final.size());
+	//cout << "final activation size: " << activs_final.size() << "initial activ size: " << activs_initial.size() << endl;
+	//cout << "control functions: " << controlFuncs.size() << endl;
 	knee_controller->_activations.resize( activs_final.size());
 	for (int i=0; i<activs_final.size(); i++){
 		knee_controller->_activations.set( i, activs_final[i]);
@@ -53,9 +46,23 @@ void forwardsim(Model model, SimTK::State& si){
 }
 
 
-void computeActivations (Model &model, const double angle,
-    vector<OpenSim::Function*> &controlFuncs, double &duration, bool store, Vector ssai, Vector ssaf)
+void computeActivations (Model &model, const double angle, vector<OpenSim::Function*> &controlFuncs, 
+			double &duration, bool store, Vector &ssai, Vector &ssaf, State &si)
 {
+	calcSSact(model, ssai, si);
+	
+	//set movement parameters
+	const CustomJoint &knee_r_joint = static_cast<const CustomJoint&>(model.getJointSet().get("knee_r"));
+    knee_r_joint.get_CoordinateSet().get("knee_angle_r").setValue(si, angle);
+	//model.equilibrateMuscles(si);
+
+	calcSSact(model, ssaf, si);
+
+	////--------------- DELETE THIS --------------------------------------
+	//for (int i=0; i<ssaf.size(); i++){
+	//	ssaf.set( i , 0.5);
+	//}
+
     const int N = 9;
 
     const double t_eq = 0.000;
@@ -141,18 +148,12 @@ void calcSSact(Model &model, Vector &activations, State &si)
     int na = model.getActuators().getSize();
     activations.resize(na);
     int row = as->getSize() - 1;
-
+	
     // Store activations to out vector
     for (int i = 0; i<na; i++)
 	{
         as->getData(row, i, activations[i]);
-		//cout << as->getColumnLabels()[i] << ": " << activations[i] << "\n" << endl;
+		cout << as->getColumnLabels()[i] << ": " << activations[i] << endl;
+		//cout << as->getDataColumn() << "\n" << endl;
 	}
-}
-
-
-Real evalFunc(OpenSim::Function *f, Real x)
-{
-    Vector xv(1); xv[0] = x;
-    return f->calcValue(xv);
 }

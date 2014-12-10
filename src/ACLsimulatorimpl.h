@@ -10,7 +10,7 @@ using namespace SimTK;
 void forwardsim(Model model, SimTK::State& si);
 
 void computeActivations (Model &model, const double angle,
-    vector<OpenSim::Function*> &controlFuncs, double &duration, bool store, Vector ssai, Vector ssaf);
+    vector<OpenSim::Function*> &controlFuncs, double &duration, bool store, Vector &ssai, Vector &ssaf, State &si);
 
 void calcSSact(Model &model, Vector &activations, State &si);
 
@@ -28,9 +28,8 @@ public:
 
     void computeControls(const State &s, Vector &controls) const OVERRIDE_11
 	{
-		for (int i=0; i<_activations.size(); ++i){
+		for (int i=0; i<_activations.size(); ++i)
             controls[i] = _activations[i];
-		}
 	}
 
  //   void computeControls(const State &s, Vector &controls) const OVERRIDE_11

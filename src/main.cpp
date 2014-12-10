@@ -19,7 +19,9 @@ int main(int argc, char *argv[])
 		//model.print("myKnee_model.osim");
 
 		forwardsim(model, state);
-
+		std::cout << "OpenSim example completed successfully.\n";
+		std::cin.get();
+		
 		return 0;
 	}
 	catch (OpenSim::Exception ex)
@@ -35,8 +37,7 @@ int main(int argc, char *argv[])
         std::cout << "UNRECOGNIZED EXCEPTION" << std::endl;
     }
 
-    std::cout << "OpenSim example completed successfully.\n";
-	std::cin.get();
+
 
 
     //QApplication a(argc, argv);
