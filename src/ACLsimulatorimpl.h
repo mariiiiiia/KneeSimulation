@@ -1,6 +1,7 @@
 #include "OpenSim\OpenSim.h"
+#include "osimutils.h"
 
-#include <string>
+//#include <string>
 #include <vector>
 
 using namespace std;
@@ -18,6 +19,9 @@ class KneeController : public OpenSim::Controller
 {
 	OpenSim_DECLARE_CONCRETE_OBJECT(KneeController, Controller);
 
+    vector<double> timesLog;
+    vector<Vector> activationLog;
+
 public:
 	Vector _activations;
 
@@ -26,10 +30,20 @@ public:
 		setNumControls(numControls);
 	}
 
+	const vector<double> &getControlTimesLog() {return timesLog;}
+
+    const vector<Vector> &getControlLog() {return activationLog;}
+
+
     void computeControls(const State &s, Vector &controls) const OVERRIDE_11
 	{
 		for (int i=0; i<_activations.size(); ++i)
             controls[i] = _activations[i];
+
+        // Log activations (Need to drop const-ness)
+        KneeController *this_ = const_cast<KneeController*>(this);
+        this_->timesLog.push_back(s.getTime());
+        this_->activationLog.push_back(_activations);
 	}
 
  //   void computeControls(const State &s, Vector &controls) const OVERRIDE_11
@@ -71,5 +85,3 @@ public:
 
 	//}
 };
-
-Real evalFunc(OpenSim::Function *f, Real x);

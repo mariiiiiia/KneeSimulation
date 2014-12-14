@@ -4,6 +4,8 @@
 void forwardsim(Model model, SimTK::State& si){
 	Vector activs_initial, activs_final;	
 	vector<OpenSim::Function*> controlFuncs;
+	vector<Vector> acts; 
+	vector<double> actsTimes;
 	double initialTime = 0.0;
 	double finalTime = 2.0;
 
@@ -43,6 +45,43 @@ void forwardsim(Model model, SimTK::State& si){
 	model.updSimbodyEngine().convertRadiansToDegrees(statesDegrees);
 	statesDegrees.setWriteSIMMHeader(true);
 	statesDegrees.print("kneeforwsim_states_degrees.mot");
+
+	// Get activation trajectory
+    acts.resize(knee_controller->getControlLog().size());
+    actsTimes.resize(knee_controller->getControlLog().size());
+
+    vector<int> index(acts.size(), 0);
+    for (int i = 0 ; i != index.size() ; i++) {
+        index[i] = i;
+    }
+
+    sort(index.begin(), index.end(),
+        [&](const int& a, const int& b) {
+            return (knee_controller->getControlTimesLog()[a] < 
+                    knee_controller->getControlTimesLog()[b]);
+        }
+    );
+
+    for (int i = 0 ; i != acts.size() ; i++) {
+        acts[i] = knee_controller->getControlLog()[index[i]];
+        actsTimes[i] = knee_controller->getControlTimesLog()[index[i]];
+    }
+
+    // Delete duplicates
+    double ii = 0;
+    for (int i=1; i<acts.size(); i++) {
+        if (actsTimes[i] <= actsTimes[ii]) {
+            actsTimes.erase(actsTimes.begin()+i);
+            acts.erase(acts.begin()+i);
+            --i;
+        }
+        ii = i;
+    }
+
+
+	OsimUtils::writeFunctionsToFile( controlFuncs, "_Excitations_LOG.sto", duration, 0.001 );
+
+	OsimUtils::writeFunctionsToFile(actsTimes, acts, "force_Excitations_LOG.sto");
 }
 
 
@@ -58,10 +97,10 @@ void computeActivations (Model &model, const double angle, vector<OpenSim::Funct
 
 	calcSSact(model, ssaf, si);
 
-	////--------------- DELETE THIS --------------------------------------
-	//for (int i=0; i<ssaf.size(); i++){
-	//	ssaf.set( i , 0.5);
-	//}
+	//--------------- DELETE THIS --------------------------------------
+	for (int i=0; i<ssaf.size(); i++){
+		ssaf.set( i , 0.5);
+	}
 
     const int N = 9;
 
