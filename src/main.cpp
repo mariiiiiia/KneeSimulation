@@ -15,10 +15,10 @@ int main(int argc, char *argv[])
 
 		SimTK::State &state = model.initSystem();
 
-		// Save the model to a file
+		////Save the model to a file
 		//model.print("myKnee_model.osim");
 
-		forwardsim(model, state);
+		forwardSim(model, state);
 		std::cout << "OpenSim example completed successfully.\n";
 		std::cin.get();
 		

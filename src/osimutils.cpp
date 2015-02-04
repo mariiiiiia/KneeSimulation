@@ -5,6 +5,12 @@ protected:
     charT do_decimal_point() const { return sep; }
 };
 
+Real OsimUtils::evalFunc(OpenSim::Function *f, Real x)
+{
+    Vector xv(1); xv[0] = x;
+    return f->calcValue(xv);
+}
+
 void OsimUtils::disableAllForces(State &state, Model &model)
 {
     for (int i = 0; i < model.getForceSet().getSize(); i++)
@@ -52,16 +58,16 @@ void OsimUtils::writeFunctionsToFile(const vector<double> &times,
     file.imbue(std::locale(file.getloc(), new punct_facet<char, '.'>));
 
     file << "nRows=" << times.size() << "\n";
-    file << "nColumns=" << (1+6) << "\n";
+    file << "nColumns=" << acts[0].size() +1 << "\n";
     file << "endheader" << "\n\n";
     file << "time" << " ";
-    for (int i=0; i< 6; i++) file << "Act_" << i << ' ';
+    for (int i=0; i< acts[0].size(); i++) file << "Act_" << i << ' ';
     file << "\n";
 
     Vector xv(1);
     for (double t = 0; t<times.size(); t++) {
         file << times[t] << "\t";
-        for (int i=0; i<6; i++) 
+		for (int i=0; i<acts[0].size(); i++) 
             file << acts[t][i] << '\t';
         file << "\n";
     }

@@ -1,36 +1,36 @@
 #include "ACLsimulatorimpl.h"
 #include "osimutils.h"
 
-void forwardsim(Model model, SimTK::State& si){
-	Vector activs_initial, activs_final;	
-	vector<OpenSim::Function*> controlFuncs;
-	vector<Vector> acts; 
-	vector<double> actsTimes;
-	double initialTime = 0.0;
+void forwardSim(Model model, SimTK::State& si){
+	// name parameters needed
+	Vector activs_initial, activs_final;		//	activations for the current position and activations for the next position
+	vector<OpenSim::Function*> controlFuncs;	//	control functions for every t (time)
+	vector<Vector> acts;						//	activations
+	vector<double> actsTimes;					//	every t (=time) when I have an activation to apply
+	double initialTime = 0.0;					
 	double finalTime = 2.0;
-
-	si = model.initSystem();
-    //model.equilibrateMuscles(si);
-	
 	double duration = 0.5;
 
-	// compute activations of specific knee angle
-	double knee_angle = -0.8; 
-	computeActivations(model, knee_angle, controlFuncs, duration, false, activs_initial, activs_final, si);
+	si = model.initSystem();
 
-	// add controller to the model after adding the control function
-	KneeController *knee_controller = new KneeController( activs_final.size());
-	//cout << "final activation size: " << activs_final.size() << "initial activ size: " << activs_initial.size() << endl;
-	//cout << "control functions: " << controlFuncs.size() << endl;
-	knee_controller->_activations.resize( activs_final.size());
-	for (int i=0; i<activs_final.size(); i++){
-		knee_controller->_activations.set( i, activs_final[i]);
-	}
+	// compute muscle activations for specific knee angle (in rads)
+	double knee_angle = -1.0; 
+	computeActivations(model, knee_angle, controlFuncs, duration, true, activs_initial, activs_final, si);
+
+	// add controller to the model after adding the control functions to the controller
+	KneeController *knee_controller = new KneeController( model.getActuators().getSize());
+    knee_controller->setControlFunctions(controlFuncs);
 	knee_controller->setActuators(model.getActuators());
+	//knee_controller->connectToModel(model);      // I don't know if it's needed
 	model.addController(knee_controller);
 	 
 	// set model to initial state
 	si = model.initSystem();
+    //model.equilibrateMuscles(si);
+
+    // Add reporters
+    ForceReporter* forceReporter = new ForceReporter(&model);
+    model.addAnalysis(forceReporter);
 
 	// Simulate
     RungeKuttaMersonIntegrator integrator(model.getMultibodySystem());
@@ -78,29 +78,20 @@ void forwardsim(Model model, SimTK::State& si){
         ii = i;
     }
 
-
-	OsimUtils::writeFunctionsToFile( controlFuncs, "_Excitations_LOG.sto", duration, 0.001 );
-
-	OsimUtils::writeFunctionsToFile(actsTimes, acts, "force_Excitations_LOG.sto");
+	OsimUtils::writeFunctionsToFile( actsTimes, acts, "force_Excitations_LOG.sto");
 }
 
-
 void computeActivations (Model &model, const double angle, vector<OpenSim::Function*> &controlFuncs, 
-			double &duration, bool store, Vector &ssai, Vector &ssaf, State &si)
+			double &duration, bool store, Vector &so_activ_init, Vector &so_activ_final, State &si)
 {
-	calcSSact(model, ssai, si);
+	calcSSact(model, so_activ_init, si);
 	
 	//set movement parameters
 	const CustomJoint &knee_r_joint = static_cast<const CustomJoint&>(model.getJointSet().get("knee_r"));
     knee_r_joint.get_CoordinateSet().get("knee_angle_r").setValue(si, angle);
 	//model.equilibrateMuscles(si);
-
-	calcSSact(model, ssaf, si);
-
-	//--------------- DELETE THIS --------------------------------------
-	for (int i=0; i<ssaf.size(); i++){
-		ssaf.set( i , 0.5);
-	}
+	
+	calcSSact(model, so_activ_final, si);
 
     const int N = 9;
 
@@ -125,22 +116,22 @@ void computeActivations (Model &model, const double angle, vector<OpenSim::Funct
     controlFuncs.clear();
     double values[N];
 
-    for (int i = 0; i < ssaf.size(); i++)  {
-        double dssa = ssaf[i] - ssai[i];
+    for (int i = 0; i < so_activ_final.size(); i++)  {
+        double dssa = so_activ_final[i] - so_activ_init[i];
         int j=0;
 
-        values[j++] = ssai[i];
+        values[j++] = so_activ_init[i];
         values[j++] = values[j-1];
 
-        values[j++] = ssaf[i] + dssa * 0.75;
+        values[j++] = so_activ_final[i] + dssa * 0.75;
         values[j++] = values[j-1];
 
-        values[j++] = ssai[i] + dssa * 0.975;
+        values[j++] = so_activ_init[i] + dssa * 0.975;
         values[j++] = values[j-1];
 
-        values[j++] = ssai[i] + dssa * 1.350;
+        values[j++] = so_activ_init[i] + dssa * 1.350;
 
-        values[j++] = ssaf[i];
+        values[j++] = so_activ_final[i];
         values[j++] = values[j-1];
 
         OpenSim::Function *controlFunc = new PiecewiseLinearFunction(N, phases, values);
@@ -150,15 +141,15 @@ void computeActivations (Model &model, const double angle, vector<OpenSim::Funct
     }
 
     duration = t_eq + t_fix * 2;
-}
 
+	if (store == true) OsimUtils::writeFunctionsToFile( controlFuncs, "_Excitations_LOG.sto", duration, 0.001 );
+}
 
 void calcSSact(Model &model, Vector &activations, State &si)
 {
 	// Perform a dummy forward simulation without forces,
     // just to obtain a state-series to be used by stat opt
     OsimUtils::disableAllForces(si, model);
-
 	// Create the integrator and manager for the simulation.
     SimTK::RungeKuttaMersonIntegrator integrator( model.getMultibodySystem() );
     Manager manager( model, integrator );
@@ -171,7 +162,11 @@ void calcSSact(Model &model, Vector &activations, State &si)
     // Perform a quick static optimization that will give us
     // the steady state activations needed to overcome the passive forces
     OsimUtils::enableAllForces(si, model);
-
+	//// initiate all muscle activations at 0.005 (DON'T KNOW WHY)
+	//const Set<Muscle> &muscleSet = model.getMuscles();
+	//   for(int i=0; i< muscleSet.getSize(); i++ ){
+	//		muscleSet[i].setActivation(si, 0.05);
+	//	}
     Storage &states = manager.getStateStorage();
     states.setInDegrees(false);
     StaticOptimization so(&model);
@@ -192,7 +187,33 @@ void calcSSact(Model &model, Vector &activations, State &si)
     for (int i = 0; i<na; i++)
 	{
         as->getData(row, i, activations[i]);
-		cout << as->getColumnLabels()[i] << ": " << activations[i] << endl;
+		cout << as->getColumnLabels()[i+1] << ": " << activations[i] << endl;
 		//cout << as->getDataColumn() << "\n" << endl;
+	}
+}
+
+// for any post XML deseraialization intialization
+void KneeController::connectToModel(Model& model)
+{
+	Super::connectToModel(model);
+
+	if(getProperty_actuator_list().size() > 0){
+		if(IO::Uppercase(get_actuator_list(0)) == "ALL"){
+			setActuators(model.getActuators());
+			// setup actuators to ensure actuators added by controllers are also setup properly
+			// TODO: Adopt the controls (discrete state variables) of the Actuator
+			return;
+		}
+		else{
+			Set<Actuator> actuatorsByName;
+			for(int i =0; i <  getProperty_actuator_list().size(); i++){
+				if(model.getActuators().contains(get_actuator_list(i)))
+					actuatorsByName.adoptAndAppend(&model.updActuators().get(get_actuator_list(i)));
+				else
+					cerr << "WARN: Controller::setup : Actuator " << get_actuator_list(i) << " was not found and will be ignored." << endl;
+			}
+			actuatorsByName.setMemoryOwner(false);
+			setActuators(actuatorsByName);
+		}
 	}
 }

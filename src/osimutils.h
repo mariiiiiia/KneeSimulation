@@ -13,6 +13,8 @@ using namespace OpenSim;
 class OsimUtils
 {
 public:
+    Real static evalFunc(OpenSim::Function *f, Real x);
+
 	void static enableAllForces(State &state, Model &model);
 
 	void static disableAllForces(State &state, Model &model);
