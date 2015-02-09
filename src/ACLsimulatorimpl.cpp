@@ -162,11 +162,12 @@ void calcSSact(Model &model, Vector &activations, State &si)
     // Perform a quick static optimization that will give us
     // the steady state activations needed to overcome the passive forces
     OsimUtils::enableAllForces(si, model);
-	//// initiate all muscle activations at 0.005 (DON'T KNOW WHY)
+	// initiate all muscle activations at 0.05 (DON'T KNOW WHY)
 	//const Set<Muscle> &muscleSet = model.getMuscles();
 	//   for(int i=0; i< muscleSet.getSize(); i++ ){
-	//		muscleSet[i].setActivation(si, 0.05);
+	//		muscleSet[i].setActivation(si, 0.005);
 	//	}
+
     Storage &states = manager.getStateStorage();
     states.setInDegrees(false);
     StaticOptimization so(&model);
@@ -187,7 +188,8 @@ void calcSSact(Model &model, Vector &activations, State &si)
     for (int i = 0; i<na; i++)
 	{
         as->getData(row, i, activations[i]);
-		cout << as->getColumnLabels()[i+1] << ": " << activations[i] << endl;
+		//// print results
+		//cout << as->getColumnLabels()[i+1] << ": " << activations[i] << endl;
 		//cout << as->getDataColumn() << "\n" << endl;
 	}
 }
