@@ -89,7 +89,7 @@ void computeActivations (Model &model, const double angle, vector<OpenSim::Funct
 	//set movement parameters
 	const CustomJoint &knee_r_joint = static_cast<const CustomJoint&>(model.getJointSet().get("knee_r"));
     knee_r_joint.get_CoordinateSet().get("knee_angle_r").setValue(si, angle);
-	//model.equilibrateMuscles(si);
+	model.equilibrateMuscles(si);
 	
 	calcSSact(model, so_activ_final, si);
 
