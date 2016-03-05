@@ -5,6 +5,7 @@ protected:
     charT do_decimal_point() const { return sep; }
 };
 
+// OUT: return f[x]
 Real OsimUtils::evalFunc(OpenSim::Function *f, Real x)
 {
     Vector xv(1); xv[0] = x;

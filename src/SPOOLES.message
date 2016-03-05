@@ -1,0 +1,28 @@
+
+
+----------------------------------------
+
+ Order the graph via best of ND and MS
+
+                    # fronts  # indices    # entries         # ops
+ nested dissection      6772     735036     15738258   13520356816
+ multisection           6728     705018     15265866   12097288768
+ final ordering         2461     368388     15688551   12186233275
+
+ CPU breakdown                            CPU %
+    make equivalence map                0.009   2.73
+    compress graph                      0.006   1.83
+    construct domain/separator tree     0.181  55.61
+    evaluate nested dissection          0.064  19.62
+    evaluate multisection               0.063  19.33
+    transform final tree                0.001   0.29
+    miscellaneous time                  0.002   0.60
+    total time                          0.326
+
+----------------------------------------
+    set up solves                  0.000   0.42
+    load rhs and store solution    0.001   2.02
+    forward solve                  0.021  46.18
+    diagonal solve                 0.001   1.24
+    backward solve                 0.022  50.00
+    total time                     0.045

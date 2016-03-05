@@ -7,23 +7,21 @@ void forwardSim(Model model, SimTK::State& si){
 	vector<OpenSim::Function*> controlFuncs;	//	control functions for every t (time)
 	vector<Vector> acts;						//	activations
 	vector<double> actsTimes;					//	every t (=time) when I have an activation to apply
-	double initialTime = 0.0;					
-	double finalTime = 2.0;
 	double duration = 0.5;
 
 	si = model.initSystem();
 
 	// compute muscle activations for specific knee angle (in rads)
-	double knee_angle = -1.0; 
+	double knee_angle = -1.0;
 	computeActivations(model, knee_angle, controlFuncs, duration, true, activs_initial, activs_final, si);
 
 	// add controller to the model after adding the control functions to the controller
-	KneeController *knee_controller = new KneeController( model.getActuators().getSize());
+	KneeController *knee_controller = new KneeController( controlFuncs.size());
     knee_controller->setControlFunctions(controlFuncs);
 	knee_controller->setActuators(model.getActuators());
 	//knee_controller->connectToModel(model);      // I don't know if it's needed
 	model.addController(knee_controller);
-	 
+
 	// set model to initial state
 	si = model.initSystem();
     //model.equilibrateMuscles(si);
@@ -36,15 +34,15 @@ void forwardSim(Model model, SimTK::State& si){
     RungeKuttaMersonIntegrator integrator(model.getMultibodySystem());
     Manager manager(model, integrator);
     manager.setInitialTime(0);
-    manager.setFinalTime(duration);
+    manager.setFinalTime(2);
     manager.integrate(si);
 
 	// Save the simulation results
 	Storage statesDegrees(manager.getStateStorage());
-	statesDegrees.print("kneeforwsim_states.sto");
+	statesDegrees.print("../outputs/kneeforwsim_states.sto");
 	model.updSimbodyEngine().convertRadiansToDegrees(statesDegrees);
 	statesDegrees.setWriteSIMMHeader(true);
-	statesDegrees.print("kneeforwsim_states_degrees.mot");
+	statesDegrees.print("../outputs/kneeforwsim_states_degrees.mot");
 
 	// Get activation trajectory
     acts.resize(knee_controller->getControlLog().size());
@@ -52,14 +50,14 @@ void forwardSim(Model model, SimTK::State& si){
 
     vector<int> index(acts.size(), 0);
     for (int i = 0 ; i != index.size() ; i++) {
-        index[i] = i;
+      index[i] = i;
     }
 
     sort(index.begin(), index.end(),
-        [&](const int& a, const int& b) {
-            return (knee_controller->getControlTimesLog()[a] < 
-                    knee_controller->getControlTimesLog()[b]);
-        }
+         [&](const int& a, const int& b) {
+           return (knee_controller->getControlTimesLog()[a] <
+                   knee_controller->getControlTimesLog()[b]);
+         }
     );
 
     for (int i = 0 ; i != acts.size() ; i++) {
@@ -78,19 +76,19 @@ void forwardSim(Model model, SimTK::State& si){
         ii = i;
     }
 
-	OsimUtils::writeFunctionsToFile( actsTimes, acts, "force_Excitations_LOG.sto");
+	OsimUtils::writeFunctionsToFile( actsTimes, acts, "../outputs/force_Excitations_LOG.sto");
 }
 
-void computeActivations (Model &model, const double angle, vector<OpenSim::Function*> &controlFuncs, 
+void computeActivations (Model &model, const double angle, vector<OpenSim::Function*> &controlFuncs,
 			double &duration, bool store, Vector &so_activ_init, Vector &so_activ_final, State &si)
 {
 	calcSSact(model, so_activ_init, si);
-	
+
 	//set movement parameters
-	const CustomJoint &knee_r_joint = static_cast<const CustomJoint&>(model.getJointSet().get("knee_r"));
-    knee_r_joint.get_CoordinateSet().get("knee_angle_r").setValue(si, angle);
+	const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
+    knee_r_cs.get("knee_angle_r").setValue(si, angle);
 	model.equilibrateMuscles(si);
-	
+
 	calcSSact(model, so_activ_final, si);
 
     const int N = 9;
@@ -142,7 +140,7 @@ void computeActivations (Model &model, const double angle, vector<OpenSim::Funct
 
     duration = t_eq + t_fix * 2;
 
-	if (store == true) OsimUtils::writeFunctionsToFile( controlFuncs, "_Excitations_LOG.sto", duration, 0.001 );
+	if (store == true) OsimUtils::writeFunctionsToFile( controlFuncs, "../outputs/_Excitations_LOG.sto", duration, 0.001 );
 }
 
 void calcSSact(Model &model, Vector &activations, State &si)
@@ -155,35 +153,30 @@ void calcSSact(Model &model, Vector &activations, State &si)
     Manager manager( model, integrator );
 	// Integrate from initial time to final time.
     manager.setInitialTime( 0);
-    manager.setFinalTime( 2 );
+    manager.setFinalTime( 2);
     std::cout << "\n\nIntegrating from 0 to 2 " << std::endl;
-    manager.integrate( si );
+    manager.integrate( si);
 
     // Perform a quick static optimization that will give us
     // the steady state activations needed to overcome the passive forces
     OsimUtils::enableAllForces(si, model);
-	// initiate all muscle activations at 0.05 (DON'T KNOW WHY)
-	//const Set<Muscle> &muscleSet = model.getMuscles();
-	//   for(int i=0; i< muscleSet.getSize(); i++ ){
-	//		muscleSet[i].setActivation(si, 0.005);
-	//	}
 
     Storage &states = manager.getStateStorage();
     states.setInDegrees(false);
     StaticOptimization so(&model);
-
     so.setStatesStore(states);
-    si = model.initSystem();
-    states.getData(0, si.getNY(), &si.updY()[0]);
-    si.setTime(0);
-    so.begin(si);
-    so.end(si);
+    State &s = model.initSystem();
+
+    states.getData(0, s.getNY(), &s.updY()[0]);
+    s.setTime(0);
+    so.begin(s);
+    so.end(s);
 
     Storage *as = so.getActivationStorage();
     int na = model.getActuators().getSize();
     activations.resize(na);
     int row = as->getSize() - 1;
-	
+
     // Store activations to out vector
     for (int i = 0; i<na; i++)
 	{
@@ -194,7 +187,73 @@ void calcSSact(Model &model, Vector &activations, State &si)
 	}
 }
 
-// for any post XML deseraialization intialization
+//void inverseSimulate(Model model, Saccade &saccade, string name)
+//{
+//    // Create the state sequence corresponding to the recorded saccade.
+//    State state = model.initSystem();
+//    Storage states;
+//    states.setDescription("Recorded Movement");
+//    Array<std::string> &stateNames = model.getStateVariableNames();
+//    stateNames.insert(0, "time");
+//    states.setColumnLabels(stateNames);
+//    Array<double> stateVals;
+//
+//    for(int i=0; i<saccade.rotRx.size(); i++) {
+//        state.updQ()[0] = convertDegreesToRadians(saccade.rotRx[i]);
+//        state.updQ()[1] = convertDegreesToRadians(saccade.rotRy[i]);
+//        state.updQ()[2] = convertDegreesToRadians(saccade.rotRz[i]);
+//
+//        lmodel.getStateValues(state,stateVals);
+//        states.append(saccade.timesR[i], stateVals.size(), stateVals.get());
+//    }
+//    states.setInDegrees(false);
+//
+//    //// Perform the static optimization
+//    //StaticOptimization so(&lmodel);
+//    //so.setStatesStore(states);
+//    //int ns = states.getSize();
+//    //double ti, tf;
+//    //states.getTime(0, ti);
+//    //states.getTime(ns-1, tf);
+//    //so.setStartTime(ti);
+//    //so.setEndTime(tf);
+//
+//    //// Run the analysis loop
+//    //State s = lmodel.initSystem();
+//    //for (int i = 0; i < ns; i++) {
+//    //    states.getData(i, s.getNY(), &s.updY()[0]);
+//    //    Real t = 0.0;
+//    //    states.getTime(i, t);
+//    //    s.setTime(t);
+//    //    lmodel.assemble(s);
+//    //    lmodel.getMultibodySystem().realize(s, SimTK::Stage::Velocity);
+//
+//    //    if (i == 0 )
+//    //        so.begin(s);
+//    //    else if (i == ns)
+//    //        so.end(s);
+//    //    else
+//    //        so.step(s, i);
+//    //}
+//
+//    //Storage *as = so.getActivationStorage();
+//    //int na = lmodel.getActuators().getSize();
+//    //saccade.activationsR.resize(states.getSize());
+//    //int row = as->getSize() - 1;
+//
+//    //// Store activations to out vector
+//    //for (int row = 0; row<states.getSize(); row++)
+//    //    for (int i = 0; i<na; i++)
+//    //        as->getData(row, i, saccade.activationsR[row].act[i]);
+//
+//    //OsimUtils::writeFunctionsToFile(
+//    //    saccade.timesR,
+//    //    saccade.activationsR,
+//    //    resDir + name + ".sto"
+//    //);
+//
+//}
+
 void KneeController::connectToModel(Model& model)
 {
 	Super::connectToModel(model);

@@ -1,5 +1,7 @@
-#include <QApplication>
 #include "ACLsimulatorimpl.h"
+#include "vegafem.h"
+#include "addMeniscusToModel.h"
+#include "addKneeContactGeometries.h"
 
 #include <string>
 #include <vector>
@@ -11,17 +13,32 @@ int main(int argc, char *argv[])
 {
 	try {
 		// Create an OpenSim model and set its name
-		OpenSim::Model model("lower-limb(muscles millard13).osim");
+		OpenSim::Model model("../resources/blender outputs in m/myKnee_changeBones.osim");
 
 		SimTK::State &state = model.initSystem();
 
-		////Save the model to a file
-		//model.print("myKnee_model.osim");
+		// add meniscus bodies to left and right knee
+		addMeniscusToKnee(model, true);
+		addMeniscusToKnee(model, false);
 
-		forwardSim(model, state);
+		//Save the model to a file
+		model.print("../resources/blender outputs in m/myKnee_addMenisci.osim");
+
+		// add contact geometries at the right knee
+		addKneeContactGeometries(model, false);
+
+		//Save the model to a file
+		model.print("../resources/blender outputs in m/myKnee_addContacts.osim");
+
+		model.setUseVisualizer(1);
+		state = model.initSystem();
+		model.getVisualizer().show(state);
+
+		//initSimulation();
+		//forwardSim(model, state);
 		std::cout << "OpenSim example completed successfully.\n";
 		std::cin.get();
-		
+
 		return 0;
 	}
 	catch (OpenSim::Exception ex)
@@ -37,13 +54,5 @@ int main(int argc, char *argv[])
         std::cout << "UNRECOGNIZED EXCEPTION" << std::endl;
     }
 
-
-
-
-    //QApplication a(argc, argv);
-    //MainWindow w;
-    //w.show();
-
-    //return a.exec();
 	return 1;
 }

@@ -1,4 +1,4 @@
-#include "OpenSim\OpenSim.h"
+#include "OpenSim/OpenSim.h"
 #include "osimutils.h"
 
 #include <vector>
@@ -16,7 +16,7 @@ void computeActivations (Model &model, const double angle,
 // compute activation vector for current state (with static optimization)
 void calcSSact(Model &model, Vector &activations, State &si);
 
-class KneeController : public OpenSim::Controller 
+class KneeController : public OpenSim::Controller
 {
 	OpenSim_DECLARE_CONCRETE_OBJECT(KneeController, Controller);
 
@@ -60,5 +60,5 @@ public:
 
 	/** Model component interface that permits the controller to be "wired" up
     to its actuators. Subclasses can override to perform additional setup. */
-	void connectToModel(Model& model) OVERRIDE_11;  
+	void connectToModel(Model& model) OVERRIDE_11;
 };
