@@ -4,16 +4,16 @@ void addMeniscusToKnee(Model& model, bool LeftOrRight){
 	string LorR = "r";
 	if (LeftOrRight) LorR = "l";
 
-	// // create body instance of tibia
+	// create body instance of tibia
 	OpenSim::Body* tibia = &model.updBodySet().get("tibia_" + LorR);
 
 	// create meniscus bodies
 	double lat_meniscus_mass = 0.1;
 	double med_meniscus_mass = 0.1;
 	OpenSim::Body* lat_meniscus_body =  new OpenSim::Body("lat_meniscus_" + LorR, lat_meniscus_mass, SimTK::Vec3(0), 
-		lat_meniscus_mass*SimTK::Inertia(1));
+		lat_meniscus_mass*SimTK::Inertia(0.1));
 	OpenSim::Body* med_meniscus_body =  new OpenSim::Body("med_meniscus_" + LorR, med_meniscus_mass, SimTK::Vec3(0), 
-		med_meniscus_mass*SimTK::Inertia(0));
+		med_meniscus_mass*SimTK::Inertia(0.1));
 
 	// Create meniscus display geometries
 	DisplayGeometry * Lat_Meniscus_dg = new DisplayGeometry("Lat_Meniscus_"+LorR+".obj");

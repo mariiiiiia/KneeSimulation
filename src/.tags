@@ -17,8 +17,8 @@ OsimUtils	osimutils.h	/^class OsimUtils$/;"	c
 _activations	ACLsimulatorimpl.h	/^	vector<OpenSim::Function*> _activations;$/;"	m	class:KneeController
 activationLog	ACLsimulatorimpl.h	/^    vector<Vector> activationLog;$/;"	m	class:KneeController
 addContactGeometry	addKneeContactGeometries.cpp	/^void addContactGeometry(Model& model, string bodyName, string objName){$/;"	f
-addKneeContactGeometries	addKneeContactGeometries.cpp	/^void addKneeContactGeometries(Model& model){$/;"	f
-addMeniscusToKnee	addMeniscusToModel.cpp	/^void addMeniscusToKnee(Model& model, bool left){$/;"	f
+addKneeContactGeometries	addKneeContactGeometries.cpp	/^void addKneeContactGeometries(Model& model, bool LeftOrRight){$/;"	f
+addMeniscusToKnee	addMeniscusToModel.cpp	/^void addMeniscusToKnee(Model& model, bool LeftOrRight){$/;"	f
 calcSSact	ACLsimulatorimpl.cpp	/^void calcSSact(Model &model, Vector &activations, State &si)$/;"	f
 cf	ACLsimulatorimpl.h	/^	vector<OpenSim::Function*> cf;$/;"	m	class:KneeController
 computeActivations	ACLsimulatorimpl.cpp	/^void computeActivations (Model &model, const double angle, vector<OpenSim::Function*> &controlFuncs,$/;"	f
@@ -31,6 +31,7 @@ evalFunc	osimutils.cpp	/^Real OsimUtils::evalFunc(OpenSim::Function *f, Real x)$
 forwardSim	ACLsimulatorimpl.cpp	/^void forwardSim(Model model, SimTK::State& si){$/;"	f
 getControlLog	ACLsimulatorimpl.h	/^    const vector<Vector> &getControlLog() {$/;"	f	class:KneeController
 getControlTimesLog	ACLsimulatorimpl.h	/^	const vector<double> &getControlTimesLog() {$/;"	f	class:KneeController
+inverseSimulation	inverseSimulation.cpp	/^void inverseSimulation(Model& model)$/;"	f
 main	main.cpp	/^int main(int argc, char *argv[])$/;"	f
 punct_facet	osimutils.cpp	/^template <class charT, charT sep> class punct_facet : public std::numpunct<charT> {$/;"	c	file:
 setControlFunctions	ACLsimulatorimpl.h	/^	void setControlFunctions( vector<OpenSim::Function*> &controlFuncs){$/;"	f	class:KneeController

@@ -23,9 +23,10 @@ INCPATH	Makefile	/^INCPATH=-isystem$(HOME)\/Apps\/simbody\/simbody331\/include \
 LIBRARYPATH	Makefile	/^LIBRARYPATH=-L$(HOME)\/Apps\/opensim\/opensim32\/lib \\$/;"	m
 LIBS	Makefile	/^LIBS=-lSimTKcommon -lSimTKmath -lSimTKsimbody \\$/;"	m
 addContactGeometry	addKneeContactGeometries.cpp	/^void addContactGeometry(Model& model, string bodyName, string objName){$/;"	f
-addKneeContactGeometries	addKneeContactGeometries.cpp	/^void addKneeContactGeometries(Model& model){$/;"	f
-addMeniscusToKnee	addMeniscusToModel.cpp	/^void addMeniscusToKnee(Model& model, bool left){$/;"	f
+addKneeContactGeometries	addKneeContactGeometries.cpp	/^void addKneeContactGeometries(Model& model, bool LeftOrRight){$/;"	f
+addMeniscusToKnee	addMeniscusToModel.cpp	/^void addMeniscusToKnee(Model& model, bool LeftOrRight){$/;"	f
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+inverseSimulation	inverseSimulation.cpp	/^void inverseSimulation(Model& model)$/;"	f
 main	main.cpp	/^int main(int argc, char *argv[])$/;"	f
 disableAllForces	osimutils.cpp	/^void OsimUtils::disableAllForces(State &state, Model &model)$/;"	f	class:OsimUtils
 do_decimal_point	osimutils.cpp	/^    charT do_decimal_point() const { return sep; }$/;"	f	class:punct_facet

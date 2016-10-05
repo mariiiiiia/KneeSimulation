@@ -1,7 +1,9 @@
 #include "ACLsimulatorimpl.h"
 #include "osimutils.h"
 
-void forwardSim(Model model, SimTK::State& si){
+void forwardSim(Model model){
+    model.setGravity(Vec3(0,0,0));
+
 	// name parameters needed
 	Vector activs_initial, activs_final;		//	activations for the current position and activations for the next position
 	vector<OpenSim::Function*> controlFuncs;	//	control functions for every t (time)
@@ -9,22 +11,21 @@ void forwardSim(Model model, SimTK::State& si){
 	vector<double> actsTimes;					//	every t (=time) when I have an activation to apply
 	double duration = 0.5;
 
-	si = model.initSystem();
+	SimTK::State& state = model.initSystem();
 
 	// compute muscle activations for specific knee angle (in rads)
 	double knee_angle = -1.0;
-	computeActivations(model, knee_angle, controlFuncs, duration, true, activs_initial, activs_final, si);
+	computeActivations(model, knee_angle, controlFuncs, duration, true, activs_initial, activs_final, state);
 
 	// add controller to the model after adding the control functions to the controller
 	KneeController *knee_controller = new KneeController( controlFuncs.size());
     knee_controller->setControlFunctions(controlFuncs);
 	knee_controller->setActuators(model.getActuators());
-	//knee_controller->connectToModel(model);      // I don't know if it's needed
 	model.addController(knee_controller);
 
 	// set model to initial state
-	si = model.initSystem();
-    //model.equilibrateMuscles(si);
+	state = model.initSystem();
+    //model.equilibrateMuscles(state);
 
     // Add reporters
     ForceReporter* forceReporter = new ForceReporter(&model);
@@ -35,7 +36,7 @@ void forwardSim(Model model, SimTK::State& si){
     Manager manager(model, integrator);
     manager.setInitialTime(0);
     manager.setFinalTime(2);
-    manager.integrate(si);
+    manager.integrate(state);
 
 	// Save the simulation results
 	Storage statesDegrees(manager.getStateStorage());
@@ -82,7 +83,7 @@ void forwardSim(Model model, SimTK::State& si){
 void computeActivations (Model &model, const double angle, vector<OpenSim::Function*> &controlFuncs,
 			double &duration, bool store, Vector &so_activ_init, Vector &so_activ_final, State &si)
 {
-	calcSSact(model, so_activ_init, si);
+    calcSSact(model, so_activ_init, si);
 
 	//set movement parameters
 	const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
@@ -187,94 +188,99 @@ void calcSSact(Model &model, Vector &activations, State &si)
 	}
 }
 
-//void inverseSimulate(Model model, Saccade &saccade, string name)
-//{
-//    // Create the state sequence corresponding to the recorded saccade.
-//    State state = model.initSystem();
-//    Storage states;
-//    states.setDescription("Recorded Movement");
-//    Array<std::string> &stateNames = model.getStateVariableNames();
-//    stateNames.insert(0, "time");
-//    states.setColumnLabels(stateNames);
-//    Array<double> stateVals;
-//
-//    for(int i=0; i<saccade.rotRx.size(); i++) {
-//        state.updQ()[0] = convertDegreesToRadians(saccade.rotRx[i]);
-//        state.updQ()[1] = convertDegreesToRadians(saccade.rotRy[i]);
-//        state.updQ()[2] = convertDegreesToRadians(saccade.rotRz[i]);
-//
-//        lmodel.getStateValues(state,stateVals);
-//        states.append(saccade.timesR[i], stateVals.size(), stateVals.get());
-//    }
-//    states.setInDegrees(false);
-//
-//    //// Perform the static optimization
-//    //StaticOptimization so(&lmodel);
-//    //so.setStatesStore(states);
-//    //int ns = states.getSize();
-//    //double ti, tf;
-//    //states.getTime(0, ti);
-//    //states.getTime(ns-1, tf);
-//    //so.setStartTime(ti);
-//    //so.setEndTime(tf);
-//
-//    //// Run the analysis loop
-//    //State s = lmodel.initSystem();
-//    //for (int i = 0; i < ns; i++) {
-//    //    states.getData(i, s.getNY(), &s.updY()[0]);
-//    //    Real t = 0.0;
-//    //    states.getTime(i, t);
-//    //    s.setTime(t);
-//    //    lmodel.assemble(s);
-//    //    lmodel.getMultibodySystem().realize(s, SimTK::Stage::Velocity);
-//
-//    //    if (i == 0 )
-//    //        so.begin(s);
-//    //    else if (i == ns)
-//    //        so.end(s);
-//    //    else
-//    //        so.step(s, i);
-//    //}
-//
-//    //Storage *as = so.getActivationStorage();
-//    //int na = lmodel.getActuators().getSize();
-//    //saccade.activationsR.resize(states.getSize());
-//    //int row = as->getSize() - 1;
-//
-//    //// Store activations to out vector
-//    //for (int row = 0; row<states.getSize(); row++)
-//    //    for (int i = 0; i<na; i++)
-//    //        as->getData(row, i, saccade.activationsR[row].act[i]);
-//
-//    //OsimUtils::writeFunctionsToFile(
-//    //    saccade.timesR,
-//    //    saccade.activationsR,
-//    //    resDir + name + ".sto"
-//    //);
-//
-//}
-
-void KneeController::connectToModel(Model& model)
+void inverseSimulate(Model model)
 {
-	Super::connectToModel(model);
+    // set gravity off    
+    model.setGravity(Vec3(0,0,0));
 
-	if(getProperty_actuator_list().size() > 0){
-		if(IO::Uppercase(get_actuator_list(0)) == "ALL"){
-			setActuators(model.getActuators());
-			// setup actuators to ensure actuators added by controllers are also setup properly
-			// TODO: Adopt the controls (discrete state variables) of the Actuator
-			return;
-		}
-		else{
-			Set<Actuator> actuatorsByName;
-			for(int i =0; i <  getProperty_actuator_list().size(); i++){
-				if(model.getActuators().contains(get_actuator_list(i)))
-					actuatorsByName.adoptAndAppend(&model.updActuators().get(get_actuator_list(i)));
-				else
-					cerr << "WARN: Controller::setup : Actuator " << get_actuator_list(i) << " was not found and will be ignored." << endl;
-			}
-			actuatorsByName.setMemoryOwner(false);
-			setActuators(actuatorsByName);
-		}
-	}
+    SimTK::State& state = model.initSystem();
+    vector<Vector> acts;                        // activations
+    vector<double> actsTimes;                   // states.size()                      
+    // Create the state sequence of motion (knee flexion)
+    Storage states;
+    states.setDescription("Knee flexion");
+    Array<std::string> stateNames = model.getStateVariableNames();    
+    stateNames.insert(0, "time");
+    states.setColumnLabels(stateNames);
+    Array<double> stateVals;
+
+    const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
+    double knee_angle_r = 0.0;
+    double t = 0.0;
+    for (int i=0; i<20; i++)
+    {
+        knee_angle_r = -1.0/20 + knee_angle_r;
+        knee_r_cs.get("knee_angle_r").setValue(state, knee_angle_r);
+        model.getStateValues(state,stateVals);
+        states.append( t, stateVals.size(), stateVals.get());
+        t = t + 0.1;
+    }
+    t = t - 0.1;
+    actsTimes.resize(states.getSize());
+    states.setInDegrees(false);
+
+/*
+    // print q array
+    printf("print q's size: %d\n", state.getQ().size());
+    for (int i=0; i<state.getQ().size(); i++)
+    {
+        printf("print q's [%d]: %f\n", i, state.getQ()[i]);           
+    }
+*/
+
+ /*
+    // print state variable names 
+    Array<std::string> stateNames = model.getStateVariableNames();    
+    printf("print state variable names (%d):\n", stateNames.size());
+    for (int j=0; j<stateNames.size(); j++)
+    {
+        printf("state variable name %d: %s\n", j, stateNames[j].c_str());
+    }
+*/
+
+    // Perform the static optimization
+    StaticOptimization so(&model);
+    so.setStatesStore(states);
+    int ns = states.getSize(); 
+    double ti, tf;
+    states.getTime(0, ti);
+    states.getTime(ns-1, tf);
+    so.setStartTime(ti);
+    so.setEndTime(tf);
+
+    // Run the analysis loop
+    state = model.initSystem();
+    for (int i = 0; i < ns; i++) {
+        states.getData(i, state.getNY(), &state.updY()[0]);
+        Real t = 0.0;
+        states.getTime(i, t);
+        state.setTime(t);
+        model.assemble(state);
+        model.getMultibodySystem().realize(state, SimTK::Stage::Velocity);
+
+        if (i == 0 )
+          so.begin(state);
+        else if (i == ns)
+          so.end(state);
+        else
+          so.step(state, i);
+    }
+
+    Storage *as = so.getActivationStorage();
+    int na = model.getActuators().getSize();
+    acts.resize(states.getSize());
+
+    // Store activations to out vector
+    for (int row = 0; row<states.getSize(); row++)
+        for (int i = 0; i<na; i++)
+        {  
+            as->getData(row, i, acts[i]);           
+        }
+
+    // OsimUtils::writeFunctionsToFile(
+    //   actsTimes,
+    //   acts,
+    //   "../outputs/inverseSimulate.sto"
+    // );
+
 }

@@ -7,7 +7,8 @@ using namespace std;
 using namespace OpenSim;
 using namespace SimTK;
 
-void forwardSim(Model model, SimTK::State& si);
+void forwardSim(Model model);
+void inverseSimulate(Model model);
 
 // compute activation function for desirable knee angle
 void computeActivations (Model &model, const double angle,
@@ -57,8 +58,4 @@ public:
         this_->timesLog.push_back(time);
         this_->activationLog.push_back(controls);
 	}
-
-	/** Model component interface that permits the controller to be "wired" up
-    to its actuators. Subclasses can override to perform additional setup. */
-	void connectToModel(Model& model) OVERRIDE_11;
 };
