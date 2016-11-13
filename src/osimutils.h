@@ -26,6 +26,9 @@ public:
     void static writeFunctionsToFile(const vector<double> &times, 
         const vector<Vector> &acts, const string filename);
 
+	void static writeFunctionsToFile(const vector<double> &times, 
+		const vector<vector<double>> &acts, Storage *as, const string filename);
+
     void static writeForcesToFile(Model &model,
         const string filename,
         const Array<Vector> &forces, const Vector &times);

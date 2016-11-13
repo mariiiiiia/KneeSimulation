@@ -76,6 +76,36 @@ void OsimUtils::writeFunctionsToFile(const vector<double> &times,
     file << endl;
 }
 
+void OsimUtils::writeFunctionsToFile(const vector<double> &times, 
+    const std::vector<std::vector<double>> &acts, Storage *as, const string filename)
+{
+    ofstream file(filename.c_str());
+
+    // Set decimal separator character
+    file.imbue(std::locale(file.getloc(), new punct_facet<char, '.'>));
+
+    file << "nRows=" << times.size() << "\n";
+    file << "nColumns=" << acts.at(0).size() +1 << "\n";
+    file << "endheader" << "\n\n";
+    file << "time" << "\t";
+	
+    for (int i=1; i< acts.at(0).size(); i++) 
+		file << as->getColumnLabels().get(i).c_str() << "\t";
+    file << "\n";
+
+    Vector xv(1);
+	cout << acts.at(0).at(0) << " " << acts.at(1).at(0) << endl;
+    for (double t = 0; t<times.size(); t++) {
+        //file << times[t] << "\t";
+		for (int i=0; i<acts.at(0).size(); i++) 
+		{
+            file << acts.at(t).at(i) << '\t';
+		}
+        file << "\n";
+    }
+
+    file << endl;
+}
 
 void OsimUtils::writeForcesToFile(Model &model,const string filename,
     const Array<Vector> &forces, const Vector &times)
@@ -101,3 +131,4 @@ void OsimUtils::writeForcesToFile(Model &model,const string filename,
 
     file.close();
 }
+

@@ -1,8 +1,9 @@
 #include "ACLsimulatorimpl.h"
 #include "osimutils.h"
+#include <ctime>
 
 void forwardSim(Model model){
-    model.setGravity(Vec3(0,0,0));
+    model.setGravity(Vec3(0,-9.9,0));
 
 	// name parameters needed
 	Vector activs_initial, activs_final;		//	activations for the current position and activations for the next position
@@ -36,7 +37,14 @@ void forwardSim(Model model){
     Manager manager(model, integrator);
     manager.setInitialTime(0);
     manager.setFinalTime(2);
+
+	time_t result = std::time(nullptr);
+	std::cout << "\nBefore integrate(si) " << std::asctime(std::localtime(&result)) << endl;
+	
     manager.integrate(state);
+
+	result = std::time(nullptr);
+	std::cout << "\nAfter integrate(si) " << std::asctime(std::localtime(&result)) << endl;
 
 	// Save the simulation results
 	Storage statesDegrees(manager.getStateStorage());
@@ -188,13 +196,30 @@ void calcSSact(Model &model, Vector &activations, State &si)
 	}
 }
 
-void inverseSimulate(Model model)
+void inverseSimulation(Model model)
+{
+	Array_<Real> times;
+	double dur = 1.0;
+	double step = 0.001;
+
+	// Prepare time series
+    InverseDynamicsSolver ids(model);
+    times.resize((int)(dur / step) + 1, 0);
+    for (unsigned i = 0; i < times.size(); i++)
+        times[i] = step * i;
+
+    // Solve for generalized joints forces
+    State &s = model.initSystem();
+    ids.solve(s, qset, times, forceTraj);
+}
+
+void staticOptimization(Model model)
 {
     // set gravity off    
-    model.setGravity(Vec3(0,0,0));
+    //model.setGravity(Vec3(0,0,0));
 
     SimTK::State& state = model.initSystem();
-    vector<Vector> acts;                        // activations
+    std::vector<std::vector<double>> acts;                // activations
     vector<double> actsTimes;                   // states.size()                      
     // Create the state sequence of motion (knee flexion)
     Storage states;
@@ -207,9 +232,9 @@ void inverseSimulate(Model model)
     const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
     double knee_angle_r = 0.0;
     double t = 0.0;
-    for (int i=0; i<20; i++)
+    for (int i=0; i<10; i++)
     {
-        knee_angle_r = -1.0/20 + knee_angle_r;
+        knee_angle_r = -1.0/10 + knee_angle_r;
         knee_r_cs.get("knee_angle_r").setValue(state, knee_angle_r);
         model.getStateValues(state,stateVals);
         states.append( t, stateVals.size(), stateVals.get());
@@ -219,24 +244,22 @@ void inverseSimulate(Model model)
     actsTimes.resize(states.getSize());
     states.setInDegrees(false);
 
-/*
-    // print q array
-    printf("print q's size: %d\n", state.getQ().size());
-    for (int i=0; i<state.getQ().size(); i++)
-    {
-        printf("print q's [%d]: %f\n", i, state.getQ()[i]);           
-    }
-*/
 
- /*
-    // print state variable names 
-    Array<std::string> stateNames = model.getStateVariableNames();    
-    printf("print state variable names (%d):\n", stateNames.size());
-    for (int j=0; j<stateNames.size(); j++)
-    {
-        printf("state variable name %d: %s\n", j, stateNames[j].c_str());
-    }
-*/
+    //// print q array
+    //printf("print q's size: %d\n", state.getQ().size());
+    //for (int i=0; i<state.getQ().size(); i++)
+    //{
+    //    printf("print q's [%d]: %f\n", i, state.getQ()[i]);           
+    //}
+
+    //// print state variable names 
+    //Array<std::string> stateNames = model.getStateVariableNames();    
+    //printf("print state variable names (%d):\n", stateNames.size());
+    //for (int j=0; j<stateNames.size(); j++)
+    //{
+    //    printf("state variable name %d: %s\n", j, stateNames[j].c_str());
+    //}
+
 
     // Perform the static optimization
     StaticOptimization so(&model);
@@ -266,21 +289,116 @@ void inverseSimulate(Model model)
           so.step(state, i);
     }
 
-    Storage *as = so.getActivationStorage();
-    int na = model.getActuators().getSize();
-    acts.resize(states.getSize());
+ //   Storage *as = so.getActivationStorage();
+ //   //int na = model.getActuators().getSize();
+	////int na = so.getColumnLabels().getSize();
+	//int na = as->getColumnLabels().getSize();
+ //   acts.resize(states.getSize());
 
-    // Store activations to out vector
-    for (int row = 0; row<states.getSize(); row++)
-        for (int i = 0; i<na; i++)
-        {  
-            as->getData(row, i, acts[i]);           
-        }
+	//for (int j=0; j<na; j++)
+	//	cout <<	as->getColumnLabels().get(j).c_str() << endl;
 
-    // OsimUtils::writeFunctionsToFile(
-    //   actsTimes,
-    //   acts,
-    //   "../outputs/inverseSimulate.sto"
-    // );
+ //   // Store activations to out vector
+ //   for (int row = 0; row<(states.getSize()-1); row++)
+	//{
+	//	acts.at(row).resize(na);
+ //       for (int i = 0; i<na; i++)
+ //       {  
+ //           as->getData(row, i, acts.at(row).at(i));           
+ //       }
+	//}
 
+	// store .mot file
+	Storage* statesDegrees = so.getActivationStorage();
+	statesDegrees->print("../outputs/so_acts.sto");
+	Storage* forces = so.getForceStorage();
+	forces->print("../outputs/so_forces.sto");
+
+	//OsimUtils::writeFunctionsToFile(
+ //      actsTimes,
+ //      acts,
+	//   as,
+ //      "../outputs/inverseSimulate.sto"
+ //    );
+}
+
+void forwardSimulation(Model& model)
+{
+	// Get a reference to the model's ground body
+	//OpenSim::Body& ground = model.getGroundBody();
+	// Add display geometry to the ground to visualize in the GUI
+	//ground.addDisplayGeometry("ground.vtp");
+
+	// add external force
+	//addExternalForce(model, 0, 600, 0, 0.5);
+	//addExternalForce(model, 600, 0, 0.4, 0);    
+	//model.updGravityForce().setGravityVector(si, Vec3(0,-9.80665,0));
+
+	std::time_t result = std::time(nullptr);
+	std::cout << "\nBefore initSystem() " << std::asctime(std::localtime(&result)) << endl;
+
+	SimTK::State& si = model.initSystem();
+
+	result = std::time(nullptr);
+	std::cout << "\nAfter initSystem() " << std::asctime(std::localtime(&result)) << endl;
+	    
+	// Add reporters
+    ForceReporter* forceReporter = new ForceReporter(&model);
+    model.addAnalysis(forceReporter);
+
+	// Create the integrator and manager for the simulation.
+	SimTK::RungeKuttaMersonIntegrator integrator(model.getMultibodySystem());
+	integrator.setAccuracy(1.0e-3);
+	//integrator.setFixedStepSize(0.001);
+	Manager manager(model, integrator);
+
+	// Define the initial and final simulation times
+	double initialTime = 0;
+	double finalTime = 1.0;
+
+	// Integrate from initial time to final time
+	manager.setInitialTime(initialTime);
+	manager.setFinalTime(finalTime);
+	std::cout<<"\n\nIntegrating from "<<initialTime<<" to " <<finalTime<<std::endl;
+
+	result = std::time(nullptr);
+	std::cout << "\nBefore integrate(si) " << std::asctime(std::localtime(&result)) << endl;
+
+	manager.integrate(si);
+
+	result = std::time(nullptr);
+	std::cout << "\nAfter integrate(si) " << std::asctime(std::localtime(&result)) << endl;
+
+	// Save the simulation results
+	Storage statesDegrees(manager.getStateStorage());
+	statesDegrees.print("../outputs/close_knee_states.sto");
+	model.updSimbodyEngine().convertRadiansToDegrees(statesDegrees);
+	statesDegrees.setWriteSIMMHeader(true);
+	statesDegrees.print("../outputs/close_knee_states_degrees.mot");
+	// force reporter results
+	forceReporter->getForceStorage().print("../outputs/close_knee_forceY_forces.mot");
+
+}
+
+void addExternalForce(Model& model, double minForce, double maxForce, double minT, double maxT)
+{
+	// Specify properties of a force function to be applied to the block
+	double time[2] = {minT, maxT}; // time nodes for linear function
+	double fYofT[2] = {minForce, maxForce}; // force values at t1 and t2
+	//double pYofT[2] = {0, 0.1}; // point in x values at t1 and t2
+  
+	// Create a new linear functions for the force and point components
+	PiecewiseLinearFunction *forceY = new PiecewiseLinearFunction(2, time, fYofT);
+	//PiecewiseLinearFunction *pointY = new PiecewiseLinearFunction(2, time, pYofT);
+  
+	// Create a new prescribed force applied to the block
+	PrescribedForce *prescribedForce = new PrescribedForce( &model.updBodySet().get("tibia_r"));
+	prescribedForce->setName("prescribedForce");
+  
+	// Set the force and point functions for the new prescribed force
+	prescribedForce->setForceFunctions( new Constant(0.0), forceY, new Constant(0.0));
+	//prescribedForce->setPointFunctions(new Constant(0.0), pointY, new Constant(0.0));
+  
+	// Add the new prescribed force to the model
+	model.addForce(prescribedForce);
 }

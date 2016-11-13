@@ -1,49 +1,58 @@
 #include "ACLsimulatorimpl.h"
-#include "vegafem.h"
-#include "addMeniscusToModel.h"
-#include "addKneeContactGeometries.h"
+//#include "vegafem.h"
+#include "addBodies.h"
+#include "addKneeContacts.h"
+#include "CustomLigament.h"
+#include <ctime>
 
 #include <string>
 #include <vector>
 
 using namespace OpenSim;
 using namespace SimTK;
+using namespace std;
 
 int main(int argc, char *argv[])
 {
 	try {
-		// Create an OpenSim model and set its name
-		OpenSim::Model model("../resources/blender outputs in m/myKnee_changeBones.osim");
+		Object::registerType(CustomLigament());
+		//// Create an OpenSim model and set its name
+		//OpenSim::Model model("../resources/geometries/stanev_model_change_tibiofemur.osim");
 
-		SimTK::State &state = model.initSystem();
-
-		// add meniscus bodies to left and right knee
-		addMeniscusToKnee(model, true);
-		addMeniscusToKnee(model, false);
-
-		//Save the model to a file
-		model.print("../resources/blender outputs in m/myKnee_addedMenisciBodies.osim");
-
-		// add contact geometries at the right knee
-		addKneeContactGeometries(model, false);
-
-		//Save the model to a file
-		model.print("../resources/blender outputs in m/myKnee_addedKneeContacts.osim");
-
-		// open model with menisci, contacts, ligaments etc
-		// OpenSim::Model model("../resources/blender outputs in m/myKnee_addedKneeContacts.osim");
-		// OpenSim::Model model("../resources/lower-limb(muscles millard13) (copy).osim");
-
-		// simulate
-		// inverseSimulate(model);
-		// forwardSim(model);
+		//// add meniscus bodies to left and right knee
+		//cout << "Adding meniscus" << endl;
+		//addMeniscusWeldJoints(model, true);
+		//addMeniscusWeldJoints(model, false);
+		//// add femur bodies and weld joints 
+		//cout << "Adding femur" << endl;
+		//addFemurWeldJoints(model, true);
+		//addFemurWeldJoints(model, false);
+		//// add tibia weld joint
+		//cout << "Addint tibia upper bodies" << endl;
+		//addTibiaWeldJoints(model, true);
+		//addTibiaWeldJoints(model, false);
+		//// add contact geometries at the right knee
+		//cout << "Adding contacts" << endl;
+		//addKneeContactGeometries(model, true);
+		//addKneeContactGeometries(model, false);	
+		//// add contact forces
+		//cout << "Adding contact forces" << endl;
+		//addEFForce(model, 1.E9, 1.0, 0.8, 0.04, 0.04, true);
+		//addEFForce(model, 1.E9, 1.0, 0.8, 0.04, 0.04, false);	
+		OpenSim::Model model("../resources/geometries/closed_knee.osim");
 		
+		// simulate
+		inverseSimulation(model);
+		 //staticOptimization(model);
+		//forwardSim(model);
+		//forwardSimulation(model);
+		
+		//model.print("../resources/geometries/closed_knee_sim.osim");
 		// Save the model to a file
-		// model.print("../outputs/myKnee_output.osim");	
-		model.setUseVisualizer(1);
-		// SimTK::State& state = model.initSystem();
-		state = model.initSystem();
-		model.getVisualizer().show(state);
+		//model.setUseVisualizer(1);
+		//SimTK::State& state = model.initSystem();
+		//state = model.initSystem();
+		//model.getVisualizer().show(state);
 
 		std::cout << "OpenSim example completed successfully.\n";
 		std::cin.get();
@@ -54,6 +63,10 @@ int main(int argc, char *argv[])
     {
         std::cout << "OpenSim exception\n" << ex.getMessage() << std::endl;
     }
+	catch (SimTK::Exception::ErrorCheck ex)
+	{
+		cout << "Simbody exception\n" << ex.getMessage() << endl;
+	}
     catch (std::exception ex)
     {
 		std::cout << "std exception: " << ex.what() << std::endl;
@@ -63,5 +76,6 @@ int main(int argc, char *argv[])
         std::cout << "UNRECOGNIZED EXCEPTION" << std::endl;
     }
 
+	std::cin.get();
 	return 1;
 }
