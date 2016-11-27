@@ -111,3 +111,32 @@ void addTibiaWeldJoints(Model& model, bool LeftOrRight)
 	model.addBody(upper_tibia_body);
 }
 
+void addUpperTibiaFreeJoints(Model& model, bool LeftOrRight)
+{
+	string LorR = "r";
+	if (LeftOrRight) LorR = "l";
+
+	// create body instance of tibia
+	OpenSim::Body* tibia = &model.updBodySet().get("tibia_" + LorR);
+
+	// create upper tibia bodies
+	double upper_tibia_mass = 0.1;
+	OpenSim::Body* upper_tibia_body =  new OpenSim::Body("tibia_upper_" + LorR, upper_tibia_mass, SimTK::Vec3(0), 
+		upper_tibia_mass*SimTK::Inertia(0.0));
+
+	// Create meniscus display geometries
+	DisplayGeometry * upper_tibia_dg = new DisplayGeometry("tibia_upper_"+LorR+".obj");
+	upper_tibia_dg->setOpacity(1.0);
+	upper_tibia_dg->setColor(Vec3(0.6, 0.4, 0.9));
+	upper_tibia_dg->setScaleFactors(SimTK::Vec3(1.0));
+	
+	// Add meniscus display geometries to bodies
+	upper_tibia_body->updDisplayer()->updGeometrySet().cloneAndAppend(*upper_tibia_dg);
+
+	// create meniscus - tibia pin jointS 
+	FreeJoint *free_upper_tibia_j = new FreeJoint("tibia_freeJoint_" + LorR, *tibia, SimTK::Vec3(0.0), 
+		SimTK::Vec3(0), *upper_tibia_body, SimTK::Vec3(0), SimTK::Vec3(0), true);
+
+	// add meniscus bodies to the model
+	model.addBody(upper_tibia_body);
+}

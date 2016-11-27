@@ -1,6 +1,8 @@
 #include "ACLsimulatorimpl.h"
 #include "osimutils.h"
 #include <ctime>
+#include "CustomLigament.h"
+
 
 void forwardSim(Model model){
     model.setGravity(Vec3(0,-9.9,0));
@@ -76,7 +78,7 @@ void forwardSim(Model model){
 
     // Delete duplicates
     double ii = 0;
-    for (int i=1; i<acts.size(); i++) {
+    for (unsigned i=1; i<acts.size(); i++) {
         if (actsTimes[i] <= actsTimes[ii]) {
             actsTimes.erase(actsTimes.begin()+i);
             acts.erase(acts.begin()+i);
@@ -208,9 +210,24 @@ void inverseSimulation(Model model)
     for (unsigned i = 0; i < times.size(); i++)
         times[i] = step * i;
 
-    // Solve for generalized joints forces
+	// Solve for generalized joints forces
     State &s = model.initSystem();
-    ids.solve(s, qset, times, forceTraj);
+	Vector ids_results = ids.solve(s, SimTK::Vector(0));
+
+	for (unsigned i=0; i<ids_results.size(); i++)
+		cout << i << " : " << ids_results(i) << endl;
+
+	//for (int j=0; j<s.getQ().size(); j++)
+	//{
+	//	cout << "Q(" << j << "): " << s.getQ()[j] << endl;
+	//}
+	//
+	//Array<std::string> stateNames = model.getStateVariableNames();    
+	//printf("print state variable names (%d):\n", stateNames.size());
+	//for (int j=0; j<stateNames.size(); j++)
+ //   {
+ //       printf("state variable name %d: %s\n", j, stateNames[j].c_str());
+	//}
 }
 
 void staticOptimization(Model model)
@@ -243,25 +260,8 @@ void staticOptimization(Model model)
     t = t - 0.1;
     actsTimes.resize(states.getSize());
     states.setInDegrees(false);
-
-
-    //// print q array
-    //printf("print q's size: %d\n", state.getQ().size());
-    //for (int i=0; i<state.getQ().size(); i++)
-    //{
-    //    printf("print q's [%d]: %f\n", i, state.getQ()[i]);           
-    //}
-
-    //// print state variable names 
-    //Array<std::string> stateNames = model.getStateVariableNames();    
-    //printf("print state variable names (%d):\n", stateNames.size());
-    //for (int j=0; j<stateNames.size(); j++)
-    //{
-    //    printf("state variable name %d: %s\n", j, stateNames[j].c_str());
-    //}
-
-
-    // Perform the static optimization
+    
+	// Perform the static optimization
     StaticOptimization so(&model);
     so.setStatesStore(states);
     int ns = states.getSize(); 
@@ -289,48 +289,26 @@ void staticOptimization(Model model)
           so.step(state, i);
     }
 
- //   Storage *as = so.getActivationStorage();
- //   //int na = model.getActuators().getSize();
-	////int na = so.getColumnLabels().getSize();
-	//int na = as->getColumnLabels().getSize();
- //   acts.resize(states.getSize());
-
-	//for (int j=0; j<na; j++)
-	//	cout <<	as->getColumnLabels().get(j).c_str() << endl;
-
- //   // Store activations to out vector
- //   for (int row = 0; row<(states.getSize()-1); row++)
-	//{
-	//	acts.at(row).resize(na);
- //       for (int i = 0; i<na; i++)
- //       {  
- //           as->getData(row, i, acts.at(row).at(i));           
- //       }
-	//}
-
 	// store .mot file
-	Storage* statesDegrees = so.getActivationStorage();
-	statesDegrees->print("../outputs/so_acts.sto");
+	Storage* activations = so.getActivationStorage();
+	activations->print("../outputs/so_acts.sto");
 	Storage* forces = so.getForceStorage();
 	forces->print("../outputs/so_forces.sto");
 
-	//OsimUtils::writeFunctionsToFile(
- //      actsTimes,
- //      acts,
-	//   as,
- //      "../outputs/inverseSimulate.sto"
- //    );
+	//cout << forces->getName() << endl;
 }
 
 void forwardSimulation(Model& model)
 {
+	Object::registerType(CustomLigament());
+
 	// Get a reference to the model's ground body
 	//OpenSim::Body& ground = model.getGroundBody();
 	// Add display geometry to the ground to visualize in the GUI
 	//ground.addDisplayGeometry("ground.vtp");
 
 	// add external force
-	//addExternalForce(model, 0, 600, 0, 0.5);
+	addExternalForce(model, 0, 100, 0, 0.5);
 	//addExternalForce(model, 600, 0, 0.4, 0);    
 	//model.updGravityForce().setGravityVector(si, Vec3(0,-9.80665,0));
 
@@ -338,23 +316,30 @@ void forwardSimulation(Model& model)
 	std::cout << "\nBefore initSystem() " << std::asctime(std::localtime(&result)) << endl;
 
 	SimTK::State& si = model.initSystem();
+	//set movement parameters
+	const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
+	//knee_r_cs.get("knee_angle_r").setValue(si, -0.34906585);  // -20 degrees
+    //knee_r_cs.get("knee_angle_r").setValue(si, -0.1745329252); // -10 degrees
+    knee_r_cs.get("knee_angle_r").setValue(si, -0); 
+	knee_r_cs.get("knee_angle_r").setLocked(si, true);
 
 	result = std::time(nullptr);
 	std::cout << "\nAfter initSystem() " << std::asctime(std::localtime(&result)) << endl;
-	    
+
 	// Add reporters
     ForceReporter* forceReporter = new ForceReporter(&model);
     model.addAnalysis(forceReporter);
 
 	// Create the integrator and manager for the simulation.
 	SimTK::RungeKuttaMersonIntegrator integrator(model.getMultibodySystem());
-	integrator.setAccuracy(1.0e-3);
+	//integrator.setAccuracy(1.0e-3);
 	//integrator.setFixedStepSize(0.001);
 	Manager manager(model, integrator);
 
 	// Define the initial and final simulation times
 	double initialTime = 0;
-	double finalTime = 1.0;
+	double finalTime = 0.5;
+
 
 	// Integrate from initial time to final time
 	manager.setInitialTime(initialTime);
@@ -377,7 +362,6 @@ void forwardSimulation(Model& model)
 	statesDegrees.print("../outputs/close_knee_states_degrees.mot");
 	// force reporter results
 	forceReporter->getForceStorage().print("../outputs/close_knee_forceY_forces.mot");
-
 }
 
 void addExternalForce(Model& model, double minForce, double maxForce, double minT, double maxT)
@@ -392,7 +376,7 @@ void addExternalForce(Model& model, double minForce, double maxForce, double min
 	//PiecewiseLinearFunction *pointY = new PiecewiseLinearFunction(2, time, pYofT);
   
 	// Create a new prescribed force applied to the block
-	PrescribedForce *prescribedForce = new PrescribedForce( &model.updBodySet().get("tibia_r"));
+	PrescribedForce *prescribedForce = new PrescribedForce( &model.updBodySet().get("tibia_upper_r"));
 	prescribedForce->setName("prescribedForce");
   
 	// Set the force and point functions for the new prescribed force

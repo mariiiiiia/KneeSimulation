@@ -1,4 +1,5 @@
 #include "OpenSim/OpenSim.h"
+#include "OpenSim/Simulation/InverseDynamicsSolver.h"
 #include "osimutils.h"
 
 #include <vector>

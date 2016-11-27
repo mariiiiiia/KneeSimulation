@@ -3,6 +3,7 @@
 
 #include <string>
 #include <OpenSim/OpenSim.h>
+#include "CustomLigament.h"
 
 using namespace std;
 using namespace SimTK;
@@ -33,5 +34,8 @@ public:
         const string filename,
         const Array<Vector> &forces, const Vector &times);
 };
+
+
+void printLigamentLengths(Model& model);
 
 #endif

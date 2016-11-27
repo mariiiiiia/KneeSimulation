@@ -45,7 +45,7 @@ void addEFForce(Model& model, double stiff, double diss, double us, double ud, d
 	contactParamsMed->addGeometry("meniscus_med_" + LorR + "_CM");
 
 	OpenSim::ElasticFoundationForce *contactForceMed = new OpenSim::ElasticFoundationForce(contactParamsMed);
-	contactForceMed->setTransitionVelocity(0.1);
+	contactForceMed->setTransitionVelocity(0.2);
 	contactForceMed->setName("contactForce_femur_med_meniscii_" + LorR);
 
 	model.addForce(contactForceMed);

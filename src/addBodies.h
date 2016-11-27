@@ -13,3 +13,5 @@ void addMeniscusWeldJoints(Model& model, bool LeftOrRight);
 void addFemurWeldJoints(Model& model, bool LeftOrRight);
 
 void addTibiaWeldJoints(Model& model, bool LeftOrRight);
+
+void addUpperTibiaFreeJoints(Model& model, bool LeftOrRight);
