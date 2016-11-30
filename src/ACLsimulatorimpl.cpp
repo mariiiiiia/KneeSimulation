@@ -308,19 +308,32 @@ void forwardSimulation(Model& model)
 	//ground.addDisplayGeometry("ground.vtp");
 
 	// add external force
-	addExternalForce(model, 0, 100, 0, 0.5);
+	addExternalForce(model, 0, 500, 0, 0.3);
 	//addExternalForce(model, 600, 0, 0.4, 0);    
-	//model.updGravityForce().setGravityVector(si, Vec3(0,-9.80665,0));
 
 	std::time_t result = std::time(nullptr);
 	std::cout << "\nBefore initSystem() " << std::asctime(std::localtime(&result)) << endl;
 
 	SimTK::State& si = model.initSystem();
+
+	// set gravity
+	model.updGravityForce().setGravityVector(si, Vec3(0,0,0));
+	
+	// disable muscles
+	for (int i=0; i<model.getMuscles().getSize(); i++)
+	{
+		model.getMuscles().get(i).setDisabled(si, true);
+	}
+
 	//set movement parameters
 	const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
+	knee_r_cs.get("knee_angle_r").setValue(si, -2.09439510);  // -120 degrees
+	//knee_r_cs.get("knee_angle_r").setValue(si, -1.74532925);  // -100 degrees
+	//knee_r_cs.get("knee_angle_r").setValue(si, -1.39626340);  // -80 degrees
+	//knee_r_cs.get("knee_angle_r").setValue(si, -1.04719755);  // -60 degrees
+	//knee_r_cs.get("knee_angle_r").setValue(si, -0.6981317008);  // -40 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -0.34906585);  // -20 degrees
-    //knee_r_cs.get("knee_angle_r").setValue(si, -0.1745329252); // -10 degrees
-    knee_r_cs.get("knee_angle_r").setValue(si, -0); 
+    //knee_r_cs.get("knee_angle_r").setValue(si, -0); 
 	knee_r_cs.get("knee_angle_r").setLocked(si, true);
 
 	result = std::time(nullptr);
@@ -338,7 +351,7 @@ void forwardSimulation(Model& model)
 
 	// Define the initial and final simulation times
 	double initialTime = 0;
-	double finalTime = 0.5;
+	double finalTime = 1.0;
 
 
 	// Integrate from initial time to final time
@@ -368,11 +381,14 @@ void addExternalForce(Model& model, double minForce, double maxForce, double min
 {
 	// Specify properties of a force function to be applied to the block
 	double time[2] = {minT, maxT}; // time nodes for linear function
-	double fYofT[2] = {minForce, maxForce}; // force values at t1 and t2
+	double time2[2] = {minT, maxT/2}; // time nodes for linear function
+	double fXofT[2] = {minForce, 100}; // force values at t1 and t2
+	double fYofT[2] = {minForce, -20}; // force values at t1 and t2
 	//double pYofT[2] = {0, 0.1}; // point in x values at t1 and t2
   
 	// Create a new linear functions for the force and point components
-	PiecewiseLinearFunction *forceY = new PiecewiseLinearFunction(2, time, fYofT);
+	PiecewiseLinearFunction *forceX = new PiecewiseLinearFunction(2, time, fXofT);
+	PiecewiseLinearFunction *forceY = new PiecewiseLinearFunction(2, time2, fYofT);
 	//PiecewiseLinearFunction *pointY = new PiecewiseLinearFunction(2, time, pYofT);
   
 	// Create a new prescribed force applied to the block
@@ -380,7 +396,7 @@ void addExternalForce(Model& model, double minForce, double maxForce, double min
 	prescribedForce->setName("prescribedForce");
   
 	// Set the force and point functions for the new prescribed force
-	prescribedForce->setForceFunctions( new Constant(0.0), forceY, new Constant(0.0));
+	prescribedForce->setForceFunctions( forceX, forceY, new Constant(0.0));
 	//prescribedForce->setPointFunctions(new Constant(0.0), pointY, new Constant(0.0));
   
 	// Add the new prescribed force to the model

@@ -16,8 +16,8 @@ int main(int argc, char *argv[])
 {
 	try {
 		Object::registerType(CustomLigament());
-		//// Create an OpenSim model and set its name
-		//OpenSim::Model model("../resources/geometries/stanev_model_change_tibiofemur_coords.osim");
+		// Create an OpenSim model and set its name
+		//OpenSim::Model model("../resources/geometries/stanev_model_change_tibiofemur.osim");
 
 		//// add meniscus bodies to left and right knee
 		//cout << "Adding meniscus" << endl;
@@ -29,8 +29,10 @@ int main(int argc, char *argv[])
 		//addFemurWeldJoints(model, false);
 		//// add tibia weld joint
 		//cout << "Addint tibia upper bodies" << endl;
-		//addTibiaWeldJoints(model, true);
-		//addTibiaWeldJoints(model, false);
+		////addTibiaWeldJoints(model, true);
+		////addTibiaWeldJoints(model, false);
+		//addUpperTibiaFreeJoints( model, true);
+		//addUpperTibiaFreeJoints( model, false);
 		//// add contact geometries at the right knee
 		//cout << "Adding contacts" << endl;
 		//addKneeContactGeometries(model, true);
@@ -39,11 +41,10 @@ int main(int argc, char *argv[])
 		//cout << "Adding contact forces" << endl;
 		//addEFForce(model, 1.E9, 1.0, 0.8, 0.04, 0.04, true);
 		//addEFForce(model, 1.E9, 1.0, 0.8, 0.04, 0.04, false);	
-		//model.print("../resources/geometries/gait_model_all_components.osim");
-		//addUpperTibiaFreeJoints( model, false);
-		//model.print("../resources/geometries/closed_knee1.osim");
+		////model.print("../resources/geometries/stanev_added_all_components.osim");
+		//model.print("../resources/geometries/stanev_added_all_components_freeUpTibiaJ.osim");
 		
-		OpenSim::Model model("../resources/geometries/closed_knee1.osim");
+		OpenSim::Model model("../resources/geometries/closed_knee.osim");
 
 		// simulate
 		//inverseSimulation(model);
