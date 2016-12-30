@@ -11374,15 +11374,6 @@
 					<orientation>0 0 0</orientation>
 					<filename>../resources/geometries/femur_med_l.obj</filename>
 				</ContactMesh>
-				<ContactMesh name="tibia_l_CM">
-					<!--Body name to connect the contact geometry to-->
-					<body_name>tibia_l</body_name>
-					<!--Location of geometry center in the body frame-->
-					<location>0 0 0</location>
-					<!--Orientation of geometry in the body frame-->
-					<orientation>0 0 0</orientation>
-					<filename>../resources/geometries/tibia_upper_l.obj</filename>
-				</ContactMesh>
 				<ContactMesh name="meniscus_lat_r_CM">
 					<!--Body name to connect the contact geometry to-->
 					<body_name>meniscus_lat_r</body_name>
@@ -11418,15 +11409,6 @@
 					<!--Orientation of geometry in the body frame-->
 					<orientation>0 0 0</orientation>
 					<filename>../resources/geometries/femur_med_r.obj</filename>
-				</ContactMesh>
-				<ContactMesh name="tibia_r_CM">
-					<!--Body name to connect the contact geometry to-->
-					<body_name>tibia_r</body_name>
-					<!--Location of geometry center in the body frame-->
-					<location>0 0 0</location>
-					<!--Orientation of geometry in the body frame-->
-					<orientation>0 0 0</orientation>
-					<filename>../resources/geometries/tibia_upper_r.obj</filename>
 				</ContactMesh>
 			</objects>
 			<groups />

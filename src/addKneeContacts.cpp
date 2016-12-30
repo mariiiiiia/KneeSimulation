@@ -8,7 +8,7 @@ void addKneeContactGeometries(Model& model, bool LeftOrRight){
 	addContactGeometry(model, "meniscus_med_" + LorR, "meniscus_med_" + LorR + ".obj");
 	addContactGeometry(model, "femur_lat_" + LorR, "femur_lat_" + LorR + ".obj");
 	addContactGeometry(model, "femur_med_" + LorR, "femur_med_" + LorR + ".obj");
-	addContactGeometry(model, "tibia_" + LorR, "tibia_upper_" + LorR + ".obj");
+	//addContactGeometry(model, "tibia_" + LorR, "tibia_upper_" + LorR + ".obj");
 
 	model.buildSystem();
 };

@@ -36,6 +36,6 @@ public:
 };
 
 
-void printLigamentLengths(Model& model);
+void printLigamentLengths(Model model, double knee_angle);
 
 #endif

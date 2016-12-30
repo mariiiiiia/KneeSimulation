@@ -556,12 +556,17 @@
 					<!--Joint that connects this body with the parent body.-->
 					<Joint>
 						<CustomJoint name="knee_r">
+							<!--Name of the parent body to which this joint connects its owner body.-->
 							<parent_body>femur_r</parent_body>
-							<location_in_parent> 0 0 0</location_in_parent>
-							<orientation_in_parent> 0 0 0</orientation_in_parent>
-							<location> 0 0 0</location>
-							<orientation> 0 0 0</orientation>
-							<!--Generalized coordinates parameterizing this joint.-->
+							<!--Location of the joint in the parent body specified in the parent reference frame. Default is (0,0,0).-->
+							<location_in_parent>0 0 0</location_in_parent>
+							<!--Orientation of the joint in the parent body specified in the parent reference frame. Euler XYZ body-fixed rotation angles are used to express the orientation. Default is (0,0,0).-->
+							<orientation_in_parent>0 0 0</orientation_in_parent>
+							<!--Location of the joint in the child body specified in the child reference frame. For SIMM models, this vector is always the zero vector (i.e., the body reference frame coincides with the joint). -->
+							<location>0 0 0</location>
+							<!--Orientation of the joint in the owing body specified in the owning body reference frame.  Euler XYZ body-fixed rotation angles are used to express the orientation. -->
+							<orientation>0 0 0</orientation>
+							<!--Set holding the generalized coordinates (q's) that parmeterize this joint.-->
 							<CoordinateSet>
 								<objects>
 									<Coordinate name="knee_angle_r">
@@ -570,18 +575,21 @@
 										<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
 										<default_value>-0.0290726</default_value>
 										<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-										<range> -1.74532925 -0.0290726</range>
+										<range>-2.0944 -0.0290726</range>
 										<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 										<clamped>false</clamped>
 										<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
 										<locked>false</locked>
 										<!--If specified, the coordinate can be prescribed by a function of time. It can be any OpenSim Function with valid second order derivatives.-->
 										<prescribed_function />
+										<!--Flag indicating whether or not the values of the coordinates should be prescribed according to the function above. It is ignored if the no prescribed function is specified.-->
+										<prescribed>false</prescribed>
 									</Coordinate>
 								</objects>
 								<groups />
 							</CoordinateSet>
-							<reverse>false</reverse>						
+							<!--Whether the joint transform defines parent->child or child->parent.-->
+							<reverse>false</reverse>
 							<!--Defines how the child body moves with respect to the parent as a function of the generalized coordinates.-->
 							<SpatialTransform>
 								<!--3 Axes for rotations are listed first.-->
@@ -606,7 +614,7 @@
 									<function>
 										<SimmSpline>
 											<x> -2.0944 -1.74533 -1.39626 -1.0472 -0.698132 -0.349066 -0.0290726</x>
-											<y> -0.33 -0.33 -0.33 -0.33 -0.23232678 -0.318649 -0.33</y>
+											<y> -0.33 -0.33 -0.33 -0.33 -0.232327 -0.318649 -0.33</y>
 										</SimmSpline>
 									</function>
 								</TransformAxis>
@@ -619,7 +627,7 @@
 									<function>
 										<SimmSpline>
 											<x> -2.0944 -1.74533 -1.39626 -1.0472 -0.698132 -0.349066 -0.0290726</x>
-											<y> -0.0383574 0.0621309 0.0415606 0.00139061 0.05255266 0.013597 -0.0383574</y>
+											<y> -0.0383574 0.0621309 0.0415606 0.00139061 0.0525527 0.013597 -0.0383574</y>
 										</SimmSpline>
 									</function>
 								</TransformAxis>
@@ -633,7 +641,7 @@
 									<function>
 										<SimmSpline>
 											<x> -2.0944 -1.74533 -1.39626 -1.0472 -0.698132 -0.349066 -0.0290726</x>
-											<y> 0.030837 0.0305924 0.0268479 0.0207306 0.01261712 0.00639072 -0.00065366</y>
+											<y> 0.030837 0.0305924 0.0268479 0.0207306 0.0126171 0.00639072 -0.00065366</y>
 										</SimmSpline>
 									</function>
 								</TransformAxis>
@@ -645,8 +653,8 @@
 									<!--Transform function of the generalized coordinates used to        represent the amount of transformation along a specified axis.-->
 									<function>
 										<SimmSpline>
-											<x> -2.09439510 -1.74532925 -1.39626340 -1.04719755 -0.6981317008 -0.34906585 -0.0290726</x>
-											<y> -0.41176223 -0.39904221 -0.39135283 -0.38519428 -0.38117098 -0.38282254 -0.38519428</y>
+											<x> -2.0944 -1.74533 -1.39626 -1.0472 -0.698132 -0.349066 -0.0290726</x>
+											<y> -0.411762 -0.399042 -0.391353 -0.385194 -0.381171 -0.382823 -0.385194</y>
 										</SimmSpline>
 									</function>
 								</TransformAxis>
@@ -659,7 +667,7 @@
 									<function>
 										<SimmSpline>
 											<x> -2.0944 -1.74533 -1.39626 -1.0472 -0.698132 -0.349066 -0.0290726</x>
-											<y> -0.00575837 -0.00356904 -0.00524561 -0.0053975 -0.00444729 -0.00505951 -0.0053975</y>
+											<y> -0.00575837 -0.00356904 -0.00524561 -0.0053975 -0.00244729 -0.00405951 -0.0053975</y>
 										</SimmSpline>
 									</function>
 								</TransformAxis>
@@ -3118,7 +3126,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -3192,7 +3200,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -3266,7 +3274,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -3340,7 +3348,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -3414,7 +3422,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -3488,7 +3496,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -3568,7 +3576,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -3656,7 +3664,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -3734,7 +3742,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -3812,7 +3820,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -3898,7 +3906,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -3972,7 +3980,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -4046,7 +4054,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -4120,7 +4128,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -4194,7 +4202,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -4268,7 +4276,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -4350,7 +4358,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -4424,7 +4432,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -4508,7 +4516,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -4590,7 +4598,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -4672,7 +4680,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -4754,7 +4762,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -4842,7 +4850,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -4930,7 +4938,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -5004,7 +5012,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -5078,7 +5086,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -5156,7 +5164,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -5211,7 +5219,7 @@
 									<coordinate>knee_angle_r</coordinate>
 								</ConditionalPathPoint>
 								<MovingPathPoint name="rect_fem_r-P3">
-									<location> 0.0617576 0.020984 0.0014</location>
+									<location> 0.0602215 0.0213918 0.0014</location>
 									<body>tibia_r</body>
 									<x_location>
 										<SimmSpline>
@@ -5257,7 +5265,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -5322,7 +5330,7 @@
 									<coordinate>knee_angle_r</coordinate>
 								</ConditionalPathPoint>
 								<MovingPathPoint name="vas_med_r-P5">
-									<location> 0.0559586 0.0217917 -0.0146</location>
+									<location> 0.0543948 0.022007 -0.0146</location>
 									<body>tibia_r</body>
 									<x_location>
 										<SimmSpline>
@@ -5368,7 +5376,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -5427,7 +5435,7 @@
 									<coordinate>knee_angle_r</coordinate>
 								</ConditionalPathPoint>
 								<MovingPathPoint name="vas_int_r-P4">
-									<location> 0.0554632 0.0252923 0.0018</location>
+									<location> 0.0537714 0.0254745 0.0018</location>
 									<body>tibia_r</body>
 									<x_location>
 										<SimmSpline>
@@ -5473,7 +5481,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -5538,7 +5546,7 @@
 									<coordinate>knee_angle_r</coordinate>
 								</ConditionalPathPoint>
 								<MovingPathPoint name="vas_lat_r-P5">
-									<location> 0.0599557 0.0195864 0.0165</location>
+									<location> 0.0584712 0.019932 0.0165</location>
 									<body>tibia_r</body>
 									<x_location>
 										<SimmSpline>
@@ -5584,7 +5592,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -5664,7 +5672,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -5744,7 +5752,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -5818,7 +5826,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -5900,7 +5908,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -5998,7 +6006,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -6092,7 +6100,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -6170,7 +6178,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -6256,7 +6264,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -6350,7 +6358,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -6428,7 +6436,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -6518,7 +6526,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -6612,7 +6620,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -6686,7 +6694,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -6760,7 +6768,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -6834,7 +6842,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -6908,7 +6916,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -6982,7 +6990,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -7056,7 +7064,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -7136,7 +7144,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -7224,7 +7232,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -7302,7 +7310,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -7380,7 +7388,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -7466,7 +7474,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -7540,7 +7548,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -7614,7 +7622,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -7688,7 +7696,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -7762,7 +7770,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -7836,7 +7844,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -7918,7 +7926,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -7992,7 +8000,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -8076,7 +8084,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -8158,7 +8166,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -8240,7 +8248,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -8322,7 +8330,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -8410,7 +8418,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -8498,7 +8506,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -8572,7 +8580,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -8646,7 +8654,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -8724,7 +8732,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -8825,7 +8833,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -8936,7 +8944,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -9041,7 +9049,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -9152,7 +9160,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -9232,7 +9240,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -9312,7 +9320,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -9386,7 +9394,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -9468,7 +9476,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -9566,7 +9574,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -9660,7 +9668,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -9738,7 +9746,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -9824,7 +9832,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -9918,7 +9926,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -9996,7 +10004,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -10086,7 +10094,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -10180,7 +10188,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -10254,7 +10262,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -10328,7 +10336,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -10402,7 +10410,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -10476,7 +10484,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -10550,7 +10558,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -10624,7 +10632,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 					</GeometryPath>
 					<!--The maximum force this actuator can produce.-->
@@ -10739,11 +10747,11 @@
 						<PathPointSet>
 							<objects>
 								<PathPoint name="aACL_R_femur">
-									<location> -0.00718 -0.40037 0.00407</location>
+									<location> 0.00875273 -0.407568 0.00561595</location>
 									<body>femur_r</body>
 								</PathPoint>
 								<PathPoint name="aACL_R_tibia">
-									<location> 0.01657 -0.03009 -0.00074</location>
+									<location> 0.0224667 -0.0433423 -0.00540747</location>
 									<body>tibia_r</body>
 								</PathPoint>
 							</objects>
@@ -10769,7 +10777,7 @@
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.0264295</resting_length>
+					<resting_length>0.0321103</resting_length>
 					<!--damping of the ligament-->
 					<damping>390.921987102286</damping>
 					<!--stiffness of the ligament-->
@@ -10784,11 +10792,11 @@
 						<PathPointSet>
 							<objects>
 								<PathPoint name="pACL_R_femur">
-									<location> -0.01495 -0.40981 0.00999</location>
+									<location> -0.00147721 -0.411017 0.00926978</location>
 									<body>femur_r</body>
 								</PathPoint>
 								<PathPoint name="pACL_R_tibia">
-									<location> 0.0025 -0.0325 0</location>
+									<location> 0.0145142 -0.042363 -0.00122432</location>
 									<body>tibia_r</body>
 								</PathPoint>
 							</objects>
@@ -10814,7 +10822,7 @@
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.021828</resting_length>
+					<resting_length>0.0313292</resting_length>
 					<!--damping of the ligament-->
 					<damping>403.742492190257</damping>
 					<!--stiffness of the ligament-->
@@ -10829,11 +10837,11 @@
 						<PathPointSet>
 							<objects>
 								<PathPoint name="aPCL_R_femur">
-									<location> -0.00867 -0.41342 -0.00925</location>
+									<location> 0.00537595 -0.400369 -0.00160798</location>
 									<body>femur_r</body>
 								</PathPoint>
 								<PathPoint name="aPCL_R_tibia">
-									<location> -0.02045 -0.03314 0.00333</location>
+									<location> -0.000272399 -0.0452384 0.00950549</location>
 									<body>tibia_r</body>
 								</PathPoint>
 							</objects>
@@ -10853,13 +10861,13 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 						<!--Used to initialize the colour cache variable-->
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.0144661</resting_length>
+					<resting_length>0.0323092</resting_length>
 					<!--damping of the ligament-->
 					<damping>363.526370236543</damping>
 					<!--stiffness of the ligament-->
@@ -10874,11 +10882,11 @@
 						<PathPointSet>
 							<objects>
 								<PathPoint name="pPCL_R_femur">
-									<location> -0.01588 -0.40574 -0.01629</location>
+									<location> 0.00324952 -0.399372 -0.00559738</location>
 									<body>femur_r</body>
 								</PathPoint>
 								<PathPoint name="pPCL_R_tibia">
-									<location> -0.01471 -0.03175 -0.00407</location>
+									<location> -0.00221146 -0.0456221 0.0036314</location>
 									<body>tibia_r</body>
 								</PathPoint>
 							</objects>
@@ -10898,13 +10906,13 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 						<!--Used to initialize the colour cache variable-->
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.0115455</resting_length>
+					<resting_length>0.032752</resting_length>
 					<!--damping of the ligament-->
 					<damping>948.765015575893</damping>
 					<!--stiffness of the ligament-->
@@ -11345,6 +11353,8 @@
 					<location>0 0 0</location>
 					<!--Orientation of geometry in the body frame-->
 					<orientation>0 0 0</orientation>
+					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
+					<display_preference>4</display_preference>
 					<filename>../resources/geometries/femur_lat_r.obj</filename>
 				</ContactMesh>
 				<ContactMesh name="femur_med_r_CM">
@@ -11354,6 +11364,8 @@
 					<location>0 0 0</location>
 					<!--Orientation of geometry in the body frame-->
 					<orientation>0 0 0</orientation>
+					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
+					<display_preference>1</display_preference>
 					<filename>../resources/geometries/femur_med_r.obj</filename>
 				</ContactMesh>
 			</objects>

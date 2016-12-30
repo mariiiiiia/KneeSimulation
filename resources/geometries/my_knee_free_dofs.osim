@@ -149,7 +149,7 @@
 										<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 										<clamped>false</clamped>
 										<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
-										<locked>false</locked>
+										<locked>true</locked>
 										<!--If specified, the coordinate can be prescribed by a function of time. It can be any OpenSim Function with valid second order derivatives.-->
 										<prescribed_function />
 										<!--Flag indicating whether or not the values of the coordinates should be prescribed according to the function above. It is ignored if the no prescribed function is specified.-->
@@ -185,7 +185,7 @@
 										<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 										<clamped>false</clamped>
 										<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
-										<locked>false</locked>
+										<locked>true</locked>
 										<!--If specified, the coordinate can be prescribed by a function of time. It can be any OpenSim Function with valid second order derivatives.-->
 										<prescribed_function />
 										<!--Flag indicating whether or not the values of the coordinates should be prescribed according to the function above. It is ignored if the no prescribed function is specified.-->
@@ -556,12 +556,17 @@
 					<!--Joint that connects this body with the parent body.-->
 					<Joint>
 						<CustomJoint name="knee_r">
+							<!--Name of the parent body to which this joint connects its owner body.-->
 							<parent_body>femur_r</parent_body>
-							<location_in_parent> 0 0 0</location_in_parent>
-							<orientation_in_parent> 0 0 0</orientation_in_parent>
-							<location> 0 0 0</location>
-							<orientation> 0 0 0</orientation>
-							<!--Generalized coordinates parameterizing this joint.-->
+							<!--Location of the joint in the parent body specified in the parent reference frame. Default is (0,0,0).-->
+							<location_in_parent>0 0 0</location_in_parent>
+							<!--Orientation of the joint in the parent body specified in the parent reference frame. Euler XYZ body-fixed rotation angles are used to express the orientation. Default is (0,0,0).-->
+							<orientation_in_parent>0 0 0</orientation_in_parent>
+							<!--Location of the joint in the child body specified in the child reference frame. For SIMM models, this vector is always the zero vector (i.e., the body reference frame coincides with the joint). -->
+							<location>0 0 0</location>
+							<!--Orientation of the joint in the owing body specified in the owning body reference frame.  Euler XYZ body-fixed rotation angles are used to express the orientation. -->
+							<orientation>0 0 0</orientation>
+							<!--Set holding the generalized coordinates (q's) that parmeterize this joint.-->
 							<CoordinateSet>
 								<objects>
 									<Coordinate name="knee_angle_r">
@@ -570,18 +575,89 @@
 										<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
 										<default_value>-0.0290726</default_value>
 										<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
-										<range> -1.74532925 -0.0290726</range>
+										<range>-2.0943951 0</range>
 										<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
 										<clamped>false</clamped>
 										<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
 										<locked>false</locked>
-										<!--If specified, the coordinate can be prescribed by a function of time. It can be any OpenSim Function with valid second order derivatives.-->
-										<prescribed_function />
+										<!--Flag indicating whether or not the values of the coordinates should be prescribed according to the function above. It is ignored if the no prescribed function is specified.-->
+										<prescribed>false</prescribed>
+									</Coordinate>
+									<Coordinate name="knee_adduction_r">
+										<!--Coordinate can describe rotational, translational, or coupled motion. Defaults to rotational.-->
+										<motion_type>rotational</motion_type>
+										<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
+										<default_value>-0.399665983647613</default_value>
+										<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
+										<range>-0.4 0</range>
+										<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
+										<clamped>false</clamped>
+										<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
+										<locked>true</locked>
+										<!--Flag indicating whether or not the values of the coordinates should be prescribed according to the function above. It is ignored if the no prescribed function is specified.-->
+										<prescribed>false</prescribed>
+									</Coordinate>
+									<Coordinate name="knee_rotation_r">
+										<!--Coordinate can describe rotational, translational, or coupled motion. Defaults to rotational.-->
+										<motion_type>rotational</motion_type>
+										<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
+										<default_value>-0.0383573599779404</default_value>
+										<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
+										<range>-0.17453293 0.2</range>
+										<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
+										<clamped>false</clamped>
+										<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
+										<locked>false</locked>
+										<!--Flag indicating whether or not the values of the coordinates should be prescribed according to the function above. It is ignored if the no prescribed function is specified.-->
+										<prescribed>false</prescribed>
+									</Coordinate>
+									<Coordinate name="knee_anterior_posterior_r">
+										<!--Coordinate can describe rotational, translational, or coupled motion. Defaults to rotational.-->
+										<motion_type>translational</motion_type>
+										<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
+										<default_value>-0.00065366</default_value>
+										<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
+										<range>-0.016 0.02</range>
+										<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
+										<clamped>false</clamped>
+										<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
+										<locked>false</locked>
+										<!--Flag indicating whether or not the values of the coordinates should be prescribed according to the function above. It is ignored if the no prescribed function is specified.-->
+										<prescribed>false</prescribed>
+									</Coordinate>
+									<Coordinate name="knee_inferior_superior_r">
+										<!--Coordinate can describe rotational, translational, or coupled motion. Defaults to rotational.-->
+										<motion_type>translational</motion_type>
+										<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
+										<default_value>-0.38519428</default_value>
+										<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
+										<range>-0.416 -0.37</range>
+										<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
+										<clamped>false</clamped>
+										<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
+										<locked>false</locked>
+										<!--Flag indicating whether or not the values of the coordinates should be prescribed according to the function above. It is ignored if the no prescribed function is specified.-->
+										<prescribed>false</prescribed>
+									</Coordinate>
+									<Coordinate name="knee_medial_lateral_r">
+										<!--Coordinate can describe rotational, translational, or coupled motion. Defaults to rotational.-->
+										<motion_type>translational</motion_type>
+										<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
+										<default_value>-0.0053975</default_value>
+										<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
+										<range>-0.012 0.012</range>
+										<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
+										<clamped>false</clamped>
+										<!--Flag indicating whether or not the values of the coordinates should be constrained to the current (e.g. default) value, above.-->
+										<locked>false</locked>
+										<!--Flag indicating whether or not the values of the coordinates should be prescribed according to the function above. It is ignored if the no prescribed function is specified.-->
+										<prescribed>false</prescribed>
 									</Coordinate>
 								</objects>
 								<groups />
 							</CoordinateSet>
-							<reverse>false</reverse>						
+							<!--Whether the joint transform defines parent->child or child->parent.-->
+							<reverse>false</reverse>
 							<!--Defines how the child body moves with respect to the parent as a function of the generalized coordinates.-->
 							<SpatialTransform>
 								<!--3 Axes for rotations are listed first.-->
@@ -599,68 +675,63 @@
 								</TransformAxis>
 								<TransformAxis name="rotation2">
 									<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-									<coordinates>knee_angle_r</coordinates>
+									<coordinates>knee_adduction_r</coordinates>
 									<!--Rotation or translation axis for the transform.-->
 									<axis>0 1 0</axis>
 									<!--Transform function of the generalized coordinates used to        represent the amount of transformation along a specified axis.-->
 									<function>
-										<SimmSpline>
-											<x> -2.0944 -1.74533 -1.39626 -1.0472 -0.698132 -0.349066 -0.0290726</x>
-											<y> -0.33 -0.33 -0.33 -0.33 -0.23232678 -0.318649 -0.33</y>
-										</SimmSpline>
+										<LinearFunction>
+											<coefficients> 1 0</coefficients>
+										</LinearFunction>
 									</function>
 								</TransformAxis>
 								<TransformAxis name="rotation3">
 									<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-									<coordinates>knee_angle_r</coordinates>
+									<coordinates>knee_rotation_r</coordinates>
 									<!--Rotation or translation axis for the transform.-->
 									<axis>1 0 0</axis>
 									<!--Transform function of the generalized coordinates used to        represent the amount of transformation along a specified axis.-->
 									<function>
-										<SimmSpline>
-											<x> -2.0944 -1.74533 -1.39626 -1.0472 -0.698132 -0.349066 -0.0290726</x>
-											<y> -0.0383574 0.0621309 0.0415606 0.00139061 0.05255266 0.013597 -0.0383574</y>
-										</SimmSpline>
+										<LinearFunction>
+											<coefficients> 1 0</coefficients>
+										</LinearFunction>
 									</function>
 								</TransformAxis>
 								<!--3 Axes for translations are listed next.-->
 								<TransformAxis name="translation1">
 									<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-									<coordinates>knee_angle_r</coordinates>
+									<coordinates>knee_anterior_posterior_r</coordinates>
 									<!--Rotation or translation axis for the transform.-->
 									<axis>1 0 0</axis>
 									<!--Transform function of the generalized coordinates used to        represent the amount of transformation along a specified axis.-->
 									<function>
-										<SimmSpline>
-											<x> -2.0944 -1.74533 -1.39626 -1.0472 -0.698132 -0.349066 -0.0290726</x>
-											<y> 0.030837 0.0305924 0.0268479 0.0207306 0.01261712 0.00639072 -0.00065366</y>
-										</SimmSpline>
+										<LinearFunction>
+											<coefficients> 1 0</coefficients>
+										</LinearFunction>
 									</function>
 								</TransformAxis>
 								<TransformAxis name="translation2">
 									<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-									<coordinates>knee_angle_r</coordinates>
+									<coordinates>knee_inferior_superior_r</coordinates>
 									<!--Rotation or translation axis for the transform.-->
 									<axis>0 1 0</axis>
 									<!--Transform function of the generalized coordinates used to        represent the amount of transformation along a specified axis.-->
 									<function>
-										<SimmSpline>
-											<x> -2.09439510 -1.74532925 -1.39626340 -1.04719755 -0.6981317008 -0.34906585 -0.0290726</x>
-											<y> -0.41176223 -0.39904221 -0.39135283 -0.38519428 -0.38117098 -0.38282254 -0.38519428</y>
-										</SimmSpline>
+										<LinearFunction>
+											<coefficients> 1 0</coefficients>
+										</LinearFunction>
 									</function>
 								</TransformAxis>
 								<TransformAxis name="translation3">
 									<!--Names of the coordinates that serve as the independent variables         of the transform function.-->
-									<coordinates>knee_angle_r</coordinates>
+									<coordinates>knee_medial_lateral_r</coordinates>
 									<!--Rotation or translation axis for the transform.-->
 									<axis>0 0 1</axis>
 									<!--Transform function of the generalized coordinates used to        represent the amount of transformation along a specified axis.-->
 									<function>
-										<SimmSpline>
-											<x> -2.0944 -1.74533 -1.39626 -1.0472 -0.698132 -0.349066 -0.0290726</x>
-											<y> -0.00575837 -0.00356904 -0.00524561 -0.0053975 -0.00444729 -0.00505951 -0.0053975</y>
-										</SimmSpline>
+										<LinearFunction>
+											<coefficients> 1 0</coefficients>
+										</LinearFunction>
 									</function>
 								</TransformAxis>
 							</SpatialTransform>
@@ -5211,7 +5282,7 @@
 									<coordinate>knee_angle_r</coordinate>
 								</ConditionalPathPoint>
 								<MovingPathPoint name="rect_fem_r-P3">
-									<location> 0.0617576 0.020984 0.0014</location>
+									<location> 0.0602215 0.0213918 0.0014</location>
 									<body>tibia_r</body>
 									<x_location>
 										<SimmSpline>
@@ -5322,7 +5393,7 @@
 									<coordinate>knee_angle_r</coordinate>
 								</ConditionalPathPoint>
 								<MovingPathPoint name="vas_med_r-P5">
-									<location> 0.0559586 0.0217917 -0.0146</location>
+									<location> 0.0543948 0.022007 -0.0146</location>
 									<body>tibia_r</body>
 									<x_location>
 										<SimmSpline>
@@ -5427,7 +5498,7 @@
 									<coordinate>knee_angle_r</coordinate>
 								</ConditionalPathPoint>
 								<MovingPathPoint name="vas_int_r-P4">
-									<location> 0.0554632 0.0252923 0.0018</location>
+									<location> 0.0537714 0.0254745 0.0018</location>
 									<body>tibia_r</body>
 									<x_location>
 										<SimmSpline>
@@ -5538,7 +5609,7 @@
 									<coordinate>knee_angle_r</coordinate>
 								</ConditionalPathPoint>
 								<MovingPathPoint name="vas_lat_r-P5">
-									<location> 0.0599557 0.0195864 0.0165</location>
+									<location> 0.0584712 0.019932 0.0165</location>
 									<body>tibia_r</body>
 									<x_location>
 										<SimmSpline>
@@ -10732,456 +10803,6 @@
 					<!--Slip velocity (creep) at which peak static friction occurs.-->
 					<transition_velocity>0.2</transition_velocity>
 				</ElasticFoundationForce>
-				<CustomLigament name="aACL_R">
-					<!--the set of points defining the path of the CustomLigament-->
-					<GeometryPath>
-						<!--The set of points defining the path-->
-						<PathPointSet>
-							<objects>
-								<PathPoint name="aACL_R_femur">
-									<location> -0.00718 -0.40037 0.00407</location>
-									<body>femur_r</body>
-								</PathPoint>
-								<PathPoint name="aACL_R_tibia">
-									<location> 0.01657 -0.03009 -0.00074</location>
-									<body>tibia_r</body>
-								</PathPoint>
-							</objects>
-							<groups />
-						</PathPointSet>
-						<!--Used to display the path in the 3D window-->
-						<VisibleObject name="display">
-							<!--Set of geometry files and associated attributes, allow .vtp, .stl, .obj-->
-							<GeometrySet>
-								<objects />
-								<groups />
-							</GeometrySet>
-							<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-							<scale_factors> 1 1 1</scale_factors>
-							<!--transform relative to owner specified as 3 rotations (rad) followed by 3 translations rX rY rZ tx ty tz-->
-							<transform> -0 0 -0 0 0 0</transform>
-							<!--Whether to show a coordinate frame-->
-							<show_axes>false</show_axes>
-							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
-						</VisibleObject>
-						<!--Used to initialize the colour cache variable-->
-						<default_color>0.9 0.9 0.9</default_color>
-					</GeometryPath>
-					<!--resting length of the ligament-->
-					<resting_length>0.0264295</resting_length>
-					<!--damping of the ligament-->
-					<damping>390.921987102286</damping>
-					<!--stiffness of the ligament-->
-					<stiffness>1500</stiffness>
-					<!--el rigion from non-linear to linear-->
-					<el>0.03</el>
-				</CustomLigament>
-				<CustomLigament name="pACL_R">
-					<!--the set of points defining the path of the CustomLigament-->
-					<GeometryPath>
-						<!--The set of points defining the path-->
-						<PathPointSet>
-							<objects>
-								<PathPoint name="pACL_R_femur">
-									<location> -0.01495 -0.40981 0.00999</location>
-									<body>femur_r</body>
-								</PathPoint>
-								<PathPoint name="pACL_R_tibia">
-									<location> 0.0025 -0.0325 0</location>
-									<body>tibia_r</body>
-								</PathPoint>
-							</objects>
-							<groups />
-						</PathPointSet>
-						<!--Used to display the path in the 3D window-->
-						<VisibleObject name="display">
-							<!--Set of geometry files and associated attributes, allow .vtp, .stl, .obj-->
-							<GeometrySet>
-								<objects />
-								<groups />
-							</GeometrySet>
-							<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-							<scale_factors> 1 1 1</scale_factors>
-							<!--transform relative to owner specified as 3 rotations (rad) followed by 3 translations rX rY rZ tx ty tz-->
-							<transform> -0 0 -0 0 0 0</transform>
-							<!--Whether to show a coordinate frame-->
-							<show_axes>false</show_axes>
-							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
-						</VisibleObject>
-						<!--Used to initialize the colour cache variable-->
-						<default_color>0.9 0.9 0.9</default_color>
-					</GeometryPath>
-					<!--resting length of the ligament-->
-					<resting_length>0.021828</resting_length>
-					<!--damping of the ligament-->
-					<damping>403.742492190257</damping>
-					<!--stiffness of the ligament-->
-					<stiffness>1600</stiffness>
-					<!--el rigion from non-linear to linear-->
-					<el>0.03</el>
-				</CustomLigament>
-				<CustomLigament name="aPCL_R">
-					<!--the set of points defining the path of the CustomLigament-->
-					<GeometryPath>
-						<!--The set of points defining the path-->
-						<PathPointSet>
-							<objects>
-								<PathPoint name="aPCL_R_femur">
-									<location> -0.00867 -0.41342 -0.00925</location>
-									<body>femur_r</body>
-								</PathPoint>
-								<PathPoint name="aPCL_R_tibia">
-									<location> -0.02045 -0.03314 0.00333</location>
-									<body>tibia_r</body>
-								</PathPoint>
-							</objects>
-							<groups />
-						</PathPointSet>
-						<!--Used to display the path in the 3D window-->
-						<VisibleObject name="display">
-							<!--Set of geometry files and associated attributes, allow .vtp, .stl, .obj-->
-							<GeometrySet>
-								<objects />
-								<groups />
-							</GeometrySet>
-							<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-							<scale_factors> 1 1 1</scale_factors>
-							<!--transform relative to owner specified as 3 rotations (rad) followed by 3 translations rX rY rZ tx ty tz-->
-							<transform> -0 0 -0 0 0 0</transform>
-							<!--Whether to show a coordinate frame-->
-							<show_axes>false</show_axes>
-							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
-						</VisibleObject>
-						<!--Used to initialize the colour cache variable-->
-						<default_color>0.9 0.9 0.9</default_color>
-					</GeometryPath>
-					<!--resting length of the ligament-->
-					<resting_length>0.0144661</resting_length>
-					<!--damping of the ligament-->
-					<damping>363.526370236543</damping>
-					<!--stiffness of the ligament-->
-					<stiffness>1297.12820825831</stiffness>
-					<!--el rigion from non-linear to linear-->
-					<el>0.0827372051149022</el>
-				</CustomLigament>
-				<CustomLigament name="pPCL_R">
-					<!--the set of points defining the path of the CustomLigament-->
-					<GeometryPath>
-						<!--The set of points defining the path-->
-						<PathPointSet>
-							<objects>
-								<PathPoint name="pPCL_R_femur">
-									<location> -0.01588 -0.40574 -0.01629</location>
-									<body>femur_r</body>
-								</PathPoint>
-								<PathPoint name="pPCL_R_tibia">
-									<location> -0.01471 -0.03175 -0.00407</location>
-									<body>tibia_r</body>
-								</PathPoint>
-							</objects>
-							<groups />
-						</PathPointSet>
-						<!--Used to display the path in the 3D window-->
-						<VisibleObject name="display">
-							<!--Set of geometry files and associated attributes, allow .vtp, .stl, .obj-->
-							<GeometrySet>
-								<objects />
-								<groups />
-							</GeometrySet>
-							<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-							<scale_factors> 1 1 1</scale_factors>
-							<!--transform relative to owner specified as 3 rotations (rad) followed by 3 translations rX rY rZ tx ty tz-->
-							<transform> -0 0 -0 0 0 0</transform>
-							<!--Whether to show a coordinate frame-->
-							<show_axes>false</show_axes>
-							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
-						</VisibleObject>
-						<!--Used to initialize the colour cache variable-->
-						<default_color>0.9 0.9 0.9</default_color>
-					</GeometryPath>
-					<!--resting length of the ligament-->
-					<resting_length>0.0115455</resting_length>
-					<!--damping of the ligament-->
-					<damping>948.765015575893</damping>
-					<!--stiffness of the ligament-->
-					<stiffness>8835.44419690542</stiffness>
-					<!--el rigion from non-linear to linear-->
-					<el>0.070588702047792</el>
-				</CustomLigament>
-				<CustomLigament name="aMCL_R">
-					<!--the set of points defining the path of the CustomLigament-->
-					<GeometryPath>
-						<!--The set of points defining the path-->
-						<PathPointSet>
-							<objects>
-								<PathPoint name="aMCL_R_femur">
-									<location> -0.00741 -0.40435 -0.034</location>
-									<body>femur_r</body>
-								</PathPoint>
-								<PathPoint name="aMCL_R_tibia">
-									<location> 0.00768 -0.0796 -0.02762</location>
-									<body>tibia_r</body>
-								</PathPoint>
-							</objects>
-							<groups />
-						</PathPointSet>
-						<!--Used to display the path in the 3D window-->
-						<VisibleObject name="display">
-							<!--Set of geometry files and associated attributes, allow .vtp, .stl, .obj-->
-							<GeometrySet>
-								<objects />
-								<groups />
-							</GeometrySet>
-							<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-							<scale_factors> 1 1 1</scale_factors>
-							<!--transform relative to owner specified as 3 rotations (rad) followed by 3 translations rX rY rZ tx ty tz-->
-							<transform> -0 0 -0 0 0 0</transform>
-							<!--Whether to show a coordinate frame-->
-							<show_axes>false</show_axes>
-							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
-						</VisibleObject>
-						<!--Used to initialize the colour cache variable-->
-						<default_color>0.9 0.9 0.9</default_color>
-					</GeometryPath>
-					<!--resting length of the ligament-->
-					<resting_length>0.0653678</resting_length>
-					<!--damping of the ligament-->
-					<damping>727.127575003531</damping>
-					<!--stiffness of the ligament-->
-					<stiffness>5189.58098086489</stiffness>
-					<!--el rigion from non-linear to linear-->
-					<el>0.0578524124881741</el>
-				</CustomLigament>
-				<CustomLigament name="aLCL_R">
-					<!--the set of points defining the path of the CustomLigament-->
-					<GeometryPath>
-						<!--The set of points defining the path-->
-						<PathPointSet>
-							<objects>
-								<PathPoint name="aLCL_R_femur">
-									<location> -0.00978 -0.40056 0.0345</location>
-									<body>femur_r</body>
-								</PathPoint>
-								<PathPoint name="aLCL_R_tibia">
-									<location> -0.0071 -0.06056 0.03725</location>
-									<body>tibia_r</body>
-								</PathPoint>
-							</objects>
-							<groups />
-						</PathPointSet>
-						<!--Used to display the path in the 3D window-->
-						<VisibleObject name="display">
-							<!--Set of geometry files and associated attributes, allow .vtp, .stl, .obj-->
-							<GeometrySet>
-								<objects />
-								<groups />
-							</GeometrySet>
-							<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-							<scale_factors> 1 1 1</scale_factors>
-							<!--transform relative to owner specified as 3 rotations (rad) followed by 3 translations rX rY rZ tx ty tz-->
-							<transform> -0 0 -0 0 0 0</transform>
-							<!--Whether to show a coordinate frame-->
-							<show_axes>false</show_axes>
-							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
-						</VisibleObject>
-						<!--Used to initialize the colour cache variable-->
-						<default_color>0.9 0.9 0.9</default_color>
-					</GeometryPath>
-					<!--resting length of the ligament-->
-					<resting_length>0.0450526</resting_length>
-					<!--damping of the ligament-->
-					<damping>915.909859480219</damping>
-					<!--stiffness of the ligament-->
-					<stiffness>8234.10748619037</stiffness>
-					<!--el rigion from non-linear to linear-->
-					<el>0.0158833582567827</el>
-				</CustomLigament>
-				<CustomLigament name="aPCL_L">
-					<!--the set of points defining the path of the CustomLigament-->
-					<GeometryPath>
-						<!--The set of points defining the path-->
-						<PathPointSet>
-							<objects>
-								<PathPoint name="aPCL_L_femur">
-									<location> -0.00867 -0.41342 0.00925</location>
-									<body>femur_l</body>
-								</PathPoint>
-								<PathPoint name="aPCL_L_tibia">
-									<location> -0.02045 -0.03314 -0.00333</location>
-									<body>tibia_l</body>
-								</PathPoint>
-							</objects>
-							<groups />
-						</PathPointSet>
-						<!--Used to display the path in the 3D window-->
-						<VisibleObject name="display">
-							<!--Set of geometry files and associated attributes, allow .vtp, .stl, .obj-->
-							<GeometrySet>
-								<objects />
-								<groups />
-							</GeometrySet>
-							<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-							<scale_factors> 1 1 1</scale_factors>
-							<!--transform relative to owner specified as 3 rotations (rad) followed by 3 translations rX rY rZ tx ty tz-->
-							<transform> -0 0 -0 0 0 0</transform>
-							<!--Whether to show a coordinate frame-->
-							<show_axes>false</show_axes>
-							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
-						</VisibleObject>
-						<!--Used to initialize the colour cache variable-->
-						<default_color>0.9 0.9 0.9</default_color>
-					</GeometryPath>
-					<!--resting length of the ligament-->
-					<resting_length>0.0152585</resting_length>
-					<!--damping of the ligament-->
-					<damping>363.526370236543</damping>
-					<!--stiffness of the ligament-->
-					<stiffness>1297.12820825831</stiffness>
-					<!--el rigion from non-linear to linear-->
-					<el>0.0827372051149022</el>
-				</CustomLigament>
-				<CustomLigament name="pPCL_L">
-					<!--the set of points defining the path of the CustomLigament-->
-					<GeometryPath>
-						<!--The set of points defining the path-->
-						<PathPointSet>
-							<objects>
-								<PathPoint name="pPCL_L_femur">
-									<location> -0.01588 -0.40574 0.01629</location>
-									<body>femur_l</body>
-								</PathPoint>
-								<PathPoint name="pPCL_L_tibia">
-									<location> -0.01471 -0.03175 -0.00407</location>
-									<body>tibia_l</body>
-								</PathPoint>
-							</objects>
-							<groups />
-						</PathPointSet>
-						<!--Used to display the path in the 3D window-->
-						<VisibleObject name="display">
-							<!--Set of geometry files and associated attributes, allow .vtp, .stl, .obj-->
-							<GeometrySet>
-								<objects />
-								<groups />
-							</GeometrySet>
-							<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-							<scale_factors> 1 1 1</scale_factors>
-							<!--transform relative to owner specified as 3 rotations (rad) followed by 3 translations rX rY rZ tx ty tz-->
-							<transform> -0 0 -0 0 0 0</transform>
-							<!--Whether to show a coordinate frame-->
-							<show_axes>false</show_axes>
-							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
-						</VisibleObject>
-						<!--Used to initialize the colour cache variable-->
-						<default_color>0.9 0.9 0.9</default_color>
-					</GeometryPath>
-					<!--resting length of the ligament-->
-					<resting_length>0.0245886786384826</resting_length>
-					<!--damping of the ligament-->
-					<damping>948.765015575893</damping>
-					<!--stiffness of the ligament-->
-					<stiffness>8835.44419690542</stiffness>
-					<!--el rigion from non-linear to linear-->
-					<el>0.070588702047792</el>
-				</CustomLigament>
-				<CustomLigament name="aMCL_L">
-					<!--the set of points defining the path of the CustomLigament-->
-					<GeometryPath>
-						<!--The set of points defining the path-->
-						<PathPointSet>
-							<objects>
-								<PathPoint name="aMCL_L_femur">
-									<location> -0.00741 -0.40435 0.034</location>
-									<body>femur_l</body>
-								</PathPoint>
-								<PathPoint name="aMCL_L_tibia">
-									<location> 0.00768 -0.0796 0.02762</location>
-									<body>tibia_l</body>
-								</PathPoint>
-							</objects>
-							<groups />
-						</PathPointSet>
-						<!--Used to display the path in the 3D window-->
-						<VisibleObject name="display">
-							<!--Set of geometry files and associated attributes, allow .vtp, .stl, .obj-->
-							<GeometrySet>
-								<objects />
-								<groups />
-							</GeometrySet>
-							<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-							<scale_factors> 1 1 1</scale_factors>
-							<!--transform relative to owner specified as 3 rotations (rad) followed by 3 translations rX rY rZ tx ty tz-->
-							<transform> -0 0 -0 0 0 0</transform>
-							<!--Whether to show a coordinate frame-->
-							<show_axes>false</show_axes>
-							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
-						</VisibleObject>
-						<!--Used to initialize the colour cache variable-->
-						<default_color>0.9 0.9 0.9</default_color>
-					</GeometryPath>
-					<!--resting length of the ligament-->
-					<resting_length>0.0655015</resting_length>
-					<!--damping of the ligament-->
-					<damping>727.127575003531</damping>
-					<!--stiffness of the ligament-->
-					<stiffness>5189.58098086489</stiffness>
-					<!--el rigion from non-linear to linear-->
-					<el>0.0578524124881741</el>
-				</CustomLigament>
-				<CustomLigament name="aLCL_L">
-					<!--the set of points defining the path of the CustomLigament-->
-					<GeometryPath>
-						<!--The set of points defining the path-->
-						<PathPointSet>
-							<objects>
-								<PathPoint name="aLCL_L_femur">
-									<location> -0.00978 -0.40056 -0.0345</location>
-									<body>femur_l</body>
-								</PathPoint>
-								<PathPoint name="aLCL_L_tibia">
-									<location> -0.0071 -0.06056 -0.03725</location>
-									<body>tibia_l</body>
-								</PathPoint>
-							</objects>
-							<groups />
-						</PathPointSet>
-						<!--Used to display the path in the 3D window-->
-						<VisibleObject name="display">
-							<!--Set of geometry files and associated attributes, allow .vtp, .stl, .obj-->
-							<GeometrySet>
-								<objects />
-								<groups />
-							</GeometrySet>
-							<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-							<scale_factors> 1 1 1</scale_factors>
-							<!--transform relative to owner specified as 3 rotations (rad) followed by 3 translations rX rY rZ tx ty tz-->
-							<transform> -0 0 -0 0 0 0</transform>
-							<!--Whether to show a coordinate frame-->
-							<show_axes>false</show_axes>
-							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
-						</VisibleObject>
-						<!--Used to initialize the colour cache variable-->
-						<default_color>0.9 0.9 0.9</default_color>
-					</GeometryPath>
-					<!--resting length of the ligament-->
-					<resting_length>0.0448962</resting_length>
-					<!--damping of the ligament-->
-					<damping>915.909859480219</damping>
-					<!--stiffness of the ligament-->
-					<stiffness>8234.10748619037</stiffness>
-					<!--el rigion from non-linear to linear-->
-					<el>0.0158833582567827</el>
-				</CustomLigament>
 			</objects>
 			<groups>
 				<ObjectGroup name="R_hip_abd">
