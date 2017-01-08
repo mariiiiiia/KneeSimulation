@@ -33,9 +33,11 @@ public:
     void static writeForcesToFile(Model &model,
         const string filename,
         const Array<Vector> &forces, const Vector &times);
+	
+	void static writeLengthsToFile(string filename, const Array<Array<double>> lengths, const Array<double> angle);
 };
 
 
-void printLigamentLengths(Model model, double knee_angle);
+void printLigamentLengths(Model model);
 
 #endif

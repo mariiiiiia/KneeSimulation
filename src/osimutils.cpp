@@ -132,51 +132,148 @@ void OsimUtils::writeForcesToFile(Model &model,const string filename,
     file.close();
 }
 
+void OsimUtils::writeLengthsToFile(string filename, const Array<Array<double>> lengths, const Array<double> angle)
+{
+	 // Write result forces to file
+    ofstream file(filename.c_str());
 
-void printLigamentLengths(Model model, double knee_angle)
+    // Labels
+    file << "angles\t";
+	for (int i=0; i<angle.size(); i++)
+	{
+		file << "'" << angle[i] << "'\t";
+	}
+	file << endl;
+
+	//ligament names
+	Array<string> names;
+	names.append("aACL");
+	names.append("pACL");
+	names.append("aPCL");
+	names.append("pPCL");
+	names.append("MCL");
+	names.append("LCL");
+
+    // Data
+    for (int l = 0; l < lengths.size(); l++) {
+		file << names.get(l);
+        for (int f = 0; f < angle.size(); f++)
+		{
+			//cout << lengths[f][l] << endl;
+            file << "\t" << lengths[l][f];
+		}
+		file << endl;
+    }
+
+    file.close();
+}
+
+
+void printLigamentLengths(Model model)
 {
 	//Object::registerType(CustomLigament());
+	Array<double> aACL_R_lengths, pACL_R_lengths, aPCL_R_lengths, pPCL_R_lengths, MCL_R_lengths, LCL_R_lengths;
+	Array<Array<double>> lengths;
 
 	SimTK::State& si = model.initSystem();
 	
 	const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
-	knee_r_cs.get("knee_angle_r").setValue(si, 0);  
+	knee_r_cs.get("knee_angle_r").setValue(si, -0.0290726);  
 	
 	cout << "knee angle: " << 0 << endl;
 	cout << "aACL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aACL_R")).getLength(si) << endl;
 	cout << "pACL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("pACL_R")).getLength(si) << endl;
 	cout << "aPCL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aPCL_R")).getLength(si) << endl;
 	cout << "pPCL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("pPCL_R")).getLength(si) << endl;
-	
+	cout << "aMCL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aMCL_R")).getLength(si) << endl;
+	cout << "aLCL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aLCL_R")).getLength(si) << endl;
+
+	aACL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("aACL_R")).getLength(si));
+	pACL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("pACL_R")).getLength(si));
+	aPCL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("aPCL_R")).getLength(si));
+	pPCL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("pPCL_R")).getLength(si));
+	MCL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("aMCL_R")).getLength(si));
+	LCL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("aLCL_R")).getLength(si));
+
 	cout << "knee angle: " << -30 << endl;
-	knee_r_cs.get("knee_angle_r").setValue(si, -0.52359877);  
+	knee_r_cs.get("knee_angle_r").setValue(si, -0.52359877); 
+	knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.01); 
 
 	cout << "aACL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aACL_R")).getLength(si) << endl;
 	cout << "pACL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("pACL_R")).getLength(si) << endl;
 	cout << "aPCL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aPCL_R")).getLength(si) << endl;
 	cout << "pPCL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("pPCL_R")).getLength(si) << endl;
-	
+	cout << "aMCL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aMCL_R")).getLength(si) << endl;
+	cout << "aLCL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aLCL_R")).getLength(si) << endl;
+
+	aACL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("aACL_R")).getLength(si));
+	pACL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("pACL_R")).getLength(si));
+	aPCL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("aPCL_R")).getLength(si));
+	pPCL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("pPCL_R")).getLength(si));
+	MCL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("aMCL_R")).getLength(si));
+	LCL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("aLCL_R")).getLength(si));
+
 	cout << "knee angle: " << -60 << endl;
 	knee_r_cs.get("knee_angle_r").setValue(si, -1.0471975);  
+	knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.0207306); 
 
 	cout << "aACL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aACL_R")).getLength(si) << endl;
 	cout << "pACL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("pACL_R")).getLength(si) << endl;
 	cout << "aPCL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aPCL_R")).getLength(si) << endl;
 	cout << "pPCL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("pPCL_R")).getLength(si) << endl;
-	
+	cout << "aMCL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aMCL_R")).getLength(si) << endl;
+	cout << "aLCL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aLCL_R")).getLength(si) << endl;
+
+	aACL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("aACL_R")).getLength(si));
+	pACL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("pACL_R")).getLength(si));
+	aPCL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("aPCL_R")).getLength(si));
+	pPCL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("pPCL_R")).getLength(si));
+	MCL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("aMCL_R")).getLength(si));
+	LCL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("aLCL_R")).getLength(si));
+
 	cout << "knee angle: " << -90 << endl;
 	knee_r_cs.get("knee_angle_r").setValue(si, -1.57079632);  
+	knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.028); 
 
 	cout << "aACL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aACL_R")).getLength(si) << endl;
 	cout << "pACL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("pACL_R")).getLength(si) << endl;
 	cout << "aPCL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aPCL_R")).getLength(si) << endl;
 	cout << "pPCL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("pPCL_R")).getLength(si) << endl;
+	cout << "aMCL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aMCL_R")).getLength(si) << endl;
+	cout << "aLCL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aLCL_R")).getLength(si) << endl;
+
+	aACL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("aACL_R")).getLength(si));
+	pACL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("pACL_R")).getLength(si));
+	aPCL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("aPCL_R")).getLength(si));
+	pPCL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("pPCL_R")).getLength(si));
+	MCL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("aMCL_R")).getLength(si));
+	LCL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("aLCL_R")).getLength(si));
 
 	cout << "knee angle: " << -120 << endl;
 	knee_r_cs.get("knee_angle_r").setValue(si, -2.09439510);  
+	knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.030837); 
 
 	cout << "aACL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aACL_R")).getLength(si) << endl;
 	cout << "pACL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("pACL_R")).getLength(si) << endl;
 	cout << "aPCL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aPCL_R")).getLength(si) << endl;
 	cout << "pPCL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("pPCL_R")).getLength(si) << endl;
+	cout << "aMCL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aMCL_R")).getLength(si) << endl;
+	cout << "aLCL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aLCL_R")).getLength(si) << endl;
+
+	aACL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("aACL_R")).getLength(si));
+	pACL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("pACL_R")).getLength(si));
+	aPCL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("aPCL_R")).getLength(si));
+	pPCL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("pPCL_R")).getLength(si));
+	MCL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("aMCL_R")).getLength(si));
+	LCL_R_lengths.append( static_cast<const CustomLigament&>(model.getForceSet().get("aLCL_R")).getLength(si));
+
+	lengths.append( aACL_R_lengths); lengths.append( pACL_R_lengths); lengths.append( aPCL_R_lengths); lengths.append( pPCL_R_lengths); lengths.append( MCL_R_lengths); lengths.append( LCL_R_lengths);
+
+	Array<double> angle;
+	angle.append( 0);
+	angle.append( -30);
+	angle.append( -60);
+	angle.append( -90);
+	angle.append( -120); 
+	OsimUtils::writeLengthsToFile("../outputs/flexion_lengths.txt", lengths, angle);
 }

@@ -64,3 +64,6 @@ void inverseSimulation(Model model);
 void staticOptimization(Model model);
 void forwardSimulation(Model& model);
 void addExternalForce(Model& model, double minForce, double maxForce, double minT, double maxT);
+void addFlexionController(Model& model);
+void addExtensionController(Model& model);
+

@@ -44,14 +44,14 @@ int main(int argc, char *argv[])
 		////model.print("../resources/geometries/stanev_added_all_components.osim");
 		//model.print("../resources/geometries/stanev_added_all_components_freeUpTibiaJ.osim");
 		
-		OpenSim::Model model("../resources/geometries/closed_knee_lengths_fixed.osim");
+		OpenSim::Model model("../resources/geometries/closed_knee_lengths_linear.osim");
 
-		printLigamentLengths(model, 0);
+		//printLigamentLengths(model);
 
 		// simulate
 		//inverseSimulation(model);
 		//staticOptimization(model);
-		//forwardSimulation(model);
+		forwardSimulation(model);
 		
 		// Save the model to a file
 		//model.setUseVisualizer(1);

@@ -307,36 +307,9 @@ void forwardSimulation(Model& model)
 	//ground.addDisplayGeometry("ground.vtp");
 
 	// add external force
-	addExternalForce(model, 0, 500, 0, 1.0);   
+	//addExternalForce(model, 0, 100, 0, 0.2);   
 
-	//// set controller
-	//PrescribedController* controller = new PrescribedController();
-	//controller->setName( "flexion_controller");
-	//controller->setActuators( model.updActuators());
-	//
-	//double control_time[2] = {0, 1.0}; // time nodes for linear function
-	//double control_acts[2] = {0.1, 1.0}; // force values at t1 and t2
-	////PiecewiseLinearFunction *control_func = new PiecewiseLinearFunction( 2, control_time, control_acts);
-	////control_func->setName( "lin_control_func");
-
-	//string muscle_name;
-	//for (int i=0; i<model.getActuators().getSize(); i++)
-	//{
-	//	muscle_name = model.getActuators().get(i).getName();
-	//	if ( muscle_name == "bifemlh_r" || muscle_name == "bifemsh_r" || muscle_name == "grac_r" \
-	//		|| muscle_name == "lat_gas_r" || muscle_name == "med_gas_r" || muscle_name == "sar_r" \
-	//		|| muscle_name == "semimem_r" || muscle_name == "semiten_r")
-	//	{
-	//		Constant* ccf = new Constant(1);
-	//		controller->prescribeControlForActuator( i, ccf);
-	//	}
-	//	else 
-	//	{
-	//		Constant* zccf = new Constant(0);
-	//		controller->prescribeControlForActuator( i, zccf);
-	//	}
-	//}
-	//model.addController( controller);
+	addFlexionController(model);
 
 	// init system
 	std::time_t result = std::time(nullptr);
@@ -346,28 +319,38 @@ void forwardSimulation(Model& model)
 	std::cout << "\nAfter initSystem() " << std::asctime(std::localtime(&result)) << endl;
 
 	// set gravity
-	model.updGravityForce().setGravityVector(si, Vec3(0,0,0));
+	//model.updGravityForce().setGravityVector(si, Vec3(-9.80665,0,0));
 	
 	// disable muscles
-	for (int i=0; i<model.getMuscles().getSize(); i++)
-	{
-		model.getMuscles().get(i).setDisabled(si, true);
-	}
+	//string muscle_name;
+	//for (int i=0; i<model.getActuators().getSize(); i++)
+	//{
+	//	muscle_name = model.getActuators().get(i).getName();
+
+	//	model.getActuators().get(i).setDisabled(si, true);
+
+	//	if ( \
+	//		//muscle_name == "bifemlh_r" || muscle_name == "bifemsh_r" || muscle_name == "grac_r" \
+	//		|| muscle_name == "lat_gas_r" || muscle_name == "med_gas_r" || muscle_name == "sar_r" \
+	//		|| muscle_name == "semimem_r" || muscle_name == "semiten_r" 
+	//		muscle_name == "rect_fem_r" || muscle_name == "vas_med_r" || muscle_name == "vas_int_r" || muscle_name == "vas_lat_r" )
+	//			model.getActuators().get(i).setDisabled(si, false);
+	//}
 
 	// set knee angles  
 	const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
 	//knee_r_cs.get("knee_angle_r").setValue(si, -2.09439510);  // -120 degrees
-	//knee_r_cs.get("knee_angle_r").setValue(si, -1.74532925);  // -100 degrees
+	knee_r_cs.get("knee_angle_r").setValue(si, -1.74532925);  // -100 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -1.570796326);  // -90 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -1.39626340);  // -80 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -1.04719755);  // -60 degrees
-	knee_r_cs.get("knee_angle_r").setValue(si, -0.6981317008);  // -40 degrees
+	//knee_r_cs.get("knee_angle_r").setValue(si, -0.6981317008);  // -40 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -0.34906585);  // -20 degrees
     //knee_r_cs.get("knee_angle_r").setValue(si, -0.029); 
-	knee_r_cs.get("knee_angle_r").setLocked(si, true);
+	//knee_r_cs.get("knee_angle_r").setLocked(si, true);
 
-	knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.388);
-	knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.016);
+	//knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.399042);
+	knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.0305924);
 
 	// set initial activations
 	//const Array<Object*> flexors = model.getForceSet().getGroup( "R_knee_bend")->getMembers();
@@ -391,7 +374,7 @@ void forwardSimulation(Model& model)
 
 	// Define the initial and final simulation times
 	double initialTime = 0;
-	double finalTime = 1.0;
+	double finalTime = 0.5;
 
 	// Integrate from initial time to final time
 	manager.setInitialTime(initialTime);
@@ -421,8 +404,8 @@ void addExternalForce(Model& model, double minForce, double maxForce, double min
 	// Specify properties of a force function to be applied to the block
 	double time[2] = {minT, maxT}; // time nodes for linear function
 	double time2[2] = {minT, maxT}; // time nodes for linear function
-	double fXofT[2] = {minForce, 50}; // force values at t1 and t2
-	double fYofT[2] = {minForce, 10}; // force values at t1 and t2
+	double fXofT[2] = {minForce, 100}; // force values at t1 and t2
+	double fYofT[2] = {minForce, 50}; // force values at t1 and t2
 	//double pYofT[2] = {0, 0.1}; // point in x values at t1 and t2
   
 	// Create a new linear functions for the force and point components
@@ -435,9 +418,69 @@ void addExternalForce(Model& model, double minForce, double maxForce, double min
 	prescribedForce->setName("prescribedForce");
   
 	// Set the force and point functions for the new prescribed force
-	prescribedForce->setForceFunctions( forceX, forceY, new Constant(0.0));
+	prescribedForce->setForceFunctions( forceX, new Constant(0.0), new Constant(0.0));
 	//prescribedForce->setPointFunctions(new Constant(0.0), pointY, new Constant(0.0));
   
 	// Add the new prescribed force to the model
 	model.addForce(prescribedForce);
+}
+
+void addFlexionController(Model& model)
+{
+	PrescribedController* controller = new PrescribedController();
+	controller->setName( "flexion_controller");
+	controller->setActuators( model.updActuators());
+	
+	double control_time[2] = {0, 0.2}; // time nodes for linear function
+	double control_acts[2] = {0.2, 1.0}; // force values at t1 and t2
+	//control_func->setName( "constant_control_func");
+
+	string muscle_name;
+	for (int i=0; i<model.getActuators().getSize(); i++)
+	{
+		muscle_name = model.getActuators().get(i).getName();
+		if ( muscle_name == "bifemlh_r" || muscle_name == "bifemsh_r" || muscle_name == "grac_r" \
+			|| muscle_name == "lat_gas_r" || muscle_name == "med_gas_r" || muscle_name == "sar_r" \
+			|| muscle_name == "semimem_r" || muscle_name == "semiten_r")
+		{
+			//Constant* ccf = new Constant(1);
+			PiecewiseLinearFunction *ccf = new PiecewiseLinearFunction( 2, control_time, control_acts);
+			controller->prescribeControlForActuator( i, ccf);
+		}
+		else 
+		{
+			Constant* zccf = new Constant(0);
+			controller->prescribeControlForActuator( i, zccf);
+		}
+	}
+	model.addController( controller);
+}
+
+void addExtensionController(Model& model)
+{
+	PrescribedController* controller = new PrescribedController();
+	controller->setName( "extension_controller");
+	controller->setActuators( model.updActuators());
+	
+	//double control_time[2] = {0, 0.2}; // time nodes for linear function
+	//double control_acts[2] = {0.6, 1.0}; // force values at t1 and t2
+	//control_func->setName( "constant_control_func");
+
+	string muscle_name;
+	for (int i=0; i<model.getActuators().getSize(); i++)
+	{
+		muscle_name = model.getActuators().get(i).getName();
+		if (muscle_name == "rect_fem_r" || muscle_name == "vas_med_r" || muscle_name == "vas_int_r" || muscle_name == "vas_lat_r" )
+		{
+			Constant* ccf = new Constant(1);
+			//PiecewiseLinearFunction *ccf = new PiecewiseLinearFunction( 2, control_time, control_acts);
+			controller->prescribeControlForActuator( i, ccf);
+		}
+		else 
+		{
+			Constant* zccf = new Constant(0);
+			controller->prescribeControlForActuator( i, zccf);
+		}
+	}
+	model.addController( controller);
 }
