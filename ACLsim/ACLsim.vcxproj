@@ -84,7 +84,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Users\Maria\Documents\GitHub\CustomLigamentPlugin\src;C:\Program Files (x86)\Simbody\include;C:\Users\Maria\Documents\GitHub\OpenSim;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Maria\Documents\GitHub\CustomAnalysisPlugin\src;C:\Users\Maria\Documents\GitHub\CustomLigamentPlugin\src;C:\Program Files (x86)\Simbody\include;C:\Users\Maria\Documents\GitHub\OpenSim;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -92,7 +92,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\Users\Maria\Documents\GitHub\CustomLigamentPlugin\build\RelWithDebInfo;C:\Program Files (x86)\OpenSim 3.2\sdk\lib;C:\Program Files %28x86%29\Simbody\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>CustomLigament.lib;osimActuators.lib;osimAnalyses.lib;osimCommon.lib;osimLepton.lib;osimSimulation.lib;osimTools.lib;SimTKcommon.lib;SimTKmath.lib;SimTKsimbody.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>customAnalysisPlugin.lib;CustomLigament.lib;osimActuators.lib;osimAnalyses.lib;osimCommon.lib;osimLepton.lib;osimSimulation.lib;osimTools.lib;SimTKcommon.lib;SimTKmath.lib;SimTKsimbody.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

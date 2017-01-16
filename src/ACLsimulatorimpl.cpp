@@ -310,6 +310,7 @@ void forwardSimulation(Model& model)
 	//addExternalForce(model, 0, 100, 0, 0.2);   
 
 	addFlexionController(model);
+	//addExtensionController(model);
 
 	// init system
 	std::time_t result = std::time(nullptr);
@@ -317,9 +318,10 @@ void forwardSimulation(Model& model)
 	SimTK::State& si = model.initSystem();
 	result = std::time(nullptr);
 	std::cout << "\nAfter initSystem() " << std::asctime(std::localtime(&result)) << endl;
-
+	
 	// set gravity
-	//model.updGravityForce().setGravityVector(si, Vec3(-9.80665,0,0));
+	//model.updGravityForce().setGravityVector(si, Vec3(0,-9.80665,0));
+	//model.updGravityForce().setGravityVector(si, Vec3(0,0,0));
 	
 	// disable muscles
 	string muscle_name;
@@ -340,16 +342,16 @@ void forwardSimulation(Model& model)
 	const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
 	//knee_r_cs.get("knee_angle_r").setValue(si, -2.09439510);  // -120 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -1.74532925);  // -100 degrees
-	knee_r_cs.get("knee_angle_r").setValue(si, -1.570796326);  // -90 degrees
+	//knee_r_cs.get("knee_angle_r").setValue(si, -1.570796326);  // -90 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -1.39626340);  // -80 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -1.04719755);  // -60 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -0.6981317008);  // -40 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -0.34906585);  // -20 degrees
-    //knee_r_cs.get("knee_angle_r").setValue(si, -0.029); 
+    knee_r_cs.get("knee_angle_r").setValue(si, -0.029); 
 	//knee_r_cs.get("knee_angle_r").setLocked(si, true);
 
-	//knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.3995);
-	knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.0288479);
+	//knee_r_cs.get("knee_anterior_posterior_r").setValue(si, -0.00065366);
+	//knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.385194);
 
 	// set initial activations
 	//const Array<Object*> flexors = model.getForceSet().getGroup( "R_knee_bend")->getMembers();
@@ -361,9 +363,14 @@ void forwardSimulation(Model& model)
 		//flex_muscle->set_deactivation_time_constant( 0.5);
 	//}
 
+	model.equilibrateMuscles( si);
+
 	// Add reporters
     ForceReporter* forceReporter = new ForceReporter(&model);
     model.addAnalysis(forceReporter);
+
+	CustomAnalysis* customReporter = new CustomAnalysis(&model, "r");
+	model.addAnalysis(customReporter);
 
 	// Create the integrator and manager for the simulation.
 	SimTK::RungeKuttaMersonIntegrator integrator(model.getMultibodySystem());
@@ -372,8 +379,8 @@ void forwardSimulation(Model& model)
 	Manager manager(model, integrator);
 
 	// Define the initial and final simulation times
-	double initialTime = 0;
-	double finalTime = 0.5;
+	double initialTime = 0.0;
+	double finalTime = 0.3;
 
 	// Integrate from initial time to final time
 	manager.setInitialTime(initialTime);
@@ -396,6 +403,7 @@ void forwardSimulation(Model& model)
 	statesDegrees.print("../outputs/close_knee_states_degrees.mot");
 	// force reporter results
 	forceReporter->getForceStorage().print("../outputs/close_knee_forceY_forces.mot");
+	customReporter->print( "../outputs/custom_forces_reporter.mot");
 }
 
 void addExternalForce(Model& model, double minForce, double maxForce, double minT, double maxT)
@@ -417,7 +425,7 @@ void addExternalForce(Model& model, double minForce, double maxForce, double min
 	prescribedForce->setName("prescribedForce");
   
 	// Set the force and point functions for the new prescribed force
-	prescribedForce->setForceFunctions( forceX, new Constant(0), new Constant(0.0));
+	prescribedForce->setForceFunctions( new Constant(110.0), new Constant(0), new Constant(0.0));
 	//prescribedForce->setPointFunctions(new Constant(0.0), pointY, new Constant(0.0));
   
 	// Add the new prescribed force to the model
@@ -430,8 +438,8 @@ void addFlexionController(Model& model)
 	controller->setName( "flexion_controller");
 	controller->setActuators( model.updActuators());
 	
-	double control_time[3] = {0, 0.2, 0.3}; // time nodes for linear function
-	double control_acts[3] = {0.1, 0.1, 0.02}; // force values at t1 and t2
+	double control_time[3] = {0, 0.1, 0.2}; // time nodes for linear function
+	double control_acts[3] = {0, 0.2, 0.2}; // force values at t1 and t2
 	//control_func->setName( "constant_control_func");
 
 	string muscle_name;
@@ -442,8 +450,8 @@ void addFlexionController(Model& model)
 			|| muscle_name == "lat_gas_r" || muscle_name == "med_gas_r" || muscle_name == "sar_r" \
 			|| muscle_name == "semimem_r" || muscle_name == "semiten_r")
 		{
-			//Constant* ccf = new Constant(0.1);
-			PiecewiseLinearFunction *ccf = new PiecewiseLinearFunction( 3, control_time, control_acts);
+			Constant* ccf = new Constant(0.5);
+			//PiecewiseLinearFunction *ccf = new PiecewiseLinearFunction( 3, control_time, control_acts);
 			controller->prescribeControlForActuator( i, ccf);
 		}
 		else 
@@ -471,7 +479,7 @@ void addExtensionController(Model& model)
 		muscle_name = model.getActuators().get(i).getName();
 		if (muscle_name == "rect_fem_r" || muscle_name == "vas_med_r" || muscle_name == "vas_int_r" || muscle_name == "vas_lat_r" )
 		{
-			Constant* ccf = new Constant(1);
+			Constant* ccf = new Constant(0.2);
 			//PiecewiseLinearFunction *ccf = new PiecewiseLinearFunction( 2, control_time, control_acts);
 			controller->prescribeControlForActuator( i, ccf);
 		}
