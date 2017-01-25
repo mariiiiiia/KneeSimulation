@@ -606,7 +606,7 @@
 									<function>
 										<SimmSpline>
 											<x> -2.0944 -1.74533 -1.39626 -1.0472 -0.698132 -0.349066 -0.0290726</x>
-											<y> -0.33 -0.33 -0.33 -0.33 -0.232327 -0.318649 -0.33</y>
+											<y> -0.33 -0.33 -0.33 -0.25185458 -0.25397256 -0.295525 -0.329716</y>
 										</SimmSpline>
 									</function>
 								</TransformAxis>
@@ -619,7 +619,7 @@
 									<function>
 										<SimmSpline>
 											<x> -2.0944 -1.74533 -1.39626 -1.0472 -0.698132 -0.349066 -0.0290726</x>
-											<y> -0.0383574 0.0621309 0.0415606 0.00139061 0.0525527 0.013597 -0.0383574</y>
+											<y> -0.0383574 0.0621309 0.0415606 0.03043068 0.03301188 0.0044018 -0.0343888</y>
 										</SimmSpline>
 									</function>
 								</TransformAxis>
@@ -633,7 +633,7 @@
 									<function>
 										<SimmSpline>
 											<x> -2.0944 -1.74533 -1.39626 -1.0472 -0.698132 -0.349066 -0.0290726</x>
-											<y> 0.030837 0.0305924 0.0268479 0.0207306 0.0126171 0.00639072 -0.00065366</y>
+											<y> 0.030837 0.0305924 0.0268479 0.02025397 0.012679 0.00522225 -0.00071372</y>
 										</SimmSpline>
 									</function>
 								</TransformAxis>
@@ -646,7 +646,7 @@
 									<function>
 										<SimmSpline>
 											<x> -2.0944 -1.74533 -1.39626 -1.0472 -0.698132 -0.349066 -0.0290726</x>
-											<y> -0.411762 -0.399042 -0.391353 -0.385194 -0.381171 -0.382823 -0.385194</y>
+											<y> -0.411762 -0.399042 -0.391353 -0.38544807 -0.38227168 -0.382426 -0.385078</y>
 										</SimmSpline>
 									</function>
 								</TransformAxis>
@@ -659,7 +659,7 @@
 									<function>
 										<SimmSpline>
 											<x> -2.0944 -1.74533 -1.39626 -1.0472 -0.698132 -0.349066 -0.0290726</x>
-											<y> -0.00575837 -0.00356904 -0.00524561 -0.0053975 -0.00244729 -0.00405951 -0.0053975</y>
+											<y> -0.00575837 -0.00356904 -0.00524561 -0.00367085 -0.00403308 -0.00486 -0.005241</y>
 										</SimmSpline>
 									</function>
 								</TransformAxis>
@@ -10863,7 +10863,7 @@
 					<!--damping of the ligament-->
 					<damping>363.526370236543</damping>
 					<!--stiffness of the ligament-->
-					<stiffness>1297.12820825831</stiffness>
+					<stiffness>2600</stiffness>
 					<!--el rigion from non-linear to linear-->
 					<el>0.0827372051149022</el>
 				</CustomLigament>
@@ -10908,7 +10908,7 @@
 					<!--damping of the ligament-->
 					<damping>948.765015575893</damping>
 					<!--stiffness of the ligament-->
-					<stiffness>8835.44419690542</stiffness>
+					<stiffness>1900</stiffness>
 					<!--el rigion from non-linear to linear-->
 					<el>0.070588702047792</el>
 				</CustomLigament>
@@ -10953,7 +10953,7 @@
 					<!--damping of the ligament-->
 					<damping>727.127575003531</damping>
 					<!--stiffness of the ligament-->
-					<stiffness>5189.58098086489</stiffness>
+					<stiffness>2700</stiffness>
 					<!--el rigion from non-linear to linear-->
 					<el>0.0578524124881741</el>
 				</CustomLigament>
@@ -10998,7 +10998,7 @@
 					<!--damping of the ligament-->
 					<damping>915.909859480219</damping>
 					<!--stiffness of the ligament-->
-					<stiffness>8234.10748619037</stiffness>
+					<stiffness>2000</stiffness>
 					<!--el rigion from non-linear to linear-->
 					<el>0.0158833582567827</el>
 				</CustomLigament>

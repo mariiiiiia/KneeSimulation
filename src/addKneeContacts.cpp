@@ -4,11 +4,11 @@ void addKneeContactGeometries(Model& model, bool LeftOrRight){
 	string LorR = "r";
 	if (LeftOrRight) LorR = "l";
 
-	addContactGeometry(model, "meniscus_lat_" + LorR, "meniscus_lat_" + LorR + ".obj");
-	addContactGeometry(model, "meniscus_med_" + LorR, "meniscus_med_" + LorR + ".obj");
-	addContactGeometry(model, "femur_lat_" + LorR, "femur_lat_" + LorR + ".obj");
-	addContactGeometry(model, "femur_med_" + LorR, "femur_med_" + LorR + ".obj");
-	//addContactGeometry(model, "tibia_" + LorR, "tibia_upper_" + LorR + ".obj");
+	//addContactGeometry(model, "meniscus_lat_" + LorR, "meniscus_lat_" + LorR + ".obj");
+	//addContactGeometry(model, "meniscus_med_" + LorR, "meniscus_med_" + LorR + ".obj");
+	//addContactGeometry(model, "femur_lat_" + LorR, "femur_lat_" + LorR + ".obj");
+	//addContactGeometry(model, "femur_med_" + LorR, "femur_med_" + LorR + ".obj");
+	addContactGeometry(model, "tibia_upper_" + LorR, "tibia_upper_" + LorR + ".obj");
 
 	model.buildSystem();
 };
@@ -30,25 +30,43 @@ void addEFForce(Model& model, double stiff, double diss, double us, double ud, d
 	string LorR = "r";
 	if (LeftOrRight) LorR = "l";
 
-	OpenSim::ElasticFoundationForce::ContactParameters *contactParamsLat = new OpenSim::ElasticFoundationForce::ContactParameters(stiff, diss, us, ud, uv);
-	contactParamsLat->addGeometry("femur_lat_" + LorR + "_CM");
-	contactParamsLat->addGeometry("meniscus_lat_" + LorR + "_CM");
+	//OpenSim::ElasticFoundationForce::ContactParameters *contactParamsLat = new OpenSim::ElasticFoundationForce::ContactParameters(stiff, diss, us, ud, uv);
+	//contactParamsLat->addGeometry("femur_lat_" + LorR + "_CM");
+	//contactParamsLat->addGeometry("meniscus_lat_" + LorR + "_CM");
 
-	OpenSim::ElasticFoundationForce *contactForceLat = new OpenSim::ElasticFoundationForce(contactParamsLat);
-	contactForceLat->setTransitionVelocity(0.2);
-	contactForceLat->setName("contactForce_femur_lat_meniscii_" + LorR);
+	//OpenSim::ElasticFoundationForce *contactForceLat = new OpenSim::ElasticFoundationForce(contactParamsLat);
+	//contactForceLat->setTransitionVelocity(0.2);
+	//contactForceLat->setName("contactForce_femur_lat_meniscii_" + LorR);
 
-	model.addForce(contactForceLat);
+	//model.addForce(contactForceLat);
 
-	OpenSim::ElasticFoundationForce::ContactParameters *contactParamsMed = new OpenSim::ElasticFoundationForce::ContactParameters(stiff, diss, us, ud, uv);
-	contactParamsMed->addGeometry("femur_med_" + LorR + "_CM");
-	contactParamsMed->addGeometry("meniscus_med_" + LorR + "_CM");
+	//OpenSim::ElasticFoundationForce::ContactParameters *contactParamsMed = new OpenSim::ElasticFoundationForce::ContactParameters(stiff, diss, us, ud, uv);
+	//contactParamsMed->addGeometry("femur_med_" + LorR + "_CM");
+	//contactParamsMed->addGeometry("meniscus_med_" + LorR + "_CM");
 
-	OpenSim::ElasticFoundationForce *contactForceMed = new OpenSim::ElasticFoundationForce(contactParamsMed);
-	contactForceMed->setTransitionVelocity(0.2);
-	contactForceMed->setName("contactForce_femur_med_meniscii_" + LorR);
+	//OpenSim::ElasticFoundationForce *contactForceMed = new OpenSim::ElasticFoundationForce(contactParamsMed);
+	//contactForceMed->setTransitionVelocity(0.2);
+	//contactForceMed->setName("contactForce_femur_med_meniscii_" + LorR);
+	
+	OpenSim::ElasticFoundationForce::ContactParameters *contactParamsTibMed = new OpenSim::ElasticFoundationForce::ContactParameters(stiff, diss, us, ud, uv);
+	contactParamsTibMed->addGeometry("tibia_upper_" + LorR + "_CM");
+	contactParamsTibMed->addGeometry("femur_med_" + LorR + "_CM");
 
-	model.addForce(contactForceMed);
+	OpenSim::ElasticFoundationForce *contactForceTibMed = new OpenSim::ElasticFoundationForce(contactParamsTibMed);
+	contactForceTibMed->setTransitionVelocity(0.2);
+	contactForceTibMed->setName("femur_med_tibia_" + LorR);
+
+	model.addForce(contactForceTibMed);
+
+	OpenSim::ElasticFoundationForce::ContactParameters *contactParamsTibLat = new OpenSim::ElasticFoundationForce::ContactParameters(stiff, diss, us, ud, uv);
+	contactParamsTibLat->addGeometry("tibia_upper_" + LorR + "_CM");
+	contactParamsTibLat->addGeometry("femur_lat_" + LorR + "_CM");
+
+	OpenSim::ElasticFoundationForce *contactForceTibLat = new OpenSim::ElasticFoundationForce(contactParamsTibLat);
+	contactForceTibLat->setTransitionVelocity(0.2);
+	contactForceTibLat->setName("femur_lat_tibia_" + LorR);
+
+	model.addForce(contactForceTibLat);
 }
 
 
