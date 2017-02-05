@@ -17,7 +17,7 @@ int main(int argc, char *argv[])
 	try {
 		Object::registerType(CustomLigament());
 		// Create an OpenSim model and set its name
-		OpenSim::Model model("../resources/geometries/closed_knee_ligaments_1_0.osim");
+		OpenSim::Model model("../resources/geometries/closed_knee_ligaments_0_2.osim");
 
 		//// add meniscus bodies to left and right knee
 		//cout << "Adding meniscus" << endl;
@@ -46,6 +46,19 @@ int main(int argc, char *argv[])
 		//OpenSim::Model model("../resources/geometries/closed_knee_ligaments_1_0.osim");
 
 		//printLigamentLengths(model);
+
+		// Get a reference to the model's ground body
+		//OpenSim::Body* femur = &model.updBodySet().get("femur_r");
+
+		//Vec3 blockMassCenter(0);
+		//Inertia blockInertia = 0*Inertia::brick(Vec3(0));
+		//// Create a new block body with specified properties
+		//OpenSim::Body *block = new OpenSim::Body("block", 1, blockMassCenter, blockInertia);
+		//// Add display geometry to the block to visualize in the GUI
+		//block->addDisplayGeometry("block.vtp");
+		//WeldJoint *latMenicscus_tibia_j = new WeldJoint("block_joint_", *femur, SimTK::Vec3(0.0), 
+		//SimTK::Vec3(0), *block, SimTK::Vec3(0), SimTK::Vec3(0), true); 
+		//model.addBody( block);
 
 		// simulate
 		//inverseSimulation(model);

@@ -587,7 +587,7 @@
 										<!--Coordinate can describe rotational, translational, or coupled motion. Defaults to rotational.-->
 										<motion_type>rotational</motion_type>
 										<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-										<default_value>-0.399665983647613</default_value>
+										<default_value>-0.329716</default_value>
 										<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
 										<range>-0.4 0</range>
 										<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
@@ -601,7 +601,7 @@
 										<!--Coordinate can describe rotational, translational, or coupled motion. Defaults to rotational.-->
 										<motion_type>rotational</motion_type>
 										<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-										<default_value>-0.0383573599779404</default_value>
+										<default_value>-0.0343888</default_value>
 										<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
 										<range>-0.17453293 0.2</range>
 										<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
@@ -615,7 +615,7 @@
 										<!--Coordinate can describe rotational, translational, or coupled motion. Defaults to rotational.-->
 										<motion_type>translational</motion_type>
 										<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-										<default_value>-0.00065366</default_value>
+										<default_value>-0.00071372</default_value>
 										<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
 										<range>-0.016 0.02</range>
 										<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
@@ -629,7 +629,7 @@
 										<!--Coordinate can describe rotational, translational, or coupled motion. Defaults to rotational.-->
 										<motion_type>translational</motion_type>
 										<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-										<default_value>-0.38519428</default_value>
+										<default_value>-0.385078</default_value>
 										<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
 										<range>-0.416 -0.37</range>
 										<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->
@@ -643,7 +643,7 @@
 										<!--Coordinate can describe rotational, translational, or coupled motion. Defaults to rotational.-->
 										<motion_type>translational</motion_type>
 										<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-										<default_value>-0.0053975</default_value>
+										<default_value>-0.005241</default_value>
 										<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
 										<range>-0.012 0.012</range>
 										<!--Flag indicating whether or not the values of the coordinates should be limited to the range, above.-->

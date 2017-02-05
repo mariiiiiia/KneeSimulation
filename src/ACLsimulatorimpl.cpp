@@ -321,8 +321,8 @@ void forwardSimulation(Model& model)
 	std::cout << "\nAfter initSystem() " << std::asctime(std::localtime(&result)) << endl;
 	
 	// set gravity
-	model.updGravityForce().setGravityVector(si, Vec3(-9.80665,0,0));
-	//model.updGravityForce().setGravityVector(si, Vec3(0,0,0));
+	//model.updGravityForce().setGravityVector(si, Vec3(-9.80665,0,0));
+	model.updGravityForce().setGravityVector(si, Vec3(0,0,0));
 	
 	// disable muscles
 	string muscle_name;
@@ -340,7 +340,7 @@ void forwardSimulation(Model& model)
 	}
 
 	// set knee angles  
-	const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
+	//const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
 	//knee_r_cs.get("knee_angle_r").setValue(si, -2.09439510);  // -120 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -1.74532925);  // -100 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -1.570796326);  // -90 degrees
@@ -348,7 +348,7 @@ void forwardSimulation(Model& model)
 	//knee_r_cs.get("knee_angle_r").setValue(si, -1.04719755);  // -60 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -0.6981317008);  // -40 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -0.34906585);  // -20 degrees
-    knee_r_cs.get("knee_angle_r").setValue(si, -0.029); 
+    //knee_r_cs.get("knee_angle_r").setValue(si, -0.029); 
 	//knee_r_cs.get("knee_angle_r").setLocked(si, true);
 
 	//knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.02025397);
@@ -398,13 +398,13 @@ void forwardSimulation(Model& model)
 
 	// Save the simulation results
 	Storage statesDegrees(manager.getStateStorage());
-	statesDegrees.print("../outputs/knee_states.sto");
+	statesDegrees.print("../outputs/states_flex.sto");
 	model.updSimbodyEngine().convertRadiansToDegrees(statesDegrees);
 	statesDegrees.setWriteSIMMHeader(true);
-	statesDegrees.print("../outputs/knee_states_degrees.mot");
+	statesDegrees.print("../outputs/states_degrees_flex.mot");
 	// force reporter results
-	forceReporter->getForceStorage().print("../outputs/force_reporter.mot");
-	customReporter->print( "../outputs/custom_ligament_reporter.mot");
+	forceReporter->getForceStorage().print("../outputs/force_reporter_flex.mot");
+	customReporter->print( "../outputs/custom_reporter_flex.mot");
 }
 
 void addExternalForce(Model& model, double const_point_y)
@@ -426,8 +426,8 @@ void addExternalForce(Model& model, double const_point_y)
 	prescribedForce->setName("prescribedForce");
   
 	// Set the force and point functions for the new prescribed force
-	prescribedForce->setForceFunctions( new Constant(150), new Constant(0.0), new Constant(0.0));
-	prescribedForce->setPointFunctions(new Constant(0.0), new Constant(const_point_y), new Constant(0.0));
+	prescribedForce->setForceFunctions( new Constant(0), new Constant(800.0), new Constant(0.0));
+	prescribedForce->setPointFunctions(new Constant(0.0), new Constant(0), new Constant(0.0));
 
 	// Add the new prescribed force to the model
 	model.addForce(prescribedForce);
@@ -452,7 +452,7 @@ void addFlexionController(Model& model)
 			|| muscle_name == "lat_gas_r" || muscle_name == "med_gas_r" || muscle_name == "sar_r" \
 			|| muscle_name == "semimem_r" || muscle_name == "semiten_r")
 		{
-			Constant* ccf = new Constant(0.6);
+			Constant* ccf = new Constant(1.0);
 			//PiecewiseLinearFunction *ccf = new PiecewiseLinearFunction( 3, control_time, control_acts);
 			controller->prescribeControlForActuator( i, ccf);
 		}

@@ -197,7 +197,7 @@ void printLigamentLengths(Model model)
 
 	cout << "knee angle: " << -30 << endl;
 	knee_r_cs.get("knee_angle_r").setValue(si, -0.52359877); 
-	knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.01); 
+	//knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.01); 
 
 	cout << "aACL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aACL_R")).getLength(si) << endl;
 	cout << "pACL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("pACL_R")).getLength(si) << endl;
@@ -215,7 +215,7 @@ void printLigamentLengths(Model model)
 
 	cout << "knee angle: " << -60 << endl;
 	knee_r_cs.get("knee_angle_r").setValue(si, -1.0471975);  
-	knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.0207306); 
+	//knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.0207306); 
 
 	cout << "aACL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aACL_R")).getLength(si) << endl;
 	cout << "pACL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("pACL_R")).getLength(si) << endl;
@@ -233,7 +233,7 @@ void printLigamentLengths(Model model)
 
 	cout << "knee angle: " << -90 << endl;
 	knee_r_cs.get("knee_angle_r").setValue(si, -1.57079632);  
-	knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.028); 
+	//knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.028); 
 
 	cout << "aACL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aACL_R")).getLength(si) << endl;
 	cout << "pACL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("pACL_R")).getLength(si) << endl;
@@ -251,7 +251,7 @@ void printLigamentLengths(Model model)
 
 	cout << "knee angle: " << -120 << endl;
 	knee_r_cs.get("knee_angle_r").setValue(si, -2.09439510);  
-	knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.030837); 
+	//knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.030837); 
 
 	cout << "aACL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("aACL_R")).getLength(si) << endl;
 	cout << "pACL_R length: " << static_cast<const CustomLigament&>(model.getForceSet().get("pACL_R")).getLength(si) << endl;
