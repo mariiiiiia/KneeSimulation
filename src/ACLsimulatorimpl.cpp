@@ -78,7 +78,7 @@ void forwardSim(Model model){
     }
 
     // Delete duplicates
-    double ii = 0;
+    int ii = 0;
     for (unsigned i=1; i<acts.size(); i++) {
         if (actsTimes[i] <= actsTimes[ii]) {
             actsTimes.erase(actsTimes.begin()+i);
@@ -215,7 +215,7 @@ void inverseSimulation(Model model)
     State &s = model.initSystem();
 	Vector ids_results = ids.solve(s, SimTK::Vector(0));
 
-	for (unsigned i=0; i<ids_results.size(); i++)
+	for (int i=0; i<ids_results.size(); i++)
 		cout << i << " : " << ids_results(i) << endl;
 
 	//for (int j=0; j<s.getQ().size(); j++)
@@ -310,8 +310,8 @@ void forwardSimulation(Model& model)
 	//addExternalForce(model, -0.3);
 	//addExternalForce(model, 0.1);   
 
-	addFlexionController(model);
-	//addExtensionController(model);
+	//addFlexionController(model);
+	addExtensionController(model);
 
 	// init system
 	std::time_t result = std::time(nullptr);
@@ -340,19 +340,22 @@ void forwardSimulation(Model& model)
 	}
 
 	// set knee angles  
-	//const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
+	const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
 	//knee_r_cs.get("knee_angle_r").setValue(si, -2.09439510);  // -120 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -1.74532925);  // -100 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -1.570796326);  // -90 degrees
-	//knee_r_cs.get("knee_angle_r").setValue(si, -1.39626340);  // -80 degrees
+	knee_r_cs.get("knee_angle_r").setValue(si, -1.39626340);  // -80 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -1.04719755);  // -60 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -0.6981317008);  // -40 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -0.34906585);  // -20 degrees
     //knee_r_cs.get("knee_angle_r").setValue(si, -0.029); 
 	//knee_r_cs.get("knee_angle_r").setLocked(si, true);
 
-	//knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.02025397);
-	//knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.38544807);
+	knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.02661332);
+	knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.39351699 );
+	knee_r_cs.get("knee_medial_lateral_r").setValue(si, -0.00483042);
+	knee_r_cs.get("knee_adduction_r").setValue(si, -0.33);
+	knee_r_cs.get("knee_rotation_r").setValue(si, 0.01682137);
 
 	// set initial activations
 	//const Array<Object*> flexors = model.getForceSet().getGroup( "R_knee_bend")->getMembers();
@@ -381,7 +384,7 @@ void forwardSimulation(Model& model)
 
 	// Define the initial and final simulation times
 	double initialTime = 0.0;
-	double finalTime = 0.3;
+	double finalTime = 0.2;
 
 	// Integrate from initial time to final time
 	manager.setInitialTime(initialTime);
@@ -410,9 +413,9 @@ void forwardSimulation(Model& model)
 void addExternalForce(Model& model, double const_point_y)
 {
 	// Specify properties of a force function to be applied to the block
-	double timeX[2] = {0.1, 0.3}; // time nodes for linear function
+	double timeX[2] = {0.0, 0.008}; // time nodes for linear function
 	double timeY[2] = {0.0, 0.3}; // time nodes for linear function
-	double fXofT[2] = {100, 100}; // force values at t1 and t2
+	double fXofT[2] = {500, 0}; // force values at t1 and t2
 	double fYofT[2] = {250, 0}; // force values at t1 and t2
 	//double pYofT[2] = {0, 0.1}; // point in x values at t1 and t2
   
@@ -426,8 +429,8 @@ void addExternalForce(Model& model, double const_point_y)
 	prescribedForce->setName("prescribedForce");
   
 	// Set the force and point functions for the new prescribed force
-	prescribedForce->setForceFunctions( new Constant(0), new Constant(800.0), new Constant(0.0));
-	prescribedForce->setPointFunctions(new Constant(0.0), new Constant(0), new Constant(0.0));
+	prescribedForce->setForceFunctions( forceX, new Constant(0.0), new Constant(0.0));
+	prescribedForce->setPointFunctions(new Constant(0.0), new Constant(0.3), new Constant(0.0));
 
 	// Add the new prescribed force to the model
 	model.addForce(prescribedForce);
@@ -439,8 +442,8 @@ void addFlexionController(Model& model)
 	controller->setName( "flexion_controller");
 	controller->setActuators( model.updActuators());
 	
-	double control_time[3] = {0, 0.1, 0.2}; // time nodes for linear function
-	double control_acts[3] = {0, 0.2, 0.2}; // force values at t1 and t2
+	double control_time[2] = {0, 0.05}; // time nodes for linear function
+	double control_acts[2] = {1.0, 0}; // force values at t1 and t2
 	//control_func->setName( "constant_control_func");
 
 	string muscle_name;
@@ -452,8 +455,8 @@ void addFlexionController(Model& model)
 			|| muscle_name == "lat_gas_r" || muscle_name == "med_gas_r" || muscle_name == "sar_r" \
 			|| muscle_name == "semimem_r" || muscle_name == "semiten_r")
 		{
-			Constant* ccf = new Constant(1.0);
-			//PiecewiseLinearFunction *ccf = new PiecewiseLinearFunction( 3, control_time, control_acts);
+			//Constant* ccf = new Constant(1.0);
+			PiecewiseLinearFunction *ccf = new PiecewiseLinearFunction( 2, control_time, control_acts);
 			controller->prescribeControlForActuator( i, ccf);
 		}
 		else 
@@ -471,8 +474,8 @@ void addExtensionController(Model& model)
 	controller->setName( "extension_controller");
 	controller->setActuators( model.updActuators());
 	
-	//double control_time[2] = {0, 0.2}; // time nodes for linear function
-	//double control_acts[2] = {0.6, 1.0}; // force values at t1 and t2
+	double control_time[2] = {0.1, 0.11}; // time nodes for linear function
+	double control_acts[2] = {0.0, 1.0}; // force values at t1 and t2
 	//control_func->setName( "constant_control_func");
 
 	string muscle_name;
@@ -482,8 +485,8 @@ void addExtensionController(Model& model)
 		// activate quadriceps
 		if (muscle_name == "rect_fem_r" || muscle_name == "vas_med_r" || muscle_name == "vas_int_r" || muscle_name == "vas_lat_r" )
 		{
-			Constant* ccf = new Constant(0.5);
-			//PiecewiseLinearFunction *ccf = new PiecewiseLinearFunction( 2, control_time, control_acts);
+			//Constant* ccf = new Constant(1.0);
+			PiecewiseLinearFunction *ccf = new PiecewiseLinearFunction( 2, control_time, control_acts);
 			controller->prescribeControlForActuator( i, ccf);
 		}
 		else 

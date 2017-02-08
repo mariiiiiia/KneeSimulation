@@ -51,7 +51,7 @@ public:
 	{
 		const double time = s.getTime();
 
-		for (int i=0; i<cf.size(); ++i)
+		for (unsigned i=0; i<cf.size(); ++i)
 			controls[i] = OsimUtils::evalFunc( cf[i], time);
 
         // Log activations (Need to drop const-ness)
