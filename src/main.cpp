@@ -47,18 +47,19 @@ int main(int argc, char *argv[])
 
 		//printLigamentLengths(model);
 
-		// Get a reference to the model's ground body
-		//OpenSim::Body* femur = &model.updBodySet().get("femur_r");
+		// //Get a reference to the model's ground body
+		//OpenSim::Body* tibia_upper_r = &model.updBodySet().get("tibia_r");
 
 		//Vec3 blockMassCenter(0);
 		//Inertia blockInertia = 0*Inertia::brick(Vec3(0));
 		//// Create a new block body with specified properties
 		//OpenSim::Body *block = new OpenSim::Body("block", 1, blockMassCenter, blockInertia);
 		//// Add display geometry to the block to visualize in the GUI
-		//block->addDisplayGeometry("block.vtp");
-		//WeldJoint *latMenicscus_tibia_j = new WeldJoint("block_joint_", *femur, SimTK::Vec3(0.0), 
+		//block->addDisplayGeometry("blockMesh.obj");
+		//WeldJoint *weldJ = new WeldJoint("block_joint_", *tibia_upper_r, SimTK::Vec3(0.0, -0.1, 0.0), 
 		//SimTK::Vec3(0), *block, SimTK::Vec3(0), SimTK::Vec3(0), true); 
-		//model.addBody( block);
+		//model.addBody( block);		
+		//model.print("../resources/geometries/block.osim");
 
 		// simulate
 		//inverseSimulation(model);

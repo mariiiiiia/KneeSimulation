@@ -64,7 +64,8 @@ public:
 void inverseSimulation(Model model);
 void staticOptimization(Model model);
 void forwardSimulation(Model& model);
-void addExternalForce(Model& model, double const_point_y);
+void addExternalForce(Model& model, double const_point_y, double const_point_z);
 void addFlexionController(Model& model);
 void addExtensionController(Model& model);
 
+void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees);

@@ -307,11 +307,11 @@ void forwardSimulation(Model& model)
 	//ground.addDisplayGeometry("ground.vtp");
 
 	// add external force
-	//addExternalForce(model, -0.3);
-	//addExternalForce(model, 0.1);   
+	addExternalForce(model, -0.05, -0.1);
+	addExternalForce(model, -0.05, 0.1);   
 
 	//addFlexionController(model);
-	addExtensionController(model);
+	//addExtensionController(model);
 
 	// init system
 	std::time_t result = std::time(nullptr);
@@ -325,48 +325,39 @@ void forwardSimulation(Model& model)
 	model.updGravityForce().setGravityVector(si, Vec3(0,0,0));
 	
 	// disable muscles
-	string muscle_name;
-	for (int i=0; i<model.getActuators().getSize(); i++)
-	{
-		muscle_name = model.getActuators().get(i).getName();
+	//string muscle_name;
+	//for (int i=0; i<model.getActuators().getSize(); i++)
+	//{
+	//	muscle_name = model.getActuators().get(i).getName();
 
-		model.getActuators().get(i).setDisabled(si, true);
+	//	model.getActuators().get(i).setDisabled(si, true);
 
-		if (muscle_name == "bifemlh_r" || muscle_name == "bifemsh_r" || muscle_name == "grac_r" \
-			|| muscle_name == "lat_gas_r" || muscle_name == "med_gas_r" || muscle_name == "sar_r" \
-			|| muscle_name == "semimem_r" || muscle_name == "semiten_r" \
-			|| muscle_name == "rect_fem_r" || muscle_name == "vas_med_r" || muscle_name == "vas_int_r" || muscle_name == "vas_lat_r" )
-				model.getActuators().get(i).setDisabled(si, false);
-	}
+	//	if (muscle_name == "bifemlh_r" || muscle_name == "bifemsh_r" || muscle_name == "grac_r" \
+	//		|| muscle_name == "lat_gas_r" || muscle_name == "med_gas_r" || muscle_name == "sar_r" \
+	//		|| muscle_name == "semimem_r" || muscle_name == "semiten_r" \
+	//		|| muscle_name == "rect_fem_r" || muscle_name == "vas_med_r" || muscle_name == "vas_int_r" || muscle_name == "vas_lat_r" )
+	//			model.getActuators().get(i).setDisabled(si, false);
+	//}
 
 	// set knee angles  
-	const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
+	//const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
 	//knee_r_cs.get("knee_angle_r").setValue(si, -2.09439510);  // -120 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -1.74532925);  // -100 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -1.570796326);  // -90 degrees
-	knee_r_cs.get("knee_angle_r").setValue(si, -1.39626340);  // -80 degrees
+	//knee_r_cs.get("knee_angle_r").setValue(si, -1.39626340);  // -80 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -1.04719755);  // -60 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -0.6981317008);  // -40 degrees
 	//knee_r_cs.get("knee_angle_r").setValue(si, -0.34906585);  // -20 degrees
     //knee_r_cs.get("knee_angle_r").setValue(si, -0.029); 
 	//knee_r_cs.get("knee_angle_r").setLocked(si, true);
 
-	knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.02661332);
-	knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.39351699 );
-	knee_r_cs.get("knee_medial_lateral_r").setValue(si, -0.00483042);
-	knee_r_cs.get("knee_adduction_r").setValue(si, -0.33);
-	knee_r_cs.get("knee_rotation_r").setValue(si, 0.01682137);
-
-	// set initial activations
-	//const Array<Object*> flexors = model.getForceSet().getGroup( "R_knee_bend")->getMembers();
-	//Thelen2003Muscle* flex_muscle;
-	//for (int i=0; i<flexors.size(); i++)
-	//{
-	//	flex_muscle = static_cast<Thelen2003Muscle*> (flexors.get(i));
-	//	flex_muscle->setActivation( si, 1.0);
-		//flex_muscle->set_deactivation_time_constant( 0.5);
-	//}
-
+	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.295525);
+	//knee_r_cs.get("knee_rotation_r").setValue(si, 0.0044018);
+	//knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.00522225);
+	//knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.382426);
+	//knee_r_cs.get("knee_medial_lateral_r").setValue(si, -0.00486);
+	
+	setKneeAngle(model, si, 0);
 	model.equilibrateMuscles( si);
 
 	// Add reporters
@@ -384,7 +375,7 @@ void forwardSimulation(Model& model)
 
 	// Define the initial and final simulation times
 	double initialTime = 0.0;
-	double finalTime = 0.2;
+	double finalTime = 0.3;
 
 	// Integrate from initial time to final time
 	manager.setInitialTime(initialTime);
@@ -410,7 +401,7 @@ void forwardSimulation(Model& model)
 	customReporter->print( "../outputs/custom_reporter_flex.mot");
 }
 
-void addExternalForce(Model& model, double const_point_y)
+void addExternalForce(Model& model, double const_point_y, double const_point_z)
 {
 	// Specify properties of a force function to be applied to the block
 	double timeX[2] = {0.0, 0.008}; // time nodes for linear function
@@ -429,8 +420,8 @@ void addExternalForce(Model& model, double const_point_y)
 	prescribedForce->setName("prescribedForce");
   
 	// Set the force and point functions for the new prescribed force
-	prescribedForce->setForceFunctions( forceX, new Constant(0.0), new Constant(0.0));
-	prescribedForce->setPointFunctions(new Constant(0.0), new Constant(0.3), new Constant(0.0));
+	prescribedForce->setForceFunctions( new Constant(67.0), new Constant(0.0), new Constant(0.0));
+	prescribedForce->setPointFunctions(new Constant(0.0), new Constant(const_point_y), new Constant(const_point_z));
 
 	// Add the new prescribed force to the model
 	model.addForce(prescribedForce);
@@ -455,8 +446,8 @@ void addFlexionController(Model& model)
 			|| muscle_name == "lat_gas_r" || muscle_name == "med_gas_r" || muscle_name == "sar_r" \
 			|| muscle_name == "semimem_r" || muscle_name == "semiten_r")
 		{
-			//Constant* ccf = new Constant(1.0);
-			PiecewiseLinearFunction *ccf = new PiecewiseLinearFunction( 2, control_time, control_acts);
+			Constant* ccf = new Constant(1.0);
+			//PiecewiseLinearFunction *ccf = new PiecewiseLinearFunction( 2, control_time, control_acts);
 			controller->prescribeControlForActuator( i, ccf);
 		}
 		else 
@@ -474,7 +465,7 @@ void addExtensionController(Model& model)
 	controller->setName( "extension_controller");
 	controller->setActuators( model.updActuators());
 	
-	double control_time[2] = {0.1, 0.11}; // time nodes for linear function
+	double control_time[2] = {0.01, 0.02}; // time nodes for linear function
 	double control_acts[2] = {0.0, 1.0}; // force values at t1 and t2
 	//control_func->setName( "constant_control_func");
 
@@ -496,4 +487,81 @@ void addExtensionController(Model& model)
 		}
 	}
 	model.addController( controller);
+}
+
+void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees)
+{
+	const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
+	if (angle_degrees == -120)
+	{
+		knee_r_cs.get("knee_angle_r").setValue(si, -2.09439510);  // -120 degrees
+		
+		knee_r_cs.get("knee_adduction_r").setValue(si, -0.19163894);
+		knee_r_cs.get("knee_rotation_r").setValue(si, 0.02110966);
+		knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.02843407);
+		knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.41174209);
+		knee_r_cs.get("knee_medial_lateral_r").setValue(si, -0.00329063);
+	}
+	else if (angle_degrees == -100)
+	{
+		knee_r_cs.get("knee_angle_r").setValue(si, -1.74533);  // -100 degrees
+		
+		knee_r_cs.get("knee_adduction_r").setValue(si, -0.23053779);
+		knee_r_cs.get("knee_rotation_r").setValue(si, 0.00044497);
+		knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.0293309);
+		knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.40140432);
+		knee_r_cs.get("knee_medial_lateral_r").setValue(si, -0.00504724);
+	}
+	else if (angle_degrees == -80)
+	{
+		knee_r_cs.get("knee_angle_r").setValue(si, -1.39626);  // -80 degrees
+			
+		knee_r_cs.get("knee_adduction_r").setValue(si, -0.25427703);
+		knee_r_cs.get("knee_rotation_r").setValue(si, 0.01682137);
+		knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.02661332);
+		knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.39351699 );
+		knee_r_cs.get("knee_medial_lateral_r").setValue(si, -0.00483042);
+	}
+	else if (angle_degrees == -60)
+	{
+		knee_r_cs.get("knee_angle_r").setValue(si, -1.0472);  // -60 degrees
+			
+		knee_r_cs.get("knee_adduction_r").setValue(si, -0.24850579);
+		knee_r_cs.get("knee_rotation_r").setValue(si, 0.02181265);
+		knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.02092232);
+		knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.38597298);
+		knee_r_cs.get("knee_medial_lateral_r").setValue(si, -0.00403978);
+	}
+	else if (angle_degrees == -40)
+	{
+		knee_r_cs.get("knee_angle_r").setValue(si, -0.698132);  // -40 degrees
+			
+		knee_r_cs.get("knee_adduction_r").setValue(si, -0.25397256);
+		knee_r_cs.get("knee_rotation_r").setValue(si, 0.03301188);
+		knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.012679);
+		knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.38227168);
+		knee_r_cs.get("knee_medial_lateral_r").setValue(si, -0.00403308);
+	}
+	else if (angle_degrees == -20)
+	{
+		knee_r_cs.get("knee_angle_r").setValue(si, -0.349066);  // -20 degrees
+		
+		knee_r_cs.get("knee_adduction_r").setValue(si, -0.295525);
+		knee_r_cs.get("knee_rotation_r").setValue(si, 0.0044018);
+		knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.00522225);
+		knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.382426);
+		knee_r_cs.get("knee_medial_lateral_r").setValue(si, -0.00486);
+	}
+	else if (angle_degrees == 0)
+	{
+		knee_r_cs.get("knee_angle_r").setValue(si, knee_r_cs.get("knee_angle_r").getDefaultValue());
+		
+		knee_r_cs.get("knee_adduction_r").setValue(si, knee_r_cs.get("knee_adduction_r").getDefaultValue());
+		knee_r_cs.get("knee_rotation_r").setValue(si, knee_r_cs.get("knee_rotation_r").getDefaultValue());
+		knee_r_cs.get("knee_anterior_posterior_r").setValue(si, knee_r_cs.get("knee_anterior_posterior_r").getDefaultValue());
+		knee_r_cs.get("knee_inferior_superior_r").setValue(si, knee_r_cs.get("knee_inferior_superior_r").getDefaultValue());
+		knee_r_cs.get("knee_medial_lateral_r").setValue(si, knee_r_cs.get("knee_medial_lateral_r").getDefaultValue());
+	}
+
+	knee_r_cs.get("knee_angle_r").setLocked(si, true);
 }

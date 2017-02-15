@@ -10794,8 +10794,8 @@
 								<stiffness>1000000000</stiffness>
 								<dissipation>2</dissipation>
 								<static_friction>1.5</static_friction>
-								<dynamic_friction>0.4</dynamic_friction>
-								<viscous_friction>0.4</viscous_friction>
+								<dynamic_friction>0.04</dynamic_friction>
+								<viscous_friction>0.04</viscous_friction>
 							</ElasticFoundationForce::ContactParameters>
 						</objects>
 						<groups />
