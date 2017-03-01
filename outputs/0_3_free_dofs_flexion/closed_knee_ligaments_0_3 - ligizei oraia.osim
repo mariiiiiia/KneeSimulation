@@ -10773,8 +10773,8 @@
 								<!--Names of geometry objects affected by these parameters.-->
 								<geometry>femur_lat_r_CM meniscus_lat_r_CM</geometry>
 								<stiffness>50000000000</stiffness>
-								<dissipation>4</dissipation>
-								<static_friction>0.09</static_friction>
+								<dissipation>3</dissipation>
+								<static_friction>1</static_friction>
 								<dynamic_friction>0.03</dynamic_friction>
 								<viscous_friction>0.03</viscous_friction>
 							</ElasticFoundationForce::ContactParameters>
@@ -10792,8 +10792,8 @@
 								<!--Names of geometry objects affected by these parameters.-->
 								<geometry>femur_med_r_CM meniscus_med_r_CM</geometry>
 								<stiffness>50000000000</stiffness>
-								<dissipation>4</dissipation>
-								<static_friction>0.09</static_friction>
+								<dissipation>3</dissipation>
+								<static_friction>1</static_friction>
 								<dynamic_friction>0.03</dynamic_friction>
 								<viscous_friction>0.03</viscous_friction>
 							</ElasticFoundationForce::ContactParameters>
@@ -10910,7 +10910,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 						<!--Used to initialize the colour cache variable-->
 						<default_color>0.9 0.9 0.9</default_color>
@@ -10955,7 +10955,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 						<!--Used to initialize the colour cache variable-->
 						<default_color>0.9 0.9 0.9</default_color>
@@ -10976,11 +10976,11 @@
 						<PathPointSet>
 							<objects>
 								<PathPoint name="aPCL_R_femur">
-									<location> 0.011034 -0.414745 -0.00544277</location>
+									<location> 0.0128479 -0.41176 -0.000758403</location>
 									<body>femur_r</body>
 								</PathPoint>
 								<PathPoint name="aPCL_R_tibia">
-									<location> 7.56543e-005 -0.0512001 0.00545411</location>
+									<location> 0.000827732 -0.0504358 0.00752014</location>
 									<body>tibia_r</body>
 								</PathPoint>
 							</objects>
@@ -11006,11 +11006,11 @@
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.02720878</resting_length>
+					<resting_length>0.0293953</resting_length>
 					<!--damping of the ligament-->
 					<damping>363.526370236543</damping>
 					<!--stiffness of the ligament-->
-					<stiffness>3600</stiffness>
+					<stiffness>5600</stiffness>
 					<!--el rigion from non-linear to linear-->
 					<el>0.0827372051149022</el>
 				</CustomLigament>
@@ -11021,11 +11021,11 @@
 						<PathPointSet>
 							<objects>
 								<PathPoint name="pPCL_R_femur">
-									<location> 0.0045827 -0.41271 -0.00803868</location>
+									<location> 0.00886686 -0.409824 -0.00581438</location>
 									<body>femur_r</body>
 								</PathPoint>
 								<PathPoint name="pPCL_R_tibia">
-									<location> -0.00317094 -0.0512838 0.00370925</location>
+									<location> -0.00295986 -0.049925 0.00356567</location>
 									<body>tibia_r</body>
 								</PathPoint>
 							</objects>
@@ -11051,11 +11051,11 @@
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.02694736</resting_length>
+					<resting_length>0.02968776</resting_length>
 					<!--damping of the ligament-->
 					<damping>948.765015575893</damping>
 					<!--stiffness of the ligament-->
-					<stiffness>2600</stiffness>
+					<stiffness>5600</stiffness>
 					<!--el rigion from non-linear to linear-->
 					<el>0.070588702047792</el>
 				</CustomLigament>
@@ -11066,7 +11066,7 @@
 						<PathPointSet>
 							<objects>
 								<PathPoint name="aMCL_R_femur">
-									<location> 0.0140719 -0.402555 -0.0346279</location>
+									<location> 0.000843992 -0.403042 -0.0359478</location>
 									<body>femur_r</body>
 								</PathPoint>
 								<PathPoint name="aMCL_R_tibia">
@@ -11096,11 +11096,11 @@
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.0640092</resting_length>
+					<resting_length>0.0647022</resting_length>
 					<!--damping of the ligament-->
 					<damping>727.127575003531</damping>
 					<!--stiffness of the ligament-->
-					<stiffness>2000</stiffness>
+					<stiffness>3000</stiffness>
 					<!--el rigion from non-linear to linear-->
 					<el>0.0578524124881741</el>
 				</CustomLigament>
@@ -11111,7 +11111,7 @@
 						<PathPointSet>
 							<objects>
 								<PathPoint name="aLCL_R_femur">
-									<location> 0.00266627 -0.399608 0.0339046</location>
+									<location> 0.001804 -0.400319 0.0325147</location>
 									<body>femur_r</body>
 								</PathPoint>
 								<PathPoint name="aLCL_R_tibia">
@@ -11135,13 +11135,13 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 						<!--Used to initialize the colour cache variable-->
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.0583361</resting_length>
+					<resting_length>0.0574639</resting_length>
 					<!--damping of the ligament-->
 					<damping>915.909859480219</damping>
 					<!--stiffness of the ligament-->
