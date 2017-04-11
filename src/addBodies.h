@@ -1,4 +1,8 @@
-#include "OpenSim/OpenSim.h"
+//#include "OpenSim/OpenSim.h"
+#include "OpenSim\Simulation\Model\Model.h"
+#include "OpenSim\Simulation\Model\BodySet.h"
+#include "OpenSim\Simulation\SimbodyEngine\WeldJoint.h"
+#include "OpenSim\Simulation\SimbodyEngine\FreeJoint.h"
 
 using namespace std;
 using namespace OpenSim;

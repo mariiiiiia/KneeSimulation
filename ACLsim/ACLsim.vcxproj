@@ -15,16 +15,19 @@
     <ClCompile Include="..\src\addKneeContacts.cpp" />
     <ClCompile Include="..\src\addBodies.cpp" />
     <ClCompile Include="..\src\main.cpp" />
+    <ClCompile Include="..\src\MonteCarloFD.cpp" />
     <ClCompile Include="..\src\osimutils.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\ACLsimulatorimpl.h" />
-    <ClInclude Include="..\src\addKneeContacts.h" />
-    <ClInclude Include="..\src\addBodies.h" />
-    <ClInclude Include="..\src\osimutils.h" />
+    <ResourceCompile Include="ACLsim.rc" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="ACLsim.rc" />
+    <ClInclude Include="..\src\ACLsimulatorimpl.h" />
+    <ClInclude Include="..\src\addBodies.h" />
+    <ClInclude Include="..\src\addKneeContacts.h" />
+    <ClInclude Include="..\src\cxxopts.hpp" />
+    <ClInclude Include="..\src\MonteCarloFD.h" />
+    <ClInclude Include="..\src\osimutils.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{175CD843-0EB5-4122-9F73-8BE285B35355}</ProjectGuid>

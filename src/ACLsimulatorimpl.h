@@ -1,4 +1,5 @@
-#include "OpenSim/OpenSim.h"
+//#include "OpenSim/OpenSim.h"
+#include "OpenSim\Simulation\Manager\Manager.h"
 #include "OpenSim/Simulation/InverseDynamicsSolver.h"
 #include "osimutils.h"
 #include "CustomAnalysis.h"
@@ -63,7 +64,10 @@ public:
 
 void inverseSimulation(Model model);
 void staticOptimization(Model model);
+void anteriorTibialLoadsFD(Model& model);
+void monteCarloFD(Model& model, double random_dissipation, int j);
 void forwardSimulation(Model& model);
+void addPrescribedForce(Model& model, double const_point_y, double const_point_z);
 void addExternalForce(Model& model, double const_point_y, double const_point_z);
 void addFlexionController(Model& model);
 void addExtensionController(Model& model);
