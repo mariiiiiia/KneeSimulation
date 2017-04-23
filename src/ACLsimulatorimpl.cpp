@@ -316,7 +316,8 @@ void anteriorTibialLoadsFD(Model& model)
 	//addExternalForce(model, -0.05, 0.5);
 	//addExternalForce(model, -0.1, -0.5);   
 	//addExternalForce(model, -0.1, 0.5);   
-	addPrescribedForce(model, 0.0, 0.0);
+	double knee_angle = -60;
+	addTibialLoads(model, knee_angle);
 	
 	// init system
 	std::time_t result = std::time(nullptr);
@@ -343,7 +344,6 @@ void anteriorTibialLoadsFD(Model& model)
 		//		model.getActuators().get(i).setDisabled(si, false);
 	//}
 
-	double knee_angle = 0;
 	setKneeAngle(model, si, knee_angle);
 	model.equilibrateMuscles( si);
 
@@ -465,36 +465,43 @@ void forwardSimulation(Model& model)
 	customReporter->print( "../outputs/custom_reporter_flex.mot");
 }
 
-void addPrescribedForce(Model& model, double const_point_y, double const_point_z)
+void addTibialLoads(Model& model, double knee_angle)
 {
 	// Specify properties of a force function to be applied to the block
-	double timeX[2] = {0.0, 0.5}; // time nodes for linear function
-	double timeY[2] = {0.0, 0.5}; // time nodes for linear function
-	double fXofT[2] = {0, -103.366188 / 4.0f}; // force values at t1 and t2
-	double fYofT[2] = {0, 37.6222 / 4.0f}; // force values at t1 and t2
-	double pYofT[2] = {0, -0.5}; // point values at t1 and t2
-  
-	// Create a new linear functions for the force and point components
-	PiecewiseLinearFunction *forceX = new PiecewiseLinearFunction(2, timeX, fXofT);
-	PiecewiseLinearFunction *forceY = new PiecewiseLinearFunction(2, timeY, fYofT);
-	PiecewiseLinearFunction *pointY = new PiecewiseLinearFunction(2, timeY, pYofT);
+	//double timeX[2] = {0.0, 0.5}; // time nodes for linear function
+	//double timeY[2] = {0.0, 0.5}; // time nodes for linear function
+	//double fXofT[2] = {0, -103.366188 / 4.0f}; // force values at t1 and t2
+	//double fYofT[2] = {0, 37.6222 / 4.0f}; // force values at t1 and t2
+	//double pYofT[2] = {0, -0.5}; // point values at t1 and t2
+ 
+	//// Create a new linear functions for the force and point components
+	//PiecewiseLinearFunction *forceX = new PiecewiseLinearFunction(2, timeX, fXofT);
+	//PiecewiseLinearFunction *forceY = new PiecewiseLinearFunction(2, timeY, fYofT);
+	//PiecewiseLinearFunction *pointY = new PiecewiseLinearFunction(2, timeY, pYofT);
   
 	// Create a new prescribed force applied to the block
 	//PrescribedForce *prescribedF = new PrescribedForce();
 	//OpenSim::Body* tibia_body = &model.updBodySet().get("tibia_r");
 	PrescribedForce *prescribedForce = new PrescribedForce();
 	ostringstream strs;
-	strs << "prescribedForce_" << const_point_y;
+	strs << "prescribedForce_" << knee_angle;
 	prescribedForce->setName(strs.str());
 	prescribedForce->setBodyName("tibia_r");
 
 	// Set the force and point functions for the new prescribed force
-	prescribedForce->setForceFunctions(new Constant(110.0), new Constant(0.0), new Constant(0.0));
-	//prescribedForce->setForceFunctions(new Constant(-110.0 / 4.0), new Constant(0.0), new Constant(0.0));	// at 0 degrees (knee_angle)
-	//prescribedForce->setForceFunctions(new Constant(-106.25), new Constant(28.47), new Constant(0.0));	// at -15 degrees
-	//prescribedForce->setForceFunctions(new Constant(-103.366188 / 4.0f), new Constant(37.6222 / 4.0f), new Constant(0.0));	// at -20 degrees (knee_angle)
-	//prescribedForce->setForceFunctions(new Constant(84.26488), new Constant(-70.7066), new Constant(0.0));	// at -40 degrees (knee_angle)
-	//prescribedForce->setForceFunctions(new Constant(-55), new Constant(95.2627), new Constant(0.0));	// at -60 degrees (knee_angle)
+	if (knee_angle == 0)
+		prescribedForce->setForceFunctions(new Constant(110.0), new Constant(0.0), new Constant(0.0));		// at 0 degrees
+	else if (knee_angle == -15)
+		prescribedForce->setForceFunctions(new Constant(106.25), new Constant(-28.47), new Constant(0.0));	// at -15 degrees
+	else if (knee_angle == -20)
+		prescribedForce->setForceFunctions(new Constant(103.366188), new Constant(-37.6222), new Constant(0.0));	// at -20 degrees (knee_angle)
+	else if (knee_angle == -40)
+		prescribedForce->setForceFunctions(new Constant(84.26488), new Constant(-70.7066), new Constant(0.0));	// at -40 degrees (knee_angle)
+	else if (knee_angle == -60)
+		prescribedForce->setForceFunctions(new Constant(55), new Constant(-95.2627), new Constant(0.0));	// at -60 degrees (knee_angle)
+	else if (knee_angle == -80)
+		prescribedForce->setForceFunctions(new Constant(19.101), new Constant(-108.3288), new Constant(0.0));	// at -80 degrees (knee_angle)	
+
 	//prescribedForce->setPointFunctions(new Constant(0.0), new Constant(const_point_y), new Constant(const_point_z));
 
 	//prescribedForce->setForceIsInGlobalFrame(true);
@@ -619,7 +626,7 @@ void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees)
 	{
 		knee_r_cs.get("knee_angle_r").setValue(si, -1.39626);  // -80 degrees
 			
-		knee_r_cs.get("knee_adduction_r").setValue(si, -0.25427703);
+		knee_r_cs.get("knee_adduction_r").setValue(si, -0.24427703);
 		knee_r_cs.get("knee_rotation_r").setValue(si, 0.01682137);
 		knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.02661332);
 		knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.39351699 );
@@ -679,7 +686,12 @@ void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees)
 	}
 
 	knee_r_cs.get("knee_angle_r").setLocked(si, true);
-	//knee_r_cs.get("knee_adduction_r").setLocked(si, true);
+	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.03490);   // ant load at -80 degrees flexion
+	knee_r_cs.get("knee_adduction_r").setValue(si, -0.122173);   // ant load at -60 degrees flexion
+	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.1221730);   // ant load at -40 degrees flexion
+	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.191986);   // ant load at -20 degrees flexion
+	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.226892);   // ant load at 0 degrees flexion
+	knee_r_cs.get("knee_adduction_r").setLocked(si, true);
 	//knee_r_cs.get("knee_rotation_r").setLocked(si, true);
 	//knee_r_cs.get("knee_anterior_posterior_r").setLocked(si, true);
 	//knee_r_cs.get("knee_inferior_superior_r").setLocked(si, true);

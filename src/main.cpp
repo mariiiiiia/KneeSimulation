@@ -61,8 +61,8 @@ int main(int argc, char *argv[])
 		// simulate
 		//inverseSimulation(model);
 		//staticOptimization(model);
-		anteriorTibialLoadsFD(model);
-		//forwardSimulation(model);
+		//anteriorTibialLoadsFD(model);
+		forwardSimulation(model);
 
 		//performMCFD(model, 100);
 

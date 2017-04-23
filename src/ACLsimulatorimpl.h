@@ -67,7 +67,7 @@ void staticOptimization(Model model);
 void anteriorTibialLoadsFD(Model& model);
 void monteCarloFD(Model& model, double random_dissipation, int j);
 void forwardSimulation(Model& model);
-void addPrescribedForce(Model& model, double const_point_y, double const_point_z);
+void addTibialLoads(Model& model, double knee_angle);
 void addExternalForce(Model& model, double const_point_y, double const_point_z);
 void addFlexionController(Model& model);
 void addExtensionController(Model& model);
