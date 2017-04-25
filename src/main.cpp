@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 	{
 		Object::registerType(CustomLigament());
 		// Create an OpenSim model and set its name
-		OpenSim::Model model("../resources/geometries/closed_knee_ligaments_0_3_scheburn_ant_loads.osim");
+		OpenSim::Model model("../resources/geometries/closed_knee_ligaments_0_3_scheburn_ant_loads - Copy.osim");
 
 		//// add meniscus bodies to left and right knee
 		//cout << "Adding meniscus" << endl;
@@ -61,8 +61,8 @@ int main(int argc, char *argv[])
 		// simulate
 		//inverseSimulation(model);
 		//staticOptimization(model);
-		//anteriorTibialLoadsFD(model);
-		forwardSimulation(model);
+		anteriorTibialLoadsFD(model);
+		//forwardSimulation(model);
 
 		//performMCFD(model, 100);
 
