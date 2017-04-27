@@ -316,7 +316,7 @@ void anteriorTibialLoadsFD(Model& model)
 	//addExternalForce(model, -0.05, 0.5);
 	//addExternalForce(model, -0.1, -0.5);   
 	//addExternalForce(model, -0.1, 0.5);   
-	double knee_angle = -80;
+	double knee_angle = -90;
 	addTibialLoads(model, knee_angle);
 	
 	// init system
@@ -362,7 +362,7 @@ void anteriorTibialLoadsFD(Model& model)
 
 	// Define the initial and final simulation times
 	double initialTime = 0.0;
-	double finalTime = 1.5;
+	double finalTime = 1.0;
 
 	// Integrate from initial time to final time
 	manager.setInitialTime(initialTime);
@@ -501,6 +501,8 @@ void addTibialLoads(Model& model, double knee_angle)
 		prescribedForce->setForceFunctions(new Constant(55), new Constant(-95.2627), new Constant(0.0));	// at -60 degrees (knee_angle)
 	else if (knee_angle == -80)
 		prescribedForce->setForceFunctions(new Constant(19.101), new Constant(-108.3288), new Constant(0.0));	// at -80 degrees (knee_angle)	
+	else if (knee_angle == -90)
+		prescribedForce->setForceFunctions(new Constant(0), new Constant(-110.0), new Constant(0.0));	// at -90 degrees (knee_angle)	
 
 	//prescribedForce->setPointFunctions(new Constant(0.0), new Constant(const_point_y), new Constant(const_point_z));
 
@@ -622,6 +624,16 @@ void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees)
 		knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.40140432);
 		knee_r_cs.get("knee_medial_lateral_r").setValue(si, -0.00504724);
 	}
+	else if (angle_degrees == -90)
+	{
+		knee_r_cs.get("knee_angle_r").setValue(si, -1.57079);	// -90 degrees
+
+		knee_r_cs.get("knee_adduction_r").setValue(si, -0.24);
+		knee_r_cs.get("knee_rotation_r").setValue(si, 0.008);
+		knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.0275);
+		knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.396);
+		knee_r_cs.get("knee_medial_lateral_r").setValue(si, -0.005);
+	}
 	else if (angle_degrees == -80)
 	{
 		knee_r_cs.get("knee_angle_r").setValue(si, -1.39626);  // -80 degrees
@@ -686,12 +698,13 @@ void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees)
 	}
 
 	knee_r_cs.get("knee_angle_r").setLocked(si, true);
+	knee_r_cs.get("knee_adduction_r").setValue(si, -0.05235);   // ant load at -90 degrees flexion (+10 degrees)
 	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.03490);   // ant load at -80 degrees flexion
 	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.122173);   // ant load at -60 degrees flexion
 	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.1221730);   // ant load at -40 degrees flexion
 	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.191986);   // ant load at -20 degrees flexion
-	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.226892);   // ant load at 0 degrees flexion
-	//knee_r_cs.get("knee_adduction_r").setLocked(si, true);
+	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.29408);   // ant load at 0 degrees flexion
+	knee_r_cs.get("knee_adduction_r").setLocked(si, true);
 	//knee_r_cs.get("knee_rotation_r").setLocked(si, true);
 	//knee_r_cs.get("knee_anterior_posterior_r").setLocked(si, true);
 	//knee_r_cs.get("knee_inferior_superior_r").setLocked(si, true);
