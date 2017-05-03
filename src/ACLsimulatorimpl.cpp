@@ -316,7 +316,9 @@ void anteriorTibialLoadsFD(Model& model)
 	//addExternalForce(model, -0.05, 0.5);
 	//addExternalForce(model, -0.1, -0.5);   
 	//addExternalForce(model, -0.1, 0.5);   
-	double knee_angle = -90;
+	//double kneeAngle [5] = {0, -20, -40, -60, -90};
+
+	double knee_angle = -40;
 	addTibialLoads(model, knee_angle);
 	
 	// init system
@@ -362,7 +364,7 @@ void anteriorTibialLoadsFD(Model& model)
 
 	// Define the initial and final simulation times
 	double initialTime = 0.0;
-	double finalTime = 1.0;
+	double finalTime = 0.5;
 
 	// Integrate from initial time to final time
 	manager.setInitialTime(initialTime);
@@ -393,6 +395,7 @@ void anteriorTibialLoadsFD(Model& model)
 void forwardSimulation(Model& model)
 {
 	addFlexionController(model);
+
 	//addExtensionController(model);
 
 	// init system
@@ -421,7 +424,7 @@ void forwardSimulation(Model& model)
 	//			model.getActuators().get(i).setDisabled(si, false);
 	//}
 
-	//setKneeAngle(model, si, 0);
+	//setKneeAngle(model, si, -90);
 	model.equilibrateMuscles( si);
 
 	// Add reporters
@@ -588,7 +591,7 @@ void addExtensionController(Model& model)
 		// activate quadriceps
 		if (muscle_name == "rect_fem_r" || muscle_name == "vas_med_r" || muscle_name == "vas_int_r" || muscle_name == "vas_lat_r" )
 		{
-			Constant* ccf = new Constant(0.6);
+			Constant* ccf = new Constant(0.8);
 			//PiecewiseLinearFunction *ccf = new PiecewiseLinearFunction( 2, control_time, control_acts);
 			controller->prescribeControlForActuator( i, ccf);
 		}
@@ -698,11 +701,14 @@ void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees)
 	}
 
 	knee_r_cs.get("knee_angle_r").setLocked(si, true);
-	knee_r_cs.get("knee_adduction_r").setValue(si, -0.05235);   // ant load at -90 degrees flexion (+10 degrees)
-	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.03490);   // ant load at -80 degrees flexion
-	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.122173);   // ant load at -60 degrees flexion
-	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.1221730);   // ant load at -40 degrees flexion
-	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.191986);   // ant load at -20 degrees flexion
+	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.05235);   // ant load at -90 degrees flexion (+10 degrees)
+	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.06981);   // ant load at -80 degrees flexion (+10 degrees)
+	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.226892);   // ant load at -60 degrees flexion (+4 degrees)
+	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.191986);   // ant load at -60 degrees flexion (+6 degrees)
+	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.157079);   // ant load at -60 degrees flexion (+8 degrees)
+	knee_r_cs.get("knee_adduction_r").setValue(si, -0.148352);   // ant load at -40 degrees flexion (+6 degrees)
+	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.17453);   // ant load at -20 degrees flexion (+7 degrees)
+	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.20943);   // ant load at -20 degrees flexion (+5 degrees)
 	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.29408);   // ant load at 0 degrees flexion
 	knee_r_cs.get("knee_adduction_r").setLocked(si, true);
 	//knee_r_cs.get("knee_rotation_r").setLocked(si, true);

@@ -2981,7 +2981,7 @@
 									<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
 									<display_preference>4</display_preference>
 									<!--Display opacity between 0.0 and 1.0-->
-									<opacity>1</opacity>
+									<opacity>0.5</opacity>
 								</DisplayGeometry>
 							</objects>
 							<groups />
@@ -5282,7 +5282,7 @@
 									<coordinate>knee_angle_r</coordinate>
 								</ConditionalPathPoint>
 								<MovingPathPoint name="rect_fem_r-P3">
-									<location> 0.0601519 0.0214093 0.0014</location>
+									<location> 0.0602215 0.0213918 0.0014</location>
 									<body>tibia_r</body>
 									<x_location>
 										<SimmSpline>
@@ -5393,7 +5393,7 @@
 									<coordinate>knee_angle_r</coordinate>
 								</ConditionalPathPoint>
 								<MovingPathPoint name="vas_med_r-P5">
-									<location> 0.0543242 0.0220161 -0.0146</location>
+									<location> 0.0543948 0.022007 -0.0146</location>
 									<body>tibia_r</body>
 									<x_location>
 										<SimmSpline>
@@ -5498,7 +5498,7 @@
 									<coordinate>knee_angle_r</coordinate>
 								</ConditionalPathPoint>
 								<MovingPathPoint name="vas_int_r-P4">
-									<location> 0.0536954 0.0254822 0.0018</location>
+									<location> 0.0537714 0.0254745 0.0018</location>
 									<body>tibia_r</body>
 									<x_location>
 										<SimmSpline>
@@ -5609,7 +5609,7 @@
 									<coordinate>knee_angle_r</coordinate>
 								</ConditionalPathPoint>
 								<MovingPathPoint name="vas_lat_r-P5">
-									<location> 0.0584039 0.0199468 0.0165</location>
+									<location> 0.0584712 0.019932 0.0165</location>
 									<body>tibia_r</body>
 									<x_location>
 										<SimmSpline>
@@ -10772,7 +10772,7 @@
 							<ElasticFoundationForce::ContactParameters>
 								<!--Names of geometry objects affected by these parameters.-->
 								<geometry>femur_lat_r_CM meniscus_lat_r_CM</geometry>
-								<stiffness>2000000000</stiffness>
+								<stiffness>1000000000</stiffness>
 								<dissipation>3</dissipation>
 								<static_friction>1</static_friction>
 								<dynamic_friction>0.03</dynamic_friction>
@@ -10791,7 +10791,7 @@
 							<ElasticFoundationForce::ContactParameters>
 								<!--Names of geometry objects affected by these parameters.-->
 								<geometry>femur_med_r_CM meniscus_med_r_CM</geometry>
-								<stiffness>2000000000</stiffness>
+								<stiffness>1000000000</stiffness>
 								<dissipation>3</dissipation>
 								<static_friction>1</static_friction>
 								<dynamic_friction>0.03</dynamic_friction>
@@ -10886,11 +10886,11 @@
 						<PathPointSet>
 							<objects>
 								<PathPoint name="aACL_R_femur">
-									<location> 0.00291154 -0.402048 0.0127502</location>
+									<location> 0.000360443 -0.401685 0.0146386</location>
 									<body>femur_r</body>
 								</PathPoint>
 								<PathPoint name="aACL_R_tibia">
-									<location> 0.0221033 -0.0463665 0.000455814</location>
+									<location> 0.0221592 -0.0454079 0.00166695</location>
 									<body>tibia_r</body>
 								</PathPoint>
 							</objects>
@@ -10916,13 +10916,13 @@
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.0365055</resting_length>
+					<resting_length>0.0340055</resting_length>
 					<!--damping of the ligament-->
 					<damping>390.921987102286</damping>
 					<!--stiffness of the ligament-->
-					<stiffness>2000</stiffness>
+					<stiffness>1500</stiffness>
 					<!--el rigion from non-linear to linear-->
-					<el>0.03</el>
+					<el>0.05</el>
 				</CustomLigament>
 				<CustomLigament name="pACL_R">
 					<!--the set of points defining the path of the CustomLigament-->
@@ -10931,11 +10931,11 @@
 						<PathPointSet>
 							<objects>
 								<PathPoint name="pACL_R_femur">
-									<location> 0.00123208 -0.405826 0.0131048</location>
+									<location> -0.00143315 -0.40486 0.0144368</location>
 									<body>femur_r</body>
 								</PathPoint>
 								<PathPoint name="pACL_R_tibia">
-									<location> 0.0158022 -0.0457753 0.00385405</location>
+									<location> 0.018994 -0.0443346 0.00348502</location>
 									<body>tibia_r</body>
 								</PathPoint>
 							</objects>
@@ -10965,9 +10965,9 @@
 					<!--damping of the ligament-->
 					<damping>403.742492190257</damping>
 					<!--stiffness of the ligament-->
-					<stiffness>2000</stiffness>
+					<stiffness>1500</stiffness>
 					<!--el rigion from non-linear to linear-->
-					<el>0.03</el>
+					<el>0.05</el>
 				</CustomLigament>
 				<CustomLigament name="aPCL_R">
 					<!--the set of points defining the path of the CustomLigament-->
@@ -11066,11 +11066,11 @@
 						<PathPointSet>
 							<objects>
 								<PathPoint name="aMCL_R_femur">
-									<location> 0.0166515 -0.403897 -0.0318416</location>
+									<location> 0.0166584 -0.404516 -0.0311046</location>
 									<body>femur_r</body>
 								</PathPoint>
 								<PathPoint name="aMCL_R_tibia">
-									<location> 0.0116091 -0.0737816 -0.0285447</location>
+									<location> 0.0140011 -0.0723078 -0.0168075</location>
 									<body>tibia_r</body>
 								</PathPoint>
 							</objects>
@@ -11111,11 +11111,11 @@
 						<PathPointSet>
 							<objects>
 								<PathPoint name="aMCL_R_femur">
-									<location> 0.0112741 -0.405276 -0.03459</location>
+									<location> 0.00922478 -0.405015 -0.0315943</location>
 									<body>femur_r</body>
 								</PathPoint>
 								<PathPoint name="aMCL_R_tibia">
-									<location> 0.00512223 -0.0794134 -0.0299563</location>
+									<location> 0.00655689 -0.078341 -0.0159121</location>
 									<body>tibia_r</body>
 								</PathPoint>
 							</objects>
@@ -11156,11 +11156,11 @@
 						<PathPointSet>
 							<objects>
 								<PathPoint name="aMCL_R_femur">
-									<location> 0.00728148 -0.406474 -0.0354486</location>
+									<location> 0.00142567 -0.406464 -0.0313543</location>
 									<body>femur_r</body>
 								</PathPoint>
 								<PathPoint name="aMCL_R_tibia">
-									<location> 0.000639448 -0.0832359 -0.0293308</location>
+									<location> 0.00232202 -0.0821789 -0.013579</location>
 									<body>tibia_r</body>
 								</PathPoint>
 							</objects>
@@ -11186,7 +11186,7 @@
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.060728</resting_length>
+					<resting_length>0.059728</resting_length>
 					<!--damping of the ligament-->
 					<damping>727.127575003531</damping>
 					<!--stiffness of the ligament-->
