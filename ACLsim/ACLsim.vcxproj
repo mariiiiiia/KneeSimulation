@@ -72,13 +72,13 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\Simbody\include;C:\Users\Maria\Documents\GitHub\OpenSim;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Maria\Documents\GitHub\CustomAnalysisPlugin\src;C:\Users\Maria\Documents\GitHub\CustomLigamentPlugin\src;C:\Program Files (x86)\Simbody\include;C:\Users\Maria\Documents\GitHub\OpenSim;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Maria\Documents\GitHub\OpenSim\build\Debug;C:\Program Files %28x86%29\Simbody\lib;C:\Users\Maria\Documents\GitHub\OpenSim\build\RelWithDebInfo;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>osimActuators_d.lib;osimAnalyses_d.lib;osimCommon_d.lib;osimLepton_d.lib;osimSimulation_d.lib;osimTools_d.lib;SimTKcommon_d.lib;SimTKmath_d.lib;SimTKsimbody_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\Maria\Documents\GitHub\CustomAnalysisPlugin\build\Debug;C:\Users\Maria\Documents\GitHub\CustomLigamentPlugin\build\Debug;C:\Users\Maria\Documents\Apps\Simbody\lib;C:\Users\Maria\Documents\GitHub\OpenSim\build\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>osimActuators_d.lib;osimAnalyses_d.lib;osimCommon_d.lib;osimLepton_d.lib;osimSimulation_d.lib;osimTools_d.lib;SimTKcommon_d.lib;SimTKmath_d.lib;SimTKsimbody_d.lib;customAnalysisPlugin_d.lib;CustomLigament_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

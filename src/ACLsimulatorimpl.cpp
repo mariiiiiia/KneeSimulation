@@ -15,299 +15,355 @@ template<typename T> std::string changeToString(
     }     oss << value;     return oss.str();
 }
 
-void forwardSim(Model model){
-    model.setGravity(Vec3(0,-9.9,0));
+//void forwardSim(Model model){
+//    model.setGravity(Vec3(0,-9.9,0));
+//
+//	// name parameters needed
+//	Vector activs_initial, activs_final;		//	activations for the current position and activations for the next position
+//	vector<OpenSim::Function*> controlFuncs;	//	control functions for every t (time)
+//	vector<Vector> acts;						//	activations
+//	vector<double> actsTimes;					//	every t (=time) when I have an activation to apply
+//	double duration = 0.5;
+//
+//	SimTK::State& state = model.initSystem();
+//
+//	// compute muscle activations for specific knee angle (in rads)
+//	double knee_angle = -1.0;
+//	computeActivations(model, knee_angle, controlFuncs, duration, true, activs_initial, activs_final, state);
+//
+//	// add controller to the model after adding the control functions to the controller
+//	KneeController *knee_controller = new KneeController( controlFuncs.size());
+//    knee_controller->setControlFunctions(controlFuncs);
+//	knee_controller->setActuators(model.getActuators());
+//	model.addController(knee_controller);
+//
+//	// set model to initial state
+//	state = model.initSystem();
+//    //model.equilibrateMuscles(state);
+//
+//    // Add reporters
+//    ForceReporter* forceReporter = new ForceReporter(&model);
+//    model.addAnalysis(forceReporter);
+//
+//	// Simulate
+//    RungeKuttaMersonIntegrator integrator(model.getMultibodySystem());
+//    Manager manager(model, integrator);
+//    manager.setInitialTime(0);
+//    manager.setFinalTime(2);
+//
+//	time_t result = std::time(nullptr);
+//	std::cout << "\nBefore integrate(si) " << std::asctime(std::localtime(&result)) << endl;
+//	
+//    manager.integrate(state);
+//
+//	result = std::time(nullptr);
+//	std::cout << "\nAfter integrate(si) " << std::asctime(std::localtime(&result)) << endl;
+//
+//	// Save the simulation results
+//	Storage statesDegrees(manager.getStateStorage());
+//	statesDegrees.print("../outputs/kneeforwsim_states.sto");
+//	model.updSimbodyEngine().convertRadiansToDegrees(statesDegrees);
+//	statesDegrees.setWriteSIMMHeader(true);
+//	statesDegrees.print("../outputs/kneeforwsim_states_degrees.mot");
+//
+//	// Get activation trajectory
+//    acts.resize(knee_controller->getControlLog().size());
+//    actsTimes.resize(knee_controller->getControlLog().size());
+//
+//    vector<int> index(acts.size(), 0);
+//    for (int i = 0 ; i != index.size() ; i++) {
+//      index[i] = i;
+//    }
+//
+//    sort(index.begin(), index.end(),
+//         [&](const int& a, const int& b) {
+//           return (knee_controller->getControlTimesLog()[a] <
+//                   knee_controller->getControlTimesLog()[b]);
+//         }
+//    );
+//
+//    for (int i = 0 ; i != acts.size() ; i++) {
+//        acts[i] = knee_controller->getControlLog()[index[i]];
+//        actsTimes[i] = knee_controller->getControlTimesLog()[index[i]];
+//    }
+//
+//    // Delete duplicates
+//    int ii = 0;
+//    for (unsigned i=1; i<acts.size(); i++) {
+//        if (actsTimes[i] <= actsTimes[ii]) {
+//            actsTimes.erase(actsTimes.begin()+i);
+//            acts.erase(acts.begin()+i);
+//            --i;
+//        }
+//        ii = i;
+//    }
+//
+//	OsimUtils::writeFunctionsToFile( actsTimes, acts, "../outputs/force_Excitations_LOG.sto");
+//}
+//
+//void computeActivations (Model &model, const double angle, vector<OpenSim::Function*> &controlFuncs,
+//			double &duration, bool store, Vector &so_activ_init, Vector &so_activ_final, State &si)
+//{
+//    calcSSact(model, so_activ_init, si);
+//
+//	//set movement parameters
+//	const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
+//    knee_r_cs.get("knee_angle_r").setValue(si, angle);
+//	model.equilibrateMuscles(si);
+//
+//	calcSSact(model, so_activ_final, si);
+//
+//    const int N = 9;
+//
+//    const double t_eq = 0.000;
+//    const double dur_xc = (25.0 + 0.2 * angle) / 1000.;
+//    const double t_fix  = (99.0 + 0.5 * angle) / 1000.;
+//
+//    double phases[N] = {
+//       -t_eq,
+//        0,
+//        0,
+//        dur_xc,
+//        dur_xc * 1.05,
+//        t_fix,
+//        t_fix + 0.005,
+//        t_fix + 0.010,
+//        t_fix*2
+//    };
+//    for (int i=0; i<N; i++) phases[i]+=t_eq;
+//
+//    // Construct control functions
+//    controlFuncs.clear();
+//    double values[N];
+//
+//    for (int i = 0; i < so_activ_final.size(); i++)  {
+//        double dssa = so_activ_final[i] - so_activ_init[i];
+//        int j=0;
+//
+//        values[j++] = so_activ_init[i];
+//        values[j++] = values[j-1];
+//
+//        values[j++] = so_activ_final[i] + dssa * 0.75;
+//        values[j++] = values[j-1];
+//
+//        values[j++] = so_activ_init[i] + dssa * 0.975;
+//        values[j++] = values[j-1];
+//
+//        values[j++] = so_activ_init[i] + dssa * 1.350;
+//
+//        values[j++] = so_activ_final[i];
+//        values[j++] = values[j-1];
+//
+//        OpenSim::Function *controlFunc = new PiecewiseLinearFunction(N, phases, values);
+//        controlFunc->setName(model.getActuators()[i].getName());
+//        controlFunc->setName("Excitation_" + model.getActuators()[i].getName());
+//        controlFuncs.push_back(controlFunc);
+//    }
+//
+//    duration = t_eq + t_fix * 2;
+//
+//	if (store == true) OsimUtils::writeFunctionsToFile( controlFuncs, "../outputs/_Excitations_LOG.sto", duration, 0.001 );
+//}
+//
+//void calcSSact(Model &model, Vector &activations, State &si)
+//{
+//	// Perform a dummy forward simulation without forces,
+//    // just to obtain a state-series to be used by stat opt
+//    OsimUtils::disableAllForces(si, model);
+//	// Create the integrator and manager for the simulation.
+//    SimTK::RungeKuttaMersonIntegrator integrator( model.getMultibodySystem() );
+//    Manager manager( model, integrator );
+//	// Integrate from initial time to final time.
+//    manager.setInitialTime( 0);
+//    manager.setFinalTime( 2);
+//    std::cout << "\n\nIntegrating from 0 to 2 " << std::endl;
+//    manager.integrate( si);
+//
+//    // Perform a quick static optimization that will give us
+//    // the steady state activations needed to overcome the passive forces
+//    OsimUtils::enableAllForces(si, model);
+//
+//    Storage &states = manager.getStateStorage();
+//    states.setInDegrees(false);
+//    StaticOptimization so(&model);
+//    so.setStatesStore(states);
+//    State &s = model.initSystem();
+//
+//    states.getData(0, s.getNY(), &s.updY()[0]);
+//    s.setTime(0);
+//    so.begin(s);
+//    so.end(s);
+//
+//    Storage *as = so.getActivationStorage();
+//    int na = model.getActuators().getSize();
+//    activations.resize(na);
+//    int row = as->getSize() - 1;
+//
+//    // Store activations to out vector
+//    for (int i = 0; i<na; i++)
+//	{
+//        as->getData(row, i, activations[i]);
+//		//// print results
+//		//cout << as->getColumnLabels()[i+1] << ": " << activations[i] << endl;
+//		//cout << as->getDataColumn() << "\n" << endl;
+//	}
+//}
 
-	// name parameters needed
-	Vector activs_initial, activs_final;		//	activations for the current position and activations for the next position
-	vector<OpenSim::Function*> controlFuncs;	//	control functions for every t (time)
-	vector<Vector> acts;						//	activations
-	vector<double> actsTimes;					//	every t (=time) when I have an activation to apply
-	double duration = 0.5;
+//void inverseSimulation(Model model)
+//{
+//	Array_<Real> times;
+//	double dur = 1.0;
+//	double step = 0.001;
+//
+//	// Prepare time series
+//    InverseDynamicsSolver ids(model);
+//    times.resize((int)(dur / step) + 1, 0);
+//    for (unsigned i = 0; i < times.size(); i++)
+//        times[i] = step * i;
+//
+//	// Solve for generalized joints forces
+//    State &s = model.initSystem();
+//	Vector ids_results = ids.solve(s, SimTK::Vector(0));
+//
+//	for (int i=0; i<ids_results.size(); i++)
+//		cout << i << " : " << ids_results(i) << endl;
+//}
 
-	SimTK::State& state = model.initSystem();
+//void staticOptimization(Model model)
+//{
+//    // set gravity off    
+//    //model.setGravity(Vec3(0,0,0));
+//
+//    SimTK::State& state = model.initSystem();
+//    std::vector<std::vector<double>> acts;                // activations
+//    vector<double> actsTimes;                   // states.size()                      
+//    // Create the state sequence of motion (knee flexion)
+//    Storage states;
+//    states.setDescription("Knee flexion");
+//    Array<std::string> stateNames = model.getStateVariableNames();    
+//    stateNames.insert(0, "time");
+//    states.setColumnLabels(stateNames);
+//    Array<double> stateVals;
+//
+//    const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
+//    double knee_angle_r = -0.0290726;
+//    double t = 0.0;
+//    for (int i=0; i<20; i++)
+//    {
+//        knee_angle_r = -1.0/20 + knee_angle_r;
+//        knee_r_cs.get("knee_angle_r").setValue(state, knee_angle_r);
+//        model.getStateValues(state,stateVals);
+//        states.append( t, stateVals.size(), stateVals.get());
+//        t = t + 0.1;
+//    }
+//    t = t - 0.1;
+//    actsTimes.resize(states.getSize());
+//    states.setInDegrees(false);
+//    
+//	// Perform the static optimization
+//    StaticOptimization so(&model);
+//    so.setStatesStore(states);
+//    int ns = states.getSize(); 
+//    double ti, tf;
+//    states.getTime(0, ti);
+//    states.getTime(ns-1, tf);
+//    so.setStartTime(ti);
+//    so.setEndTime(tf);
+//
+//    // Run the analysis loop
+//    state = model.initSystem();
+//    for (int i = 0; i < ns; i++) {
+//        states.getData(i, state.getNY(), &state.updY()[0]);
+//        Real t = 0.0;
+//        states.getTime(i, t);
+//        state.setTime(t);
+//        model.assemble(state);
+//        model.getMultibodySystem().realize(state, SimTK::Stage::Velocity);
+//
+//        if (i == 0 )
+//          so.begin(state);
+//        else if (i == ns)
+//          so.end(state);
+//        else
+//          so.step(state, i);
+//    }
+//
+//	// store .mot file
+//	Storage* activations = so.getActivationStorage();
+//	activations->print("../outputs/so_acts.sto");
+//	Storage* forces = so.getForceStorage();
+//	forces->print("../outputs/so_forces.sto");
+//
+//	//cout << forces->getName() << endl;
+//}
 
-	// compute muscle activations for specific knee angle (in rads)
-	double knee_angle = -1.0;
-	computeActivations(model, knee_angle, controlFuncs, duration, true, activs_initial, activs_final, state);
 
-	// add controller to the model after adding the control functions to the controller
-	KneeController *knee_controller = new KneeController( controlFuncs.size());
-    knee_controller->setControlFunctions(controlFuncs);
-	knee_controller->setActuators(model.getActuators());
-	model.addController(knee_controller);
+static const Real ForceScale = .25;
 
-	// set model to initial state
-	state = model.initSystem();
-    //model.equilibrateMuscles(state);
+class ForceArrowGenerator : public DecorationGenerator {
+public:
+    ForceArrowGenerator(const MultibodySystem& system,
+                        const CompliantContactSubsystem& complCont) 
+    :   m_system(system), m_compliant(complCont) {}
 
-    // Add reporters
-    ForceReporter* forceReporter = new ForceReporter(&model);
-    model.addAnalysis(forceReporter);
+    virtual void generateDecorations(const State& state, Array_<DecorativeGeometry>& geometry) override {
+        const Vec3 frcColors[] = {Red,Orange,Cyan};
+        const Vec3 momColors[] = {Blue,Green,Purple};
+        m_system.realize(state, Stage::Velocity);
 
-	// Simulate
-    RungeKuttaMersonIntegrator integrator(model.getMultibodySystem());
-    Manager manager(model, integrator);
-    manager.setInitialTime(0);
-    manager.setFinalTime(2);
+        const int ncont = m_compliant.getNumContactForces(state);
+        for (int i=0; i < ncont; ++i) {
+            const ContactForce& force = m_compliant.getContactForce(state,i);
+            const ContactId     id    = force.getContactId();
+            const Vec3& frc = force.getForceOnSurface2()[1];
+            const Vec3& mom = force.getForceOnSurface2()[0];
+            Real  frcMag = frc.norm(), momMag=mom.norm();
+            int frcThickness = 1, momThickness = 1;
+            Real frcScale = ForceScale, momScale = ForceScale;
+            while (frcMag > 10)
+                frcThickness++, frcScale /= 10, frcMag /= 10;
+            while (momMag > 10)
+                momThickness++, momScale /= 10, momMag /= 10;
+            DecorativeLine frcLine(force.getContactPoint(),
+                force.getContactPoint() + frcScale*frc);
+            DecorativeLine momLine(force.getContactPoint(),
+                force.getContactPoint() + momScale*mom);
+            frcLine.setColor(frcColors[id%3]);
+            momLine.setColor(momColors[id%3]);
+            frcLine.setLineThickness(2*frcThickness);
+            momLine.setLineThickness(2*momThickness);
+            geometry.push_back(frcLine);
+            geometry.push_back(momLine);
 
-	time_t result = std::time(nullptr);
-	std::cout << "\nBefore integrate(si) " << std::asctime(std::localtime(&result)) << endl;
-	
-    manager.integrate(state);
-
-	result = std::time(nullptr);
-	std::cout << "\nAfter integrate(si) " << std::asctime(std::localtime(&result)) << endl;
-
-	// Save the simulation results
-	Storage statesDegrees(manager.getStateStorage());
-	statesDegrees.print("../outputs/kneeforwsim_states.sto");
-	model.updSimbodyEngine().convertRadiansToDegrees(statesDegrees);
-	statesDegrees.setWriteSIMMHeader(true);
-	statesDegrees.print("../outputs/kneeforwsim_states_degrees.mot");
-
-	// Get activation trajectory
-    acts.resize(knee_controller->getControlLog().size());
-    actsTimes.resize(knee_controller->getControlLog().size());
-
-    vector<int> index(acts.size(), 0);
-    for (int i = 0 ; i != index.size() ; i++) {
-      index[i] = i;
-    }
-
-    sort(index.begin(), index.end(),
-         [&](const int& a, const int& b) {
-           return (knee_controller->getControlTimesLog()[a] <
-                   knee_controller->getControlTimesLog()[b]);
-         }
-    );
-
-    for (int i = 0 ; i != acts.size() ; i++) {
-        acts[i] = knee_controller->getControlLog()[index[i]];
-        actsTimes[i] = knee_controller->getControlTimesLog()[index[i]];
-    }
-
-    // Delete duplicates
-    int ii = 0;
-    for (unsigned i=1; i<acts.size(); i++) {
-        if (actsTimes[i] <= actsTimes[ii]) {
-            actsTimes.erase(actsTimes.begin()+i);
-            acts.erase(acts.begin()+i);
-            --i;
+            ContactPatch patch;
+            const bool found = m_compliant.calcContactPatchDetailsById(state,id,patch);
+            //cout << "patch for id" << id << " found=" << found << endl;
+            //cout << "resultant=" << patch.getContactForce() << endl;
+            //cout << "num details=" << patch.getNumDetails() << endl;
+            for (int i=0; i < patch.getNumDetails(); ++i) {
+                const ContactDetail& detail = patch.getContactDetail(i);
+                const Real peakPressure = detail.getPeakPressure();
+                // Make a black line from the element's contact point in the normal
+                // direction, with length proportional to log(peak pressure)
+                // on that element. 
+                DecorativeLine normal(detail.getContactPoint(),
+                    detail.getContactPoint()+ std::log10(peakPressure)
+                                                * detail.getContactNormal());
+                normal.setColor(Black);
+                geometry.push_back(normal);
+                // Make a red line that extends from the contact
+                // point in the direction of the slip velocity, of length 3*slipvel.
+                DecorativeLine slip(detail.getContactPoint(),
+                    detail.getContactPoint()+3*detail.getSlipVelocity());
+                slip.setColor(Red);
+                geometry.push_back(slip);
+            }
         }
-        ii = i;
     }
-
-	OsimUtils::writeFunctionsToFile( actsTimes, acts, "../outputs/force_Excitations_LOG.sto");
-}
-
-void computeActivations (Model &model, const double angle, vector<OpenSim::Function*> &controlFuncs,
-			double &duration, bool store, Vector &so_activ_init, Vector &so_activ_final, State &si)
-{
-    calcSSact(model, so_activ_init, si);
-
-	//set movement parameters
-	const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
-    knee_r_cs.get("knee_angle_r").setValue(si, angle);
-	model.equilibrateMuscles(si);
-
-	calcSSact(model, so_activ_final, si);
-
-    const int N = 9;
-
-    const double t_eq = 0.000;
-    const double dur_xc = (25.0 + 0.2 * angle) / 1000.;
-    const double t_fix  = (99.0 + 0.5 * angle) / 1000.;
-
-    double phases[N] = {
-       -t_eq,
-        0,
-        0,
-        dur_xc,
-        dur_xc * 1.05,
-        t_fix,
-        t_fix + 0.005,
-        t_fix + 0.010,
-        t_fix*2
-    };
-    for (int i=0; i<N; i++) phases[i]+=t_eq;
-
-    // Construct control functions
-    controlFuncs.clear();
-    double values[N];
-
-    for (int i = 0; i < so_activ_final.size(); i++)  {
-        double dssa = so_activ_final[i] - so_activ_init[i];
-        int j=0;
-
-        values[j++] = so_activ_init[i];
-        values[j++] = values[j-1];
-
-        values[j++] = so_activ_final[i] + dssa * 0.75;
-        values[j++] = values[j-1];
-
-        values[j++] = so_activ_init[i] + dssa * 0.975;
-        values[j++] = values[j-1];
-
-        values[j++] = so_activ_init[i] + dssa * 1.350;
-
-        values[j++] = so_activ_final[i];
-        values[j++] = values[j-1];
-
-        OpenSim::Function *controlFunc = new PiecewiseLinearFunction(N, phases, values);
-        controlFunc->setName(model.getActuators()[i].getName());
-        controlFunc->setName("Excitation_" + model.getActuators()[i].getName());
-        controlFuncs.push_back(controlFunc);
-    }
-
-    duration = t_eq + t_fix * 2;
-
-	if (store == true) OsimUtils::writeFunctionsToFile( controlFuncs, "../outputs/_Excitations_LOG.sto", duration, 0.001 );
-}
-
-void calcSSact(Model &model, Vector &activations, State &si)
-{
-	// Perform a dummy forward simulation without forces,
-    // just to obtain a state-series to be used by stat opt
-    OsimUtils::disableAllForces(si, model);
-	// Create the integrator and manager for the simulation.
-    SimTK::RungeKuttaMersonIntegrator integrator( model.getMultibodySystem() );
-    Manager manager( model, integrator );
-	// Integrate from initial time to final time.
-    manager.setInitialTime( 0);
-    manager.setFinalTime( 2);
-    std::cout << "\n\nIntegrating from 0 to 2 " << std::endl;
-    manager.integrate( si);
-
-    // Perform a quick static optimization that will give us
-    // the steady state activations needed to overcome the passive forces
-    OsimUtils::enableAllForces(si, model);
-
-    Storage &states = manager.getStateStorage();
-    states.setInDegrees(false);
-    StaticOptimization so(&model);
-    so.setStatesStore(states);
-    State &s = model.initSystem();
-
-    states.getData(0, s.getNY(), &s.updY()[0]);
-    s.setTime(0);
-    so.begin(s);
-    so.end(s);
-
-    Storage *as = so.getActivationStorage();
-    int na = model.getActuators().getSize();
-    activations.resize(na);
-    int row = as->getSize() - 1;
-
-    // Store activations to out vector
-    for (int i = 0; i<na; i++)
-	{
-        as->getData(row, i, activations[i]);
-		//// print results
-		//cout << as->getColumnLabels()[i+1] << ": " << activations[i] << endl;
-		//cout << as->getDataColumn() << "\n" << endl;
-	}
-}
-
-void inverseSimulation(Model model)
-{
-	Array_<Real> times;
-	double dur = 1.0;
-	double step = 0.001;
-
-	// Prepare time series
-    InverseDynamicsSolver ids(model);
-    times.resize((int)(dur / step) + 1, 0);
-    for (unsigned i = 0; i < times.size(); i++)
-        times[i] = step * i;
-
-	// Solve for generalized joints forces
-    State &s = model.initSystem();
-	Vector ids_results = ids.solve(s, SimTK::Vector(0));
-
-	for (int i=0; i<ids_results.size(); i++)
-		cout << i << " : " << ids_results(i) << endl;
-
-	//for (int j=0; j<s.getQ().size(); j++)
-	//{
-	//	cout << "Q(" << j << "): " << s.getQ()[j] << endl;
-	//}
-	//
-	//Array<std::string> stateNames = model.getStateVariableNames();    
-	//printf("print state variable names (%d):\n", stateNames.size());
-	//for (int j=0; j<stateNames.size(); j++)
- //   {
- //       printf("state variable name %d: %s\n", j, stateNames[j].c_str());
-	//}
-}
-
-void staticOptimization(Model model)
-{
-    // set gravity off    
-    //model.setGravity(Vec3(0,0,0));
-
-    SimTK::State& state = model.initSystem();
-    std::vector<std::vector<double>> acts;                // activations
-    vector<double> actsTimes;                   // states.size()                      
-    // Create the state sequence of motion (knee flexion)
-    Storage states;
-    states.setDescription("Knee flexion");
-    Array<std::string> stateNames = model.getStateVariableNames();    
-    stateNames.insert(0, "time");
-    states.setColumnLabels(stateNames);
-    Array<double> stateVals;
-
-    const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
-    double knee_angle_r = -0.0290726;
-    double t = 0.0;
-    for (int i=0; i<20; i++)
-    {
-        knee_angle_r = -1.0/20 + knee_angle_r;
-        knee_r_cs.get("knee_angle_r").setValue(state, knee_angle_r);
-        model.getStateValues(state,stateVals);
-        states.append( t, stateVals.size(), stateVals.get());
-        t = t + 0.1;
-    }
-    t = t - 0.1;
-    actsTimes.resize(states.getSize());
-    states.setInDegrees(false);
-    
-	// Perform the static optimization
-    StaticOptimization so(&model);
-    so.setStatesStore(states);
-    int ns = states.getSize(); 
-    double ti, tf;
-    states.getTime(0, ti);
-    states.getTime(ns-1, tf);
-    so.setStartTime(ti);
-    so.setEndTime(tf);
-
-    // Run the analysis loop
-    state = model.initSystem();
-    for (int i = 0; i < ns; i++) {
-        states.getData(i, state.getNY(), &state.updY()[0]);
-        Real t = 0.0;
-        states.getTime(i, t);
-        state.setTime(t);
-        model.assemble(state);
-        model.getMultibodySystem().realize(state, SimTK::Stage::Velocity);
-
-        if (i == 0 )
-          so.begin(state);
-        else if (i == ns)
-          so.end(state);
-        else
-          so.step(state, i);
-    }
-
-	// store .mot file
-	Storage* activations = so.getActivationStorage();
-	activations->print("../outputs/so_acts.sto");
-	Storage* forces = so.getForceStorage();
-	forces->print("../outputs/so_forces.sto");
-
-	//cout << forces->getName() << endl;
-}
+private:
+    const MultibodySystem&              m_system;
+    const CompliantContactSubsystem&    m_compliant;
+};
 
 void anteriorTibialLoadsFD(Model& model)
 {
@@ -358,6 +414,7 @@ void anteriorTibialLoadsFD(Model& model)
 
 	// Create the integrator and manager for the simulation.
 	SimTK::RungeKuttaMersonIntegrator integrator(model.getMultibodySystem());
+	//SimTK::CPodesIntegrator integrator(model.getMultibodySystem());
 	//integrator.setAccuracy(1.0e-3);
 	//integrator.setFixedStepSize(0.001);
 	Manager manager(model, integrator);
@@ -395,13 +452,16 @@ void anteriorTibialLoadsFD(Model& model)
 void forwardSimulation(Model& model)
 {
 	addFlexionController(model);
-
 	//addExtensionController(model);
+
+    //model.setUseVisualizer(1);
 
 	// init system
 	std::time_t result = std::time(nullptr);
 	std::cout << "\nBefore initSystem() " << std::asctime(std::localtime(&result)) << endl;
 	SimTK::State& si = model.initSystem();
+	//model.buildSystem();
+	//SimTK::State& si = model.initializeState();
 	result = std::time(nullptr);
 	std::cout << "\nAfter initSystem() " << std::asctime(std::localtime(&result)) << endl;
 	
@@ -409,23 +469,47 @@ void forwardSimulation(Model& model)
 	model.updGravityForce().setGravityVector(si, Vec3(-9.80665,0,0));
 	//model.updGravityForce().setGravityVector(si, Vec3(0,0,0));
 	
-	// disable muscles
-	//string muscle_name;
-	//for (int i=0; i<model.getActuators().getSize(); i++)
-	//{
-	//	muscle_name = model.getActuators().get(i).getName();
-
-	//	model.getActuators().get(i).setDisabled(si, true);
-
-	//	if (muscle_name == "bifemlh_r" || muscle_name == "bifemsh_r" || muscle_name == "grac_r" \
-	//		|| muscle_name == "lat_gas_r" || muscle_name == "med_gas_r" || muscle_name == "sar_r" \
-	//		|| muscle_name == "semimem_r" || muscle_name == "semiten_r" \
-	//		|| muscle_name == "rect_fem_r" || muscle_name == "vas_med_r" || muscle_name == "vas_int_r" || muscle_name == "vas_lat_r" )
-	//			model.getActuators().get(i).setDisabled(si, false);
-	//}
-
 	//setKneeAngle(model, si, -90);
 	model.equilibrateMuscles( si);
+
+	MultibodySystem& system = model.updMultibodySystem();
+	ContactTrackerSubsystem  tracker(system);
+    CompliantContactSubsystem contactForces(system, tracker);
+	SimbodyMatterSubsystem  matter( system);
+	contactForces.setTrackDissipatedEnergy(true);
+    //contactForces.setTransitionVelocity(1e-3);
+	
+    GeneralContactSubsystem OLDcontact(system);
+    const ContactSetIndex OLDcontactSet = OLDcontact.createContactSet();
+	
+	Visualizer viz(system);
+	viz.addDecorationGenerator(new ForceArrowGenerator(system,contactForces));
+    viz.setMode(Visualizer::RealTime);
+    viz.setDesiredBufferLengthInSec(1);
+    viz.setDesiredFrameRate(30);
+    viz.setGroundHeight(-3);
+    viz.setShowShadows(true);
+	
+	system.realizeTopology();
+
+	//Show ContactSurfaceIndex for each contact surface
+    for (int i=0; i < matter.getNumBodies(); ++i) {
+		MobilizedBodyIndex mbx(i);
+        const MobilizedBody& mobod = matter.getMobilizedBody(mbx);
+        const int nsurfs = mobod.getBody().getNumContactSurfaces();
+        printf("mobod %d has %d contact surfaces\n", (int)mbx, nsurfs);
+        //for (int i=0; i<nsurfs; ++i) {
+			//printf("%2d: index %d\n", i, 
+                   //(int)tracker.getContactSurfaceIndex(mbx,i)); 
+        //}
+    }
+
+	cout << tracker.getNumSurfaces() << endl;
+
+	State state = system.getDefaultState();
+	viz.report(state);
+
+	//model.getVisualizer().getSimbodyVisualizer().report(si);
 
 	// Add reporters
     ForceReporter* forceReporter = new ForceReporter(&model);
@@ -436,13 +520,14 @@ void forwardSimulation(Model& model)
 
 	// Create the integrator and manager for the simulation.
 	SimTK::RungeKuttaMersonIntegrator integrator(model.getMultibodySystem());
-	//integrator.setAccuracy(1.0e-3);
+	//SimTK::CPodesIntegrator integrator(model.getMultibodySystem());
+	//integrator.setAccuracy(.01);//integrator.setAccuracy(1.0e-3);
 	//integrator.setFixedStepSize(0.001);
 	Manager manager(model, integrator);
 
 	// Define the initial and final simulation times
 	double initialTime = 0.0;
-	double finalTime = 0.2;
+	double finalTime = 1.0;
 
 	// Integrate from initial time to final time
 	manager.setInitialTime(initialTime);
@@ -514,32 +599,6 @@ void addTibialLoads(Model& model, double knee_angle)
 
 	// Add the new prescribed force to the model
 	model.addForce(prescribedForce);
-}
-
-void addExternalForce(Model& model, double const_point_y, double const_point_z)
-{
-	// Specify properties of a force function to be applied to the block
-	double timeX[2] = {0.0, 0.5}; // time nodes for linear function
-	double timeY[2] = {0.0, 0.5}; // time nodes for linear function
-	double fXofT[2] = {0, -103.366188 / 4.0f}; // force values at t1 and t2
-	double fYofT[2] = {0, 37.6222 / 4.0f}; // force values at t1 and t2
-  
-	// Create a new linear functions for the force and point components
-	PiecewiseLinearFunction *forceX = new PiecewiseLinearFunction(2, timeX, fXofT);
-	PiecewiseLinearFunction *forceY = new PiecewiseLinearFunction(2, timeY, fYofT);
-  
-	// Create a new prescribed force applied to the block
-	//PrescribedForce *prescribedF = new PrescribedForce();
-	//OpenSim::Body* tibia_body = &model.updBodySet().get("tibia_r");
-	ExternalForce *externalForce = new ExternalForce( Storage("C:/Users/Maria/Documents/GitHub/ACLproj/outputs/sx.xml"), "force", "point", "torque", "tibia_upper_r", "ground", "tibia_upper_r");
-	externalForce->setName("externalTibialForce");
-	//externalForce->setAppliedToBodyName("tibia_upper_r");
-	//externalForce->setPointExpressedInBodyName("ground");
-	//externalForce->setForceExpressedInBodyName("tibia_upper_r");
-	// Set the force and point functions for the new externalForce
-
-	// Add the new externalForce to the model
-	model.addForce(externalForce);
 }
 
 void addFlexionController(Model& model)
