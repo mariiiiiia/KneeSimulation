@@ -4,6 +4,11 @@
 #include "CustomLigament.h"
 #include <OpenSim/Auxiliary/auxiliaryTestFunctions.h>
 
+Array_<State> saveEm;
+
+static const Real TimeScale = 1;
+static const Real FrameRate = 30;
+static const Real ReportInterval = TimeScale/FrameRate;
 
 template<typename T> std::string changeToString(
     const T& value, int precision = std::numeric_limits<int>::infinity())
@@ -365,6 +370,61 @@ private:
     const CompliantContactSubsystem&    m_compliant;
 };
 
+class MyReporter : public PeriodicEventReporter {
+public:
+    MyReporter(const MultibodySystem& system, 
+               const CompliantContactSubsystem& complCont,
+               Real reportInterval)
+    :   PeriodicEventReporter(reportInterval), m_system(system),
+        m_compliant(complCont)
+    {}
+
+    ~MyReporter() {}
+
+    void handleEvent(const State& state) const override {
+        m_system.realize(state, Stage::Dynamics);
+        cout << state.getTime() << ": E = " << m_system.calcEnergy(state)
+             << " Ediss=" << m_compliant.getDissipatedEnergy(state)
+             << " E+Ediss=" << m_system.calcEnergy(state)
+                               +m_compliant.getDissipatedEnergy(state)
+             << endl;
+        const int ncont = m_compliant.getNumContactForces(state);
+        cout << "Num contacts: " << ncont << endl;
+        for (int i=0; i < ncont; ++i) {
+            const ContactForce& force = m_compliant.getContactForce(state,i);
+            //cout << force;
+        }
+        saveEm.push_back(state);
+    }
+private:
+    const MultibodySystem&           m_system;
+    const CompliantContactSubsystem& m_compliant;
+};
+
+// These are the item numbers for the entries on the Run menu.
+static const int RunMenuId = 3, HelpMenuId = 7;
+static const int GoItem = 1, ReplayItem=2, QuitItem=3;
+
+// This is a periodic event handler that interrupts the simulation on a regular
+// basis to poll the InputSilo for user input. If there has been some, process it.
+// This one does nothing but look for the Run->Quit selection.
+class UserInputHandler : public PeriodicEventHandler {
+public:
+    UserInputHandler(Visualizer::InputSilo& silo, Real interval) 
+    :   PeriodicEventHandler(interval), m_silo(silo) {}
+
+    virtual void handleEvent(State& state, Real accuracy, 
+                             bool& shouldTerminate) const override 
+    {
+        int menuId, item;
+        if (m_silo.takeMenuPick(menuId, item) && menuId==RunMenuId && item==QuitItem)
+            shouldTerminate = true;
+    }
+
+private:
+    Visualizer::InputSilo& m_silo;
+};
+
 void anteriorTibialLoadsFD(Model& model)
 {
 	// add external force
@@ -454,7 +514,7 @@ void forwardSimulation(Model& model)
 	addFlexionController(model);
 	//addExtensionController(model);
 
-    //model.setUseVisualizer(1);
+    model.setUseVisualizer(true);
 
 	// init system
 	std::time_t result = std::time(nullptr);
@@ -473,24 +533,47 @@ void forwardSimulation(Model& model)
 	model.equilibrateMuscles( si);
 
 	MultibodySystem& system = model.updMultibodySystem();
+	const SimbodyMatterSubsystem& matter = system.getMatterSubsystem();
+	GeneralForceSubsystem forces(system);
 	ContactTrackerSubsystem  tracker(system);
     CompliantContactSubsystem contactForces(system, tracker);
-	SimbodyMatterSubsystem  matter( system);
 	contactForces.setTrackDissipatedEnergy(true);
     //contactForces.setTransitionVelocity(1e-3);
 	
-    GeneralContactSubsystem OLDcontact(system);
-    const ContactSetIndex OLDcontactSet = OLDcontact.createContactSet();
+	//GeneralContactSubsystem& OLDcontact = system.updContactSubsystem();
+    //const ContactSetIndex OLDcontactSet = OLDcontact.createContactSet();
+
+	ModelVisualizer& viz(model.updVisualizer());
+	//Visualizer viz(system);
+	//viz.updSimbodyVisualizer().add
+	viz.updSimbodyVisualizer().addDecorationGenerator(new ForceArrowGenerator(system,contactForces));
+    viz.updSimbodyVisualizer().setMode(Visualizer::RealTime);
+    viz.updSimbodyVisualizer().setDesiredBufferLengthInSec(1);
+    viz.updSimbodyVisualizer().setDesiredFrameRate(30);
+    viz.updSimbodyVisualizer().setGroundHeight(-3);
+    viz.updSimbodyVisualizer().setShowShadows(true);
 	
-	Visualizer viz(system);
-	viz.addDecorationGenerator(new ForceArrowGenerator(system,contactForces));
-    viz.setMode(Visualizer::RealTime);
-    viz.setDesiredBufferLengthInSec(1);
-    viz.setDesiredFrameRate(30);
-    viz.setGroundHeight(-3);
-    viz.setShowShadows(true);
+    Visualizer::InputSilo* silo = new Visualizer::InputSilo();
+	viz.updSimbodyVisualizer().addInputListener(silo);
+    Array_<std::pair<String,int> > runMenuItems;
+    runMenuItems.push_back(std::make_pair("Go", GoItem));
+    runMenuItems.push_back(std::make_pair("Replay", ReplayItem));
+    runMenuItems.push_back(std::make_pair("Quit", QuitItem));
+    viz.updSimbodyVisualizer().addMenu("Run", RunMenuId, runMenuItems);
+
+    Array_<std::pair<String,int> > helpMenuItems;
+    helpMenuItems.push_back(std::make_pair("TBD - Sorry!", 1));
+    viz.updSimbodyVisualizer().addMenu("Help", HelpMenuId, helpMenuItems);
+
+    system.addEventReporter(new MyReporter(system,contactForces,ReportInterval));
+	system.addEventReporter(new Visualizer::Reporter(viz.updSimbodyVisualizer(), ReportInterval));
 	
-	system.realizeTopology();
+    // Check for a Run->Quit menu pick every 1/4 second.
+    system.addEventHandler(new UserInputHandler(*silo, .25));
+
+	//system.realizeTopology();
+	//system.realize(si, Stage::Dynamics);
+	//system.realize(si, Stage::Topology);
 
 	//Show ContactSurfaceIndex for each contact surface
     for (int i=0; i < matter.getNumBodies(); ++i) {
@@ -506,8 +589,17 @@ void forwardSimulation(Model& model)
 
 	cout << tracker.getNumSurfaces() << endl;
 
-	State state = system.getDefaultState();
-	viz.report(state);
+	//State state = system.getDefaultState();
+	State& state = model.initializeState();
+	viz.updSimbodyVisualizer().report(state);
+
+	//cout << "\nChoose 'Go' from Run menu to simulate:\n";
+ //   int menuId, item;
+ //   do { silo->waitForMenuPick(menuId, item);
+ //        if (menuId != RunMenuId || item != GoItem) 
+ //            cout << "\aDude ... follow instructions!\n";
+ //   } while (menuId != RunMenuId || item != GoItem);
+
 
 	//model.getVisualizer().getSimbodyVisualizer().report(si);
 
@@ -521,13 +613,14 @@ void forwardSimulation(Model& model)
 	// Create the integrator and manager for the simulation.
 	SimTK::RungeKuttaMersonIntegrator integrator(model.getMultibodySystem());
 	//SimTK::CPodesIntegrator integrator(model.getMultibodySystem());
-	//integrator.setAccuracy(.01);//integrator.setAccuracy(1.0e-3);
+	integrator.setAccuracy(.01);
+	//integrator.setAccuracy(1e-3);
 	//integrator.setFixedStepSize(0.001);
 	Manager manager(model, integrator);
 
 	// Define the initial and final simulation times
 	double initialTime = 0.0;
-	double finalTime = 1.0;
+	double finalTime = 0.1;
 
 	// Integrate from initial time to final time
 	manager.setInitialTime(initialTime);
@@ -537,7 +630,7 @@ void forwardSimulation(Model& model)
 	result = std::time(nullptr);
 	std::cout << "\nBefore integrate(si) " << std::asctime(std::localtime(&result)) << endl;
 
-	manager.integrate(si);
+	manager.integrate(state);
 
 	result = std::time(nullptr);
 	std::cout << "\nAfter integrate(si) " << std::asctime(std::localtime(&result)) << endl;
