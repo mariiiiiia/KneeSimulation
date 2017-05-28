@@ -313,32 +313,37 @@ public:
 
     virtual void generateDecorations(const State& state, Array_<DecorativeGeometry>& geometry) override {
         const Vec3 frcColors[] = {Red,Orange,Cyan};
-        const Vec3 momColors[] = {Blue,Green,Purple};
+        //const Vec3 momColors[] = {Blue,Green,Purple};
         m_system.realize(state, Stage::Velocity);
 
         const int ncont = m_compliant.getNumContactForces(state);
         for (int i=0; i < ncont; ++i) {
             const ContactForce& force = m_compliant.getContactForce(state,i);
             const ContactId     id    = force.getContactId();
-            const Vec3& frc = force.getForceOnSurface2()[1];
-            const Vec3& mom = force.getForceOnSurface2()[0];
-            Real  frcMag = frc.norm(), momMag=mom.norm();
-            int frcThickness = 1, momThickness = 1;
-            Real frcScale = ForceScale, momScale = ForceScale;
-            while (frcMag > 10)
-                frcThickness++, frcScale /= 10, frcMag /= 10;
-            while (momMag > 10)
-                momThickness++, momScale /= 10, momMag /= 10;
-            DecorativeLine frcLine(force.getContactPoint(),
-                force.getContactPoint() + frcScale*frc);
-            DecorativeLine momLine(force.getContactPoint(),
-                force.getContactPoint() + momScale*mom);
-            frcLine.setColor(frcColors[id%3]);
-            momLine.setColor(momColors[id%3]);
-            frcLine.setLineThickness(2*frcThickness);
-            momLine.setLineThickness(2*momThickness);
-            geometry.push_back(frcLine);
-            geometry.push_back(momLine);
+            //const Vec3& frc = force.getForceOnSurface2()[1];
+            //const Vec3& mom = force.getForceOnSurface2()[0];
+            //Real  frcMag = frc.norm(); // momMag=mom.norm();
+            //int frcThickness = 1; // momThickness = 1;
+            //Real frcScale = ForceScale; // momScale = ForceScale;
+            //while (frcMag > 10)
+            //    frcThickness++, frcScale /= 10, frcMag /= 10;
+            //while (momMag > 10)
+                //momThickness++, momScale /= 10, momMag /= 10;
+			//DecorativePoint frcPoint( force.getContactPoint());
+			//DecorativeLine frcLine(force.getContactPoint(),
+   //             force.getContactPoint() + frcScale*frc);
+            //DecorativeLine momLine(force.getContactPoint(),
+                //force.getContactPoint() + momScale*mom);
+            //frcLine.setColor(frcColors[id%3]);
+			//frcPoint.setColor( frcColors[1]);
+			//frcPoint.setOpacity( 1);
+			//frcPoint.setScale(1);
+            //momLine.setColor(momColors[id%3]);
+            //frcLine.setLineThickness(2*frcThickness);
+            //momLine.setLineThickness(2*momThickness);
+            //geometry.push_back(frcLine);
+            //geometry.push_back(frcPoint);
+            //geometry.push_back(momLine);
 
             ContactPatch patch;
             const bool found = m_compliant.calcContactPatchDetailsById(state,id,patch);
@@ -347,21 +352,24 @@ public:
             //cout << "num details=" << patch.getNumDetails() << endl;
             for (int i=0; i < patch.getNumDetails(); ++i) {
                 const ContactDetail& detail = patch.getContactDetail(i);
-                const Real peakPressure = detail.getPeakPressure();
+                //const Real peakPressure = detail.getPeakPressure();
                 // Make a black line from the element's contact point in the normal
                 // direction, with length proportional to log(peak pressure)
                 // on that element. 
+				//cout << "cp: " << detail.getContactPoint() << endl;
                 DecorativeLine normal(detail.getContactPoint(),
-                    detail.getContactPoint()+ std::log10(peakPressure)
-                                                * detail.getContactNormal());
-                normal.setColor(Black);
+                    detail.getContactPoint()+ 0.001 * detail.getContactNormal());
+				normal.setColor(SimTK::Red);
                 geometry.push_back(normal);
+				//DecorativePoint decPoint(detail.getContactPoint());
+				//decPoint.setColor(Red);
+				//geometry.push_back(decPoint);
                 // Make a red line that extends from the contact
                 // point in the direction of the slip velocity, of length 3*slipvel.
-                DecorativeLine slip(detail.getContactPoint(),
-                    detail.getContactPoint()+3*detail.getSlipVelocity());
-                slip.setColor(Red);
-                geometry.push_back(slip);
+                //DecorativeLine slip(detail.getContactPoint(),
+                    //detail.getContactPoint()+3*detail.getSlipVelocity());
+                //slip.setColor(Red);
+                //geometry.push_back(slip);
             }
         }
     }
@@ -520,8 +528,6 @@ void forwardSimulation(Model& model)
 	std::time_t result = std::time(nullptr);
 	std::cout << "\nBefore initSystem() " << std::asctime(std::localtime(&result)) << endl;
 	SimTK::State& si = model.initSystem();
-	//model.buildSystem();
-	//SimTK::State& si = model.initializeState();
 	result = std::time(nullptr);
 	std::cout << "\nAfter initSystem() " << std::asctime(std::localtime(&result)) << endl;
 	
@@ -533,19 +539,44 @@ void forwardSimulation(Model& model)
 	model.equilibrateMuscles( si);
 
 	MultibodySystem& system = model.updMultibodySystem();
-	const SimbodyMatterSubsystem& matter = system.getMatterSubsystem();
+	SimbodyMatterSubsystem& matter = system.updMatterSubsystem();
 	GeneralForceSubsystem forces(system);
 	ContactTrackerSubsystem  tracker(system);
     CompliantContactSubsystem contactForces(system, tracker);
 	contactForces.setTrackDissipatedEnergy(true);
     //contactForces.setTransitionVelocity(1e-3);
-	
-	//GeneralContactSubsystem& OLDcontact = system.updContactSubsystem();
-    //const ContactSetIndex OLDcontactSet = OLDcontact.createContactSet();
+
+	for (int i=0; i < matter.getNumBodies(); ++i) {
+		MobilizedBodyIndex mbx(i);
+		if (i==19 || i==22)
+		{
+			MobilizedBody& mobod = matter.updMobilizedBody(mbx);
+			std::filebuf fb;
+			//if (i==15)
+			//	fb.open ( "../resources/geometries/meniscus_lat_r.obj",std::ios::in);
+			//else if (i==16)
+			//	fb.open ( "../resources/geometries/meniscus_med_r.obj",std::ios::in);
+			if (i==19)
+				fb.open ( "../resources/geometries/femur_lat_r.obj",std::ios::in);
+			//else if (i==20)
+				//fb.open ( "../resources/geometries/femur_med_r.obj",std::ios::in);
+			else if (i==22)
+				fb.open ( "../resources/geometries/tibia_upper_r.obj",std::ios::in);
+			std::istream is(&fb);
+			PolygonalMesh polMesh;
+			polMesh.loadObjFile(is);
+			fb.close();
+			SimTK::ContactGeometry::TriangleMesh mesh(polMesh);
+			ContactSurface contSurf( mesh, ContactMaterial(1.0e6, 1, 0.5, 0.5, 0.5), 0.001);
+			DecorativeMesh showMesh(mesh.createPolygonalMesh());
+			showMesh.setOpacity(0.5);
+			mobod.updBody().addDecoration( showMesh);
+			mobod.updBody().addContactSurface(contSurf);
+		}
+    }
 
 	ModelVisualizer& viz(model.updVisualizer());
 	//Visualizer viz(system);
-	//viz.updSimbodyVisualizer().add
 	viz.updSimbodyVisualizer().addDecorationGenerator(new ForceArrowGenerator(system,contactForces));
     viz.updSimbodyVisualizer().setMode(Visualizer::RealTime);
     viz.updSimbodyVisualizer().setDesiredBufferLengthInSec(1);
@@ -553,43 +584,39 @@ void forwardSimulation(Model& model)
     viz.updSimbodyVisualizer().setGroundHeight(-3);
     viz.updSimbodyVisualizer().setShowShadows(true);
 	
-    Visualizer::InputSilo* silo = new Visualizer::InputSilo();
-	viz.updSimbodyVisualizer().addInputListener(silo);
-    Array_<std::pair<String,int> > runMenuItems;
-    runMenuItems.push_back(std::make_pair("Go", GoItem));
-    runMenuItems.push_back(std::make_pair("Replay", ReplayItem));
-    runMenuItems.push_back(std::make_pair("Quit", QuitItem));
-    viz.updSimbodyVisualizer().addMenu("Run", RunMenuId, runMenuItems);
+ //   Visualizer::InputSilo* silo = new Visualizer::InputSilo();
+	//viz.updSimbodyVisualizer().addInputListener(silo);
+ //   Array_<std::pair<String,int> > runMenuItems;
+ //   runMenuItems.push_back(std::make_pair("Go", GoItem));
+ //   runMenuItems.push_back(std::make_pair("Replay", ReplayItem));
+ //   runMenuItems.push_back(std::make_pair("Quit", QuitItem));
+ //   viz.updSimbodyVisualizer().addMenu("Run", RunMenuId, runMenuItems);
 
-    Array_<std::pair<String,int> > helpMenuItems;
-    helpMenuItems.push_back(std::make_pair("TBD - Sorry!", 1));
-    viz.updSimbodyVisualizer().addMenu("Help", HelpMenuId, helpMenuItems);
+    //Array_<std::pair<String,int> > helpMenuItems;
+    //helpMenuItems.push_back(std::make_pair("TBD - Sorry!", 1));
+    //viz.updSimbodyVisualizer().addMenu("Help", HelpMenuId, helpMenuItems);
 
     system.addEventReporter(new MyReporter(system,contactForces,ReportInterval));
 	system.addEventReporter(new Visualizer::Reporter(viz.updSimbodyVisualizer(), ReportInterval));
 	
     // Check for a Run->Quit menu pick every 1/4 second.
-    system.addEventHandler(new UserInputHandler(*silo, .25));
+    //system.addEventHandler(new UserInputHandler(*silo, .25));
 
-	//system.realizeTopology();
-	//system.realize(si, Stage::Dynamics);
-	//system.realize(si, Stage::Topology);
+	system.realizeTopology();
 
 	//Show ContactSurfaceIndex for each contact surface
     for (int i=0; i < matter.getNumBodies(); ++i) {
 		MobilizedBodyIndex mbx(i);
         const MobilizedBody& mobod = matter.getMobilizedBody(mbx);
         const int nsurfs = mobod.getBody().getNumContactSurfaces();
-        printf("mobod %d has %d contact surfaces\n", (int)mbx, nsurfs);
-        //for (int i=0; i<nsurfs; ++i) {
-			//printf("%2d: index %d\n", i, 
-                   //(int)tracker.getContactSurfaceIndex(mbx,i)); 
-        //}
+        //printf("mobod %d has %d contact surfaces\n", (int)mbx, nsurfs);
+		cout << "mobod " << (float)mobod.getBodyMass(si) << " has " << nsurfs << " contact surfaces" << endl;
     }
 
-	cout << tracker.getNumSurfaces() << endl;
+	cout << "tracker num of surfaces: " << tracker.getNumSurfaces() << endl;
 
 	//State state = system.getDefaultState();
+	//viz.report(state);
 	State& state = model.initializeState();
 	viz.updSimbodyVisualizer().report(state);
 
@@ -599,9 +626,6 @@ void forwardSimulation(Model& model)
  //        if (menuId != RunMenuId || item != GoItem) 
  //            cout << "\aDude ... follow instructions!\n";
  //   } while (menuId != RunMenuId || item != GoItem);
-
-
-	//model.getVisualizer().getSimbodyVisualizer().report(si);
 
 	// Add reporters
     ForceReporter* forceReporter = new ForceReporter(&model);
