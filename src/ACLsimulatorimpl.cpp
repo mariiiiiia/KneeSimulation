@@ -20,296 +20,14 @@ template<typename T> std::string changeToString(
     }     oss << value;     return oss.str();
 }
 
-//void forwardSim(Model model){
-//    model.setGravity(Vec3(0,-9.9,0));
-//
-//	// name parameters needed
-//	Vector activs_initial, activs_final;		//	activations for the current position and activations for the next position
-//	vector<OpenSim::Function*> controlFuncs;	//	control functions for every t (time)
-//	vector<Vector> acts;						//	activations
-//	vector<double> actsTimes;					//	every t (=time) when I have an activation to apply
-//	double duration = 0.5;
-//
-//	SimTK::State& state = model.initSystem();
-//
-//	// compute muscle activations for specific knee angle (in rads)
-//	double knee_angle = -1.0;
-//	computeActivations(model, knee_angle, controlFuncs, duration, true, activs_initial, activs_final, state);
-//
-//	// add controller to the model after adding the control functions to the controller
-//	KneeController *knee_controller = new KneeController( controlFuncs.size());
-//    knee_controller->setControlFunctions(controlFuncs);
-//	knee_controller->setActuators(model.getActuators());
-//	model.addController(knee_controller);
-//
-//	// set model to initial state
-//	state = model.initSystem();
-//    //model.equilibrateMuscles(state);
-//
-//    // Add reporters
-//    ForceReporter* forceReporter = new ForceReporter(&model);
-//    model.addAnalysis(forceReporter);
-//
-//	// Simulate
-//    RungeKuttaMersonIntegrator integrator(model.getMultibodySystem());
-//    Manager manager(model, integrator);
-//    manager.setInitialTime(0);
-//    manager.setFinalTime(2);
-//
-//	time_t result = std::time(nullptr);
-//	std::cout << "\nBefore integrate(si) " << std::asctime(std::localtime(&result)) << endl;
-//	
-//    manager.integrate(state);
-//
-//	result = std::time(nullptr);
-//	std::cout << "\nAfter integrate(si) " << std::asctime(std::localtime(&result)) << endl;
-//
-//	// Save the simulation results
-//	Storage statesDegrees(manager.getStateStorage());
-//	statesDegrees.print("../outputs/kneeforwsim_states.sto");
-//	model.updSimbodyEngine().convertRadiansToDegrees(statesDegrees);
-//	statesDegrees.setWriteSIMMHeader(true);
-//	statesDegrees.print("../outputs/kneeforwsim_states_degrees.mot");
-//
-//	// Get activation trajectory
-//    acts.resize(knee_controller->getControlLog().size());
-//    actsTimes.resize(knee_controller->getControlLog().size());
-//
-//    vector<int> index(acts.size(), 0);
-//    for (int i = 0 ; i != index.size() ; i++) {
-//      index[i] = i;
-//    }
-//
-//    sort(index.begin(), index.end(),
-//         [&](const int& a, const int& b) {
-//           return (knee_controller->getControlTimesLog()[a] <
-//                   knee_controller->getControlTimesLog()[b]);
-//         }
-//    );
-//
-//    for (int i = 0 ; i != acts.size() ; i++) {
-//        acts[i] = knee_controller->getControlLog()[index[i]];
-//        actsTimes[i] = knee_controller->getControlTimesLog()[index[i]];
-//    }
-//
-//    // Delete duplicates
-//    int ii = 0;
-//    for (unsigned i=1; i<acts.size(); i++) {
-//        if (actsTimes[i] <= actsTimes[ii]) {
-//            actsTimes.erase(actsTimes.begin()+i);
-//            acts.erase(acts.begin()+i);
-//            --i;
-//        }
-//        ii = i;
-//    }
-//
-//	OsimUtils::writeFunctionsToFile( actsTimes, acts, "../outputs/force_Excitations_LOG.sto");
-//}
-//
-//void computeActivations (Model &model, const double angle, vector<OpenSim::Function*> &controlFuncs,
-//			double &duration, bool store, Vector &so_activ_init, Vector &so_activ_final, State &si)
-//{
-//    calcSSact(model, so_activ_init, si);
-//
-//	//set movement parameters
-//	const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
-//    knee_r_cs.get("knee_angle_r").setValue(si, angle);
-//	model.equilibrateMuscles(si);
-//
-//	calcSSact(model, so_activ_final, si);
-//
-//    const int N = 9;
-//
-//    const double t_eq = 0.000;
-//    const double dur_xc = (25.0 + 0.2 * angle) / 1000.;
-//    const double t_fix  = (99.0 + 0.5 * angle) / 1000.;
-//
-//    double phases[N] = {
-//       -t_eq,
-//        0,
-//        0,
-//        dur_xc,
-//        dur_xc * 1.05,
-//        t_fix,
-//        t_fix + 0.005,
-//        t_fix + 0.010,
-//        t_fix*2
-//    };
-//    for (int i=0; i<N; i++) phases[i]+=t_eq;
-//
-//    // Construct control functions
-//    controlFuncs.clear();
-//    double values[N];
-//
-//    for (int i = 0; i < so_activ_final.size(); i++)  {
-//        double dssa = so_activ_final[i] - so_activ_init[i];
-//        int j=0;
-//
-//        values[j++] = so_activ_init[i];
-//        values[j++] = values[j-1];
-//
-//        values[j++] = so_activ_final[i] + dssa * 0.75;
-//        values[j++] = values[j-1];
-//
-//        values[j++] = so_activ_init[i] + dssa * 0.975;
-//        values[j++] = values[j-1];
-//
-//        values[j++] = so_activ_init[i] + dssa * 1.350;
-//
-//        values[j++] = so_activ_final[i];
-//        values[j++] = values[j-1];
-//
-//        OpenSim::Function *controlFunc = new PiecewiseLinearFunction(N, phases, values);
-//        controlFunc->setName(model.getActuators()[i].getName());
-//        controlFunc->setName("Excitation_" + model.getActuators()[i].getName());
-//        controlFuncs.push_back(controlFunc);
-//    }
-//
-//    duration = t_eq + t_fix * 2;
-//
-//	if (store == true) OsimUtils::writeFunctionsToFile( controlFuncs, "../outputs/_Excitations_LOG.sto", duration, 0.001 );
-//}
-//
-//void calcSSact(Model &model, Vector &activations, State &si)
-//{
-//	// Perform a dummy forward simulation without forces,
-//    // just to obtain a state-series to be used by stat opt
-//    OsimUtils::disableAllForces(si, model);
-//	// Create the integrator and manager for the simulation.
-//    SimTK::RungeKuttaMersonIntegrator integrator( model.getMultibodySystem() );
-//    Manager manager( model, integrator );
-//	// Integrate from initial time to final time.
-//    manager.setInitialTime( 0);
-//    manager.setFinalTime( 2);
-//    std::cout << "\n\nIntegrating from 0 to 2 " << std::endl;
-//    manager.integrate( si);
-//
-//    // Perform a quick static optimization that will give us
-//    // the steady state activations needed to overcome the passive forces
-//    OsimUtils::enableAllForces(si, model);
-//
-//    Storage &states = manager.getStateStorage();
-//    states.setInDegrees(false);
-//    StaticOptimization so(&model);
-//    so.setStatesStore(states);
-//    State &s = model.initSystem();
-//
-//    states.getData(0, s.getNY(), &s.updY()[0]);
-//    s.setTime(0);
-//    so.begin(s);
-//    so.end(s);
-//
-//    Storage *as = so.getActivationStorage();
-//    int na = model.getActuators().getSize();
-//    activations.resize(na);
-//    int row = as->getSize() - 1;
-//
-//    // Store activations to out vector
-//    for (int i = 0; i<na; i++)
-//	{
-//        as->getData(row, i, activations[i]);
-//		//// print results
-//		//cout << as->getColumnLabels()[i+1] << ": " << activations[i] << endl;
-//		//cout << as->getDataColumn() << "\n" << endl;
-//	}
-//}
-
-//void inverseSimulation(Model model)
-//{
-//	Array_<Real> times;
-//	double dur = 1.0;
-//	double step = 0.001;
-//
-//	// Prepare time series
-//    InverseDynamicsSolver ids(model);
-//    times.resize((int)(dur / step) + 1, 0);
-//    for (unsigned i = 0; i < times.size(); i++)
-//        times[i] = step * i;
-//
-//	// Solve for generalized joints forces
-//    State &s = model.initSystem();
-//	Vector ids_results = ids.solve(s, SimTK::Vector(0));
-//
-//	for (int i=0; i<ids_results.size(); i++)
-//		cout << i << " : " << ids_results(i) << endl;
-//}
-
-//void staticOptimization(Model model)
-//{
-//    // set gravity off    
-//    //model.setGravity(Vec3(0,0,0));
-//
-//    SimTK::State& state = model.initSystem();
-//    std::vector<std::vector<double>> acts;                // activations
-//    vector<double> actsTimes;                   // states.size()                      
-//    // Create the state sequence of motion (knee flexion)
-//    Storage states;
-//    states.setDescription("Knee flexion");
-//    Array<std::string> stateNames = model.getStateVariableNames();    
-//    stateNames.insert(0, "time");
-//    states.setColumnLabels(stateNames);
-//    Array<double> stateVals;
-//
-//    const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
-//    double knee_angle_r = -0.0290726;
-//    double t = 0.0;
-//    for (int i=0; i<20; i++)
-//    {
-//        knee_angle_r = -1.0/20 + knee_angle_r;
-//        knee_r_cs.get("knee_angle_r").setValue(state, knee_angle_r);
-//        model.getStateValues(state,stateVals);
-//        states.append( t, stateVals.size(), stateVals.get());
-//        t = t + 0.1;
-//    }
-//    t = t - 0.1;
-//    actsTimes.resize(states.getSize());
-//    states.setInDegrees(false);
-//    
-//	// Perform the static optimization
-//    StaticOptimization so(&model);
-//    so.setStatesStore(states);
-//    int ns = states.getSize(); 
-//    double ti, tf;
-//    states.getTime(0, ti);
-//    states.getTime(ns-1, tf);
-//    so.setStartTime(ti);
-//    so.setEndTime(tf);
-//
-//    // Run the analysis loop
-//    state = model.initSystem();
-//    for (int i = 0; i < ns; i++) {
-//        states.getData(i, state.getNY(), &state.updY()[0]);
-//        Real t = 0.0;
-//        states.getTime(i, t);
-//        state.setTime(t);
-//        model.assemble(state);
-//        model.getMultibodySystem().realize(state, SimTK::Stage::Velocity);
-//
-//        if (i == 0 )
-//          so.begin(state);
-//        else if (i == ns)
-//          so.end(state);
-//        else
-//          so.step(state, i);
-//    }
-//
-//	// store .mot file
-//	Storage* activations = so.getActivationStorage();
-//	activations->print("../outputs/so_acts.sto");
-//	Storage* forces = so.getForceStorage();
-//	forces->print("../outputs/so_forces.sto");
-//
-//	//cout << forces->getName() << endl;
-//}
-
-
 static const Real ForceScale = .25;
+Array<DecorativeGeometry> geometries = Array<DecorativeGeometry>();
 
 class ForceArrowGenerator : public DecorationGenerator {
 public:
     ForceArrowGenerator(const MultibodySystem& system,
                         const CompliantContactSubsystem& complCont) 
-    :   m_system(system), m_compliant(complCont) {}
+    :   m_system(system), m_compliant(complCont){}
 
     virtual void generateDecorations(const State& state, Array_<DecorativeGeometry>& geometry) override {
         const Vec3 frcColors[] = {Red,Orange,Cyan};
@@ -320,57 +38,62 @@ public:
         for (int i=0; i < ncont; ++i) {
             const ContactForce& force = m_compliant.getContactForce(state,i);
             const ContactId     id    = force.getContactId();
-            //const Vec3& frc = force.getForceOnSurface2()[1];
-            //const Vec3& mom = force.getForceOnSurface2()[0];
-            //Real  frcMag = frc.norm(); // momMag=mom.norm();
-            //int frcThickness = 1; // momThickness = 1;
-            //Real frcScale = ForceScale; // momScale = ForceScale;
-            //while (frcMag > 10)
-            //    frcThickness++, frcScale /= 10, frcMag /= 10;
-            //while (momMag > 10)
-                //momThickness++, momScale /= 10, momMag /= 10;
-			//DecorativePoint frcPoint( force.getContactPoint());
-			//DecorativeLine frcLine(force.getContactPoint(),
-   //             force.getContactPoint() + frcScale*frc);
-            //DecorativeLine momLine(force.getContactPoint(),
-                //force.getContactPoint() + momScale*mom);
-            //frcLine.setColor(frcColors[id%3]);
-			//frcPoint.setColor( frcColors[1]);
-			//frcPoint.setOpacity( 1);
-			//frcPoint.setScale(1);
-            //momLine.setColor(momColors[id%3]);
-            //frcLine.setLineThickness(2*frcThickness);
-            //momLine.setLineThickness(2*momThickness);
-            //geometry.push_back(frcLine);
-            //geometry.push_back(frcPoint);
-            //geometry.push_back(momLine);
+			ContactSnapshot cs = m_compliant.getContactTrackerSubsystem().getActiveContacts(state);
+			cout <<  "contact snapshot active contacts: " << cs.getNumContacts() << endl;
+			const SimbodyMatterSubsystem& matter = m_compliant.getMultibodySystem().getMatterSubsystem();
+			const MobilizedBody mobod = matter.getMobilizedBody( MobilizedBodyIndex(22));
+			//DecorativeGeometry decGeometry1 = mobod.getBody().updDecoration(0);
+			if (cs.getNumContacts()>0)
+			{
+				//DecorativeGeometry decGeometry1 = mobod.getOutboardDecoration(0);
+				DecorativeGeometry decGeometry1 = mobod.getBody().updDecoration(0);
+				decGeometry1.setOpacity( 0.2);
+				decGeometry1.setColor( Purple);
 
-            ContactPatch patch;
-            const bool found = m_compliant.calcContactPatchDetailsById(state,id,patch);
-            //cout << "patch for id" << id << " found=" << found << endl;
-            //cout << "resultant=" << patch.getContactForce() << endl;
-            //cout << "num details=" << patch.getNumDetails() << endl;
-            for (int i=0; i < patch.getNumDetails(); ++i) {
-                const ContactDetail& detail = patch.getContactDetail(i);
-                //const Real peakPressure = detail.getPeakPressure();
-                // Make a black line from the element's contact point in the normal
-                // direction, with length proportional to log(peak pressure)
-                // on that element. 
-				//cout << "cp: " << detail.getContactPoint() << endl;
-                DecorativeLine normal(detail.getContactPoint(),
-                    detail.getContactPoint()+ 0.001 * detail.getContactNormal());
-				normal.setColor(SimTK::Red);
-                geometry.push_back(normal);
-				//DecorativePoint decPoint(detail.getContactPoint());
-				//decPoint.setColor(Red);
-				//geometry.push_back(decPoint);
-                // Make a red line that extends from the contact
-                // point in the direction of the slip velocity, of length 3*slipvel.
-                //DecorativeLine slip(detail.getContactPoint(),
-                    //detail.getContactPoint()+3*detail.getSlipVelocity());
-                //slip.setColor(Red);
-                //geometry.push_back(slip);
-            }
+				const Transform& X_BM = mobod.getOutboardFrame(state); // M frame in B
+				const Transform& X_GB = mobod.getBodyTransform(state); // B in Ground
+				const Transform& parentTransf = mobod.getInboardFrame(state);
+				Transform X_GM = X_GB*X_BM; // F frame in Ground
+				cout << "location of Mo in Ground: " << X_GM.p() << endl;
+				// rotate 
+				Rotation newRot = X_GM.updR();
+				Rotation parentRot = parentTransf.R();
+				newRot.operator=( newRot.operator*=( parentRot));
+				// translate
+				X_GM.setP( X_GM.operator+=( Vec3(0.5,0,0)).p());
+				// set new transform
+				decGeometry1.setTransform( Transform( X_GM));
+					
+				ContactPatch patch;
+				const bool found = m_compliant.calcContactPatchDetailsById(state,id,patch);
+				//cout << "patch for id" << id << " found=" << found << endl;
+				//cout << "resultant=" << patch.getContactForce() << endl;
+				//cout << "num details=" << patch.getNumDetails() << endl;
+				for (int i=0; i < patch.getNumDetails(); ++i) {
+					const ContactDetail& detail = patch.getContactDetail(i);
+					//const Real peakPressure = detail.getPeakPressure();			
+					//cout << detail.getPeakPressure() << endl;
+					const Vec3 cp = detail.getContactPoint();
+					Vec3 newcp = Vec3(cp);
+					Transform newTransf = Transform(newcp);
+					newTransf.setP( newTransf.operator+=( Vec3(0.5,0,0)).p());
+					// Make a black line from the element's contact point in the normal
+					// direction, with length proportional to log(peak pressure)
+					// on that element. 
+					//DecorativeLine normal(newTransf.p(),
+						//newTransf.p()- 0.001 * detail.getContactNormal());
+					/*DecorativeLine normal(detail.getContactPoint(),
+						detail.getContactPoint()+ 0.001 * detail.getContactNormal());*/
+					DecorativeSphere decContP;
+					decContP.setScale( 0.0005);
+					decContP.setTransform( newTransf);
+					decContP.setColor(SimTK::Red);
+					geometries.append(decContP);
+					geometry.push_back( decGeometry1);
+				}
+				for (int j=0; j<geometries.size(); j++)
+					geometry.push_back(geometries[j]);
+			}
         }
     }
 private:
@@ -567,7 +290,7 @@ void forwardSimulation(Model& model)
 			polMesh.loadObjFile(is);
 			fb.close();
 			SimTK::ContactGeometry::TriangleMesh mesh(polMesh);
-			ContactSurface contSurf( mesh, ContactMaterial(1.0e6, 1, 0.5, 0.5, 0.5), 0.001);
+			ContactSurface contSurf(mesh, ContactMaterial(1.0e6, 1, 0.5, 0.5, 0.5), 0.001);
 			DecorativeMesh showMesh(mesh.createPolygonalMesh());
 			showMesh.setOpacity(0.5);
 			mobod.updBody().addDecoration( showMesh);
