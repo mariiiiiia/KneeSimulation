@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 	{
 		Object::registerType(CustomLigament());
 		// Create an OpenSim model and set its name
-		OpenSim::Model model("../resources/geometries/closed_knee_ligaments_0_3_scheburn_ant_loads_v4.osim");
+		OpenSim::Model model("../resources/geometries/closed_knee_ligaments_0_3_scheburn_ant_loads_v4_oneleg.osim");
 
 		//// add meniscus bodies to left and right knee
 		//cout << "Adding meniscus" << endl;
@@ -59,12 +59,11 @@ int main(int argc, char *argv[])
 		//printLigamentLengths(model);
 
 		// simulate
-		//inverseSimulation(model);
-		//staticOptimization(model);
 		//anteriorTibialLoadsFD(model);
-		forwardSimulation(model);
+		//forwardSimulation(model);
+		//forwardSimulationWithHitMap(model);
 
-		//performMCFD(model, 100);
+		performMCFD(model, 100);
 
 		 //Save the model to a file
 		//model.setUseVisualizer(1);

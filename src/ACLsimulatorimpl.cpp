@@ -20,81 +20,86 @@ template<typename T> std::string changeToString(
     }     oss << value;     return oss.str();
 }
 
-static const Real ForceScale = .25;
-Array<DecorativeGeometry> geometries = Array<DecorativeGeometry>();
-
-class ForceArrowGenerator : public DecorationGenerator {
+class HitMapGenerator : public DecorationGenerator {
 public:
-    ForceArrowGenerator(const MultibodySystem& system,
+    HitMapGenerator(const MultibodySystem& system,
                         const CompliantContactSubsystem& complCont) 
     :   m_system(system), m_compliant(complCont){}
 
     virtual void generateDecorations(const State& state, Array_<DecorativeGeometry>& geometry) override {
-        const Vec3 frcColors[] = {Red,Orange,Cyan};
-        //const Vec3 momColors[] = {Blue,Green,Purple};
+        const Vec3 frcColors[] = {Red,Orange,Cyan,Green,Blue,Yellow};
         m_system.realize(state, Stage::Velocity);
 
         const int ncont = m_compliant.getNumContactForces(state);
         for (int i=0; i < ncont; ++i) {
             const ContactForce& force = m_compliant.getContactForce(state,i);
             const ContactId     id    = force.getContactId();
+			// define if it's femur_lat -> femur_med contact pair: id=8
+			//if (id == 6 || id == 8 || id==4 || id==2 || id==10 )
+			//	continue;
 			ContactSnapshot cs = m_compliant.getContactTrackerSubsystem().getActiveContacts(state);
-			cout <<  "contact snapshot active contacts: " << cs.getNumContacts() << endl;
+			//cout <<  "contact: " << id << endl;
+			ContactId idFemur = cs.getContactIdForSurfacePair( ContactSurfaceIndex(2), ContactSurfaceIndex(3));
+			ContactId idMeniscFemur1 = cs.getContactIdForSurfacePair( ContactSurfaceIndex(0), ContactSurfaceIndex(2));
+			ContactId idMeniscTibia1 = cs.getContactIdForSurfacePair( ContactSurfaceIndex(0), ContactSurfaceIndex(4));
+			ContactId idMeniscFemur2 = cs.getContactIdForSurfacePair( ContactSurfaceIndex(1), ContactSurfaceIndex(3));
+			ContactId idMeniscTibia2 = cs.getContactIdForSurfacePair( ContactSurfaceIndex(1), ContactSurfaceIndex(4));
+
+			if (id == idFemur || id == idMeniscFemur1 || id==idMeniscTibia1 || id==idMeniscFemur2 || id==idMeniscTibia2 )
+				continue;
+
 			const SimbodyMatterSubsystem& matter = m_compliant.getMultibodySystem().getMatterSubsystem();
-			const MobilizedBody mobod = matter.getMobilizedBody( MobilizedBodyIndex(22));
-			//DecorativeGeometry decGeometry1 = mobod.getBody().updDecoration(0);
+			// get tibia's mobilized body
+			MobilizedBody mobod = matter.getMobilizedBody( MobilizedBodyIndex(22));
+			//for (int numContacts=0; numContacts<cs.getNumContacts(); numContacts++)
+			//{
+			//	ContactSurfaceIndex csi1 = cs.getContact(numContacts).getSurface1();
+			//	ContactSurfaceIndex csi2 = cs.getContact(numContacts).getSurface2();
+			//	cout << "surf1: " << csi1 << " surf2: " << csi2 << endl;
+			//}
 			if (cs.getNumContacts()>0)
 			{
-				//DecorativeGeometry decGeometry1 = mobod.getOutboardDecoration(0);
-				DecorativeGeometry decGeometry1 = mobod.getBody().updDecoration(0);
-				decGeometry1.setOpacity( 0.2);
-				decGeometry1.setColor( Purple);
+				DecorativeGeometry decContactGeometry = mobod.getBody().updDecoration(0);
+				decContactGeometry.setOpacity( 0.05);
+				decContactGeometry.setColor( Gray);
+				//decContactGeometry.setRepresentation( DecorativeGeometry::Representation::DrawPoints);
 
 				const Transform& X_BM = mobod.getOutboardFrame(state); // M frame in B
 				const Transform& X_GB = mobod.getBodyTransform(state); // B in Ground
-				const Transform& parentTransf = mobod.getInboardFrame(state);
-				Transform X_GM = X_GB*X_BM; // F frame in Ground
-				cout << "location of Mo in Ground: " << X_GM.p() << endl;
+				const Transform& X_PF = mobod.getInboardFrame(state);
+				Transform X_GM = X_GB*X_BM; // M frame in Ground
+				//cout << "location of Mo in Ground: " << X_GM.p() << endl;
 				// rotate 
 				Rotation newRot = X_GM.updR();
-				Rotation parentRot = parentTransf.R();
+				Rotation parentRot = X_PF.R();
 				newRot.operator=( newRot.operator*=( parentRot));
-				// translate
+				// translate in front of the whole body
 				X_GM.setP( X_GM.operator+=( Vec3(0.5,0,0)).p());
 				// set new transform
-				decGeometry1.setTransform( Transform( X_GM));
-					
+				decContactGeometry.setTransform( X_GM);
+
 				ContactPatch patch;
 				const bool found = m_compliant.calcContactPatchDetailsById(state,id,patch);
 				//cout << "patch for id" << id << " found=" << found << endl;
 				//cout << "resultant=" << patch.getContactForce() << endl;
 				//cout << "num details=" << patch.getNumDetails() << endl;
-				for (int i=0; i < patch.getNumDetails(); ++i) {
-					const ContactDetail& detail = patch.getContactDetail(i);
+				for (int k=0; k < patch.getNumDetails(); ++k) {
+					const ContactDetail& detail = patch.getContactDetail(k);
 					//const Real peakPressure = detail.getPeakPressure();			
-					//cout << detail.getPeakPressure() << endl;
 					const Vec3 cp = detail.getContactPoint();
 					Vec3 newcp = Vec3(cp);
 					Transform newTransf = Transform(newcp);
 					newTransf.setP( newTransf.operator+=( Vec3(0.5,0,0)).p());
-					// Make a black line from the element's contact point in the normal
-					// direction, with length proportional to log(peak pressure)
-					// on that element. 
-					//DecorativeLine normal(newTransf.p(),
-						//newTransf.p()- 0.001 * detail.getContactNormal());
-					/*DecorativeLine normal(detail.getContactPoint(),
-						detail.getContactPoint()+ 0.001 * detail.getContactNormal());*/
+
 					DecorativeSphere decContP;
 					decContP.setScale( 0.0005);
 					decContP.setTransform( newTransf);
-					decContP.setColor(SimTK::Red);
-					geometries.append(decContP);
-					geometry.push_back( decGeometry1);
+					decContP.setColor(Red);
+					geometry.push_back(decContP);
+					geometry.push_back( decContactGeometry);
 				}
-				for (int j=0; j<geometries.size(); j++)
-					geometry.push_back(geometries[j]);
 			}
-        }
+        }		
     }
 private:
     const MultibodySystem&              m_system;
@@ -120,7 +125,7 @@ public:
                                +m_compliant.getDissipatedEnergy(state)
              << endl;
         const int ncont = m_compliant.getNumContactForces(state);
-        cout << "Num contacts: " << ncont << endl;
+        //cout << "Num contacts: " << ncont << endl;
         for (int i=0; i < ncont; ++i) {
             const ContactForce& force = m_compliant.getContactForce(state,i);
             //cout << force;
@@ -148,6 +153,7 @@ public:
                              bool& shouldTerminate) const override 
     {
         int menuId, item;
+		//cout << "hello " << menuId << " " << item;
         if (m_silo.takeMenuPick(menuId, item) && menuId==RunMenuId && item==QuitItem)
             shouldTerminate = true;
     }
@@ -245,6 +251,69 @@ void forwardSimulation(Model& model)
 	addFlexionController(model);
 	//addExtensionController(model);
 
+	// init system
+	std::time_t result = std::time(nullptr);
+	std::cout << "\nBefore initSystem() " << std::asctime(std::localtime(&result)) << endl;
+	SimTK::State& si = model.initSystem();
+	result = std::time(nullptr);
+	std::cout << "\nAfter initSystem() " << std::asctime(std::localtime(&result)) << endl;
+	
+	// set gravity
+	model.updGravityForce().setGravityVector(si, Vec3(-9.80665,0,0));
+	//model.updGravityForce().setGravityVector(si, Vec3(0,0,0));
+	
+	//setKneeAngle(model, si, 0);
+	model.equilibrateMuscles( si);
+
+	// Add reporters
+    ForceReporter* forceReporter = new ForceReporter(&model);
+    model.addAnalysis(forceReporter);
+
+	CustomAnalysis* customReporter = new CustomAnalysis(&model, "r");
+	model.addAnalysis(customReporter);
+
+	// Create the integrator and manager for the simulation.
+	SimTK::RungeKuttaMersonIntegrator integrator(model.getMultibodySystem());
+	//SimTK::CPodesIntegrator integrator(model.getMultibodySystem());
+	//integrator.setAccuracy(.01);
+	//integrator.setAccuracy(1e-3);
+	//integrator.setFixedStepSize(0.001);
+	Manager manager(model, integrator);
+
+	// Define the initial and final simulation times
+	double initialTime = 0.0;
+	double finalTime = 0.2;
+
+	// Integrate from initial time to final time
+	manager.setInitialTime(initialTime);
+	manager.setFinalTime(finalTime);
+	std::cout<<"\n\nIntegrating from "<<initialTime<<" to " <<finalTime<<std::endl;
+
+	result = std::time(nullptr);
+	std::cout << "\nBefore integrate(si) " << std::asctime(std::localtime(&result)) << endl;
+
+	manager.integrate(state);
+
+	result = std::time(nullptr);
+	std::cout << "\nAfter integrate(si) " << std::asctime(std::localtime(&result)) << endl;
+
+	// Save the simulation results
+	Storage statesDegrees(manager.getStateStorage());
+	statesDegrees.print("../outputs/states_flex.sto");
+	model.updSimbodyEngine().convertRadiansToDegrees(statesDegrees);
+	statesDegrees.setWriteSIMMHeader(true);
+	statesDegrees.print("../outputs/states_degrees_flex.mot");
+	// force reporter results
+	forceReporter->getForceStorage().print("../outputs/force_reporter_flex.mot");
+	customReporter->print( "../outputs/custom_reporter_flex.mot");
+}
+
+void forwardSimulationWithHitMap(Model& model)
+{
+	addFlexionController(model);
+	//addExtensionController(model);
+	//addTibialLoads(model, 0);
+
     model.setUseVisualizer(true);
 
 	// init system
@@ -258,7 +327,7 @@ void forwardSimulation(Model& model)
 	model.updGravityForce().setGravityVector(si, Vec3(-9.80665,0,0));
 	//model.updGravityForce().setGravityVector(si, Vec3(0,0,0));
 	
-	//setKneeAngle(model, si, -90);
+	//setKneeAngle(model, si, 0);
 	model.equilibrateMuscles( si);
 
 	MultibodySystem& system = model.updMultibodySystem();
@@ -271,26 +340,31 @@ void forwardSimulation(Model& model)
 
 	for (int i=0; i < matter.getNumBodies(); ++i) {
 		MobilizedBodyIndex mbx(i);
-		if (i==19 || i==22)
+		if (i==19 || i==20 || i==22 || i==15 || i==16)
 		{
 			MobilizedBody& mobod = matter.updMobilizedBody(mbx);
 			std::filebuf fb;
-			//if (i==15)
-			//	fb.open ( "../resources/geometries/meniscus_lat_r.obj",std::ios::in);
-			//else if (i==16)
-			//	fb.open ( "../resources/geometries/meniscus_med_r.obj",std::ios::in);
+			//cout << mobod.updBody().
 			if (i==19)
 				fb.open ( "../resources/geometries/femur_lat_r.obj",std::ios::in);
-			//else if (i==20)
-				//fb.open ( "../resources/geometries/femur_med_r.obj",std::ios::in);
+			else if (i==20)
+				fb.open ( "../resources/geometries/femur_med_r.obj",std::ios::in);
 			else if (i==22)
 				fb.open ( "../resources/geometries/tibia_upper_r.obj",std::ios::in);
+			else if (i==15)
+				fb.open ( "../resources/geometries/meniscus_lat_r.obj",std::ios::in);
+			else if (i==16)
+				fb.open ( "../resources/geometries/meniscus_med_r.obj",std::ios::in);
 			std::istream is(&fb);
 			PolygonalMesh polMesh;
 			polMesh.loadObjFile(is);
 			fb.close();
 			SimTK::ContactGeometry::TriangleMesh mesh(polMesh);
-			ContactSurface contSurf(mesh, ContactMaterial(1.0e6, 1, 0.5, 0.5, 0.5), 0.001);
+			ContactSurface contSurf;//(mesh, ContactMaterial(1.0e6, 1, 1, 0.03, 0.03), 0.001);
+			if (i==19 || i==20 || i==22)
+				contSurf = ContactSurface(mesh, ContactMaterial(10, 1, 1, 0.03, 0.03), 0.001);
+			else if (i==15 || i==16)
+				contSurf = ContactSurface(mesh, ContactMaterial(10, 3, 1, 0.03, 0.03), 0.001);
 			DecorativeMesh showMesh(mesh.createPolygonalMesh());
 			showMesh.setOpacity(0.5);
 			mobod.updBody().addDecoration( showMesh);
@@ -300,30 +374,30 @@ void forwardSimulation(Model& model)
 
 	ModelVisualizer& viz(model.updVisualizer());
 	//Visualizer viz(system);
-	viz.updSimbodyVisualizer().addDecorationGenerator(new ForceArrowGenerator(system,contactForces));
+	viz.updSimbodyVisualizer().addDecorationGenerator(new HitMapGenerator(system,contactForces));
     viz.updSimbodyVisualizer().setMode(Visualizer::RealTime);
     viz.updSimbodyVisualizer().setDesiredBufferLengthInSec(1);
     viz.updSimbodyVisualizer().setDesiredFrameRate(30);
     viz.updSimbodyVisualizer().setGroundHeight(-3);
     viz.updSimbodyVisualizer().setShowShadows(true);
 	
- //   Visualizer::InputSilo* silo = new Visualizer::InputSilo();
-	//viz.updSimbodyVisualizer().addInputListener(silo);
- //   Array_<std::pair<String,int> > runMenuItems;
- //   runMenuItems.push_back(std::make_pair("Go", GoItem));
- //   runMenuItems.push_back(std::make_pair("Replay", ReplayItem));
- //   runMenuItems.push_back(std::make_pair("Quit", QuitItem));
- //   viz.updSimbodyVisualizer().addMenu("Run", RunMenuId, runMenuItems);
+    Visualizer::InputSilo* silo = new Visualizer::InputSilo();
+	viz.updSimbodyVisualizer().addInputListener(silo);
+    Array_<std::pair<String,int> > runMenuItems;
+    runMenuItems.push_back(std::make_pair("Go", GoItem));
+    runMenuItems.push_back(std::make_pair("Replay", ReplayItem));
+    runMenuItems.push_back(std::make_pair("Quit", QuitItem));
+    viz.updSimbodyVisualizer().addMenu("Run", RunMenuId, runMenuItems);
 
-    //Array_<std::pair<String,int> > helpMenuItems;
-    //helpMenuItems.push_back(std::make_pair("TBD - Sorry!", 1));
-    //viz.updSimbodyVisualizer().addMenu("Help", HelpMenuId, helpMenuItems);
+    Array_<std::pair<String,int> > helpMenuItems;
+    helpMenuItems.push_back(std::make_pair("TBD - Sorry!", 1));
+    viz.updSimbodyVisualizer().addMenu("Help", HelpMenuId, helpMenuItems);
 
     system.addEventReporter(new MyReporter(system,contactForces,ReportInterval));
 	system.addEventReporter(new Visualizer::Reporter(viz.updSimbodyVisualizer(), ReportInterval));
 	
     // Check for a Run->Quit menu pick every 1/4 second.
-    //system.addEventHandler(new UserInputHandler(*silo, .25));
+    system.addEventHandler(new UserInputHandler(*silo, 0.1));
 
 	system.realizeTopology();
 
@@ -333,10 +407,10 @@ void forwardSimulation(Model& model)
         const MobilizedBody& mobod = matter.getMobilizedBody(mbx);
         const int nsurfs = mobod.getBody().getNumContactSurfaces();
         //printf("mobod %d has %d contact surfaces\n", (int)mbx, nsurfs);
-		cout << "mobod " << (float)mobod.getBodyMass(si) << " has " << nsurfs << " contact surfaces" << endl;
+		cout << "mobod with mass: " << (float)mobod.getBodyMass(si) << " has " << nsurfs << " contact surfaces" << endl;
     }
 
-	cout << "tracker num of surfaces: " << tracker.getNumSurfaces() << endl;
+	//cout << "tracker num of surfaces: " << tracker.getNumSurfaces() << endl;
 
 	//State state = system.getDefaultState();
 	//viz.report(state);
@@ -360,7 +434,7 @@ void forwardSimulation(Model& model)
 	// Create the integrator and manager for the simulation.
 	SimTK::RungeKuttaMersonIntegrator integrator(model.getMultibodySystem());
 	//SimTK::CPodesIntegrator integrator(model.getMultibodySystem());
-	integrator.setAccuracy(.01);
+	//integrator.setAccuracy(.01);
 	//integrator.setAccuracy(1e-3);
 	//integrator.setFixedStepSize(0.001);
 	Manager manager(model, integrator);
@@ -395,18 +469,6 @@ void forwardSimulation(Model& model)
 
 void addTibialLoads(Model& model, double knee_angle)
 {
-	// Specify properties of a force function to be applied to the block
-	//double timeX[2] = {0.0, 0.5}; // time nodes for linear function
-	//double timeY[2] = {0.0, 0.5}; // time nodes for linear function
-	//double fXofT[2] = {0, -103.366188 / 4.0f}; // force values at t1 and t2
-	//double fYofT[2] = {0, 37.6222 / 4.0f}; // force values at t1 and t2
-	//double pYofT[2] = {0, -0.5}; // point values at t1 and t2
- 
-	//// Create a new linear functions for the force and point components
-	//PiecewiseLinearFunction *forceX = new PiecewiseLinearFunction(2, timeX, fXofT);
-	//PiecewiseLinearFunction *forceY = new PiecewiseLinearFunction(2, timeY, fYofT);
-	//PiecewiseLinearFunction *pointY = new PiecewiseLinearFunction(2, timeY, pYofT);
-  
 	// Create a new prescribed force applied to the block
 	//PrescribedForce *prescribedF = new PrescribedForce();
 	//OpenSim::Body* tibia_body = &model.updBodySet().get("tibia_r");
@@ -605,11 +667,11 @@ void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees)
 	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.226892);   // ant load at -60 degrees flexion (+4 degrees)
 	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.191986);   // ant load at -60 degrees flexion (+6 degrees)
 	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.157079);   // ant load at -60 degrees flexion (+8 degrees)
-	knee_r_cs.get("knee_adduction_r").setValue(si, -0.148352);   // ant load at -40 degrees flexion (+6 degrees)
+	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.148352);   // ant load at -40 degrees flexion (+6 degrees)
 	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.17453);   // ant load at -20 degrees flexion (+7 degrees)
 	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.20943);   // ant load at -20 degrees flexion (+5 degrees)
 	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.29408);   // ant load at 0 degrees flexion
-	knee_r_cs.get("knee_adduction_r").setLocked(si, true);
+	//knee_r_cs.get("knee_adduction_r").setLocked(si, true);
 	//knee_r_cs.get("knee_rotation_r").setLocked(si, true);
 	//knee_r_cs.get("knee_anterior_posterior_r").setLocked(si, true);
 	//knee_r_cs.get("knee_inferior_superior_r").setLocked(si, true);
