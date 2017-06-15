@@ -10,6 +10,10 @@ static const Real TimeScale = 1;
 static const Real FrameRate = 30;
 static const Real ReportInterval = TimeScale/FrameRate;
 
+// These are the item numbers for the entries on the Run menu.
+static const int RunMenuId = 3, HelpMenuId = 7;
+static const int GoItem = 1, ReplayItem=2, QuitItem=3;
+
 template<typename T> std::string changeToString(
     const T& value, int precision = std::numeric_limits<int>::infinity())
 {
@@ -137,10 +141,6 @@ private:
     const CompliantContactSubsystem& m_compliant;
 };
 
-// These are the item numbers for the entries on the Run menu.
-static const int RunMenuId = 3, HelpMenuId = 7;
-static const int GoItem = 1, ReplayItem=2, QuitItem=3;
-
 // This is a periodic event handler that interrupts the simulation on a regular
 // basis to poll the InputSilo for user input. If there has been some, process it.
 // This one does nothing but look for the Run->Quit selection.
@@ -153,10 +153,24 @@ public:
                              bool& shouldTerminate) const override 
     {
         int menuId, item;
-		//cout << "hello " << menuId << " " << item;
+		//cout << "hello " << m_silo.isAnyUserInput << " " << item;
         if (m_silo.takeMenuPick(menuId, item) && menuId==RunMenuId && item==QuitItem)
             shouldTerminate = true;
-    }
+		//while (m_silo.isAnyUserInput()) {
+		//	//while (silo.takeKeyHit(key,modifier)) {
+		//		// Process the key that was hit
+		//		//cout << "Key: " << key << endl;
+		//	//}
+		//	while (m_silo.takeMenuPick(menuId, item)) {
+		//		// Process the picked menu item
+		//		cout << "Menu item: " << item << endl;
+		//	}
+		//	//while (silo.takeSliderMove(which, value)) {
+		//		// Process the new value for slider "which"
+		//		//cout << "Slider: " << which << endl;
+		//	//}
+		//}
+	}
 
 private:
     Visualizer::InputSilo& m_silo;
@@ -199,7 +213,7 @@ void anteriorTibialLoadsFD(Model& model)
 		//		model.getActuators().get(i).setDisabled(si, false);
 	//}
 
-	setKneeAngle(model, si, knee_angle);
+	setKneeAngle(model, si, knee_angle, true);
 	model.equilibrateMuscles( si);
 
 	// Add reporters
@@ -246,7 +260,7 @@ void anteriorTibialLoadsFD(Model& model)
 	customReporter->print( "../outputs/custom_reporter_ant_load_" + changeToString(knee_angle) +".mot");
 }
 
-void forwardSimulation(Model& model)
+void flexionFDSimulation(Model& model)
 {
 	addFlexionController(model);
 	//addExtensionController(model);
@@ -262,7 +276,8 @@ void forwardSimulation(Model& model)
 	model.updGravityForce().setGravityVector(si, Vec3(-9.80665,0,0));
 	//model.updGravityForce().setGravityVector(si, Vec3(0,0,0));
 	
-	//setKneeAngle(model, si, 0);
+	setHipAngle(model, si, 90);
+	setKneeAngle(model, si, 0, false);
 	model.equilibrateMuscles( si);
 
 	// Add reporters
@@ -292,7 +307,7 @@ void forwardSimulation(Model& model)
 	result = std::time(nullptr);
 	std::cout << "\nBefore integrate(si) " << std::asctime(std::localtime(&result)) << endl;
 
-	manager.integrate(state);
+	manager.integrate(si);
 
 	result = std::time(nullptr);
 	std::cout << "\nAfter integrate(si) " << std::asctime(std::localtime(&result)) << endl;
@@ -308,7 +323,7 @@ void forwardSimulation(Model& model)
 	customReporter->print( "../outputs/custom_reporter_flex.mot");
 }
 
-void forwardSimulationWithHitMap(Model& model)
+void flexionFDSimulationWithHitMap(Model& model)
 {
 	addFlexionController(model);
 	//addExtensionController(model);
@@ -327,7 +342,8 @@ void forwardSimulationWithHitMap(Model& model)
 	model.updGravityForce().setGravityVector(si, Vec3(-9.80665,0,0));
 	//model.updGravityForce().setGravityVector(si, Vec3(0,0,0));
 	
-	//setKneeAngle(model, si, 0);
+	setHipAngle(model, si, 90);
+	setKneeAngle(model, si, 0, false);
 	model.equilibrateMuscles( si);
 
 	MultibodySystem& system = model.updMultibodySystem();
@@ -396,8 +412,8 @@ void forwardSimulationWithHitMap(Model& model)
     system.addEventReporter(new MyReporter(system,contactForces,ReportInterval));
 	system.addEventReporter(new Visualizer::Reporter(viz.updSimbodyVisualizer(), ReportInterval));
 	
-    // Check for a Run->Quit menu pick every 1/4 second.
-    system.addEventHandler(new UserInputHandler(*silo, 0.1));
+    // Check for a Run->Quit menu pick every <x> second.
+    system.addEventHandler(new UserInputHandler(*silo, 0.01));
 
 	system.realizeTopology();
 
@@ -406,8 +422,12 @@ void forwardSimulationWithHitMap(Model& model)
 		MobilizedBodyIndex mbx(i);
         const MobilizedBody& mobod = matter.getMobilizedBody(mbx);
         const int nsurfs = mobod.getBody().getNumContactSurfaces();
-        //printf("mobod %d has %d contact surfaces\n", (int)mbx, nsurfs);
-		cout << "mobod with mass: " << (float)mobod.getBodyMass(si) << " has " << nsurfs << " contact surfaces" << endl;
+        printf("mobod %d has %d contact surfaces\n", (int)mbx, nsurfs);
+		//cout << "mobod with mass: " << (float)mobod.getBodyMass(si) << " has " << nsurfs << " contact surfaces" << endl;
+		 //for (int i=0; i<nsurfs; ++i) {
+            //printf("%2d: index %d\n", i, 
+                   //(int)tracker.getContactSurfaceIndex(mbx,i)); 
+        //}
     }
 
 	//cout << "tracker num of surfaces: " << tracker.getNumSurfaces() << endl;
@@ -417,12 +437,13 @@ void forwardSimulationWithHitMap(Model& model)
 	State& state = model.initializeState();
 	viz.updSimbodyVisualizer().report(state);
 
-	//cout << "\nChoose 'Go' from Run menu to simulate:\n";
- //   int menuId, item;
- //   do { silo->waitForMenuPick(menuId, item);
- //        if (menuId != RunMenuId || item != GoItem) 
- //            cout << "\aDude ... follow instructions!\n";
- //   } while (menuId != RunMenuId || item != GoItem);
+	cout << "\nChoose 'Go' from Run menu to simulate:\n";
+    int menuId, item;
+    //do { silo->waitForMenuPick(menuId, item);
+	do { viz.updInputSilo().waitForMenuPick(menuId, item);
+         if (menuId != RunMenuId || item != GoItem) 
+             cout << "\aDude ... follow instructions!\n";
+    } while (menuId != RunMenuId || item != GoItem);
 
 	// Add reporters
     ForceReporter* forceReporter = new ForceReporter(&model);
@@ -464,7 +485,7 @@ void forwardSimulationWithHitMap(Model& model)
 	statesDegrees.print("../outputs/states_degrees_flex.mot");
 	// force reporter results
 	forceReporter->getForceStorage().print("../outputs/force_reporter_flex.mot");
-	customReporter->print( "../outputs/custom_reporter_flex.mot");
+	//customReporter->print( "../outputs/custom_reporter_flex.mot");
 }
 
 void addTibialLoads(Model& model, double knee_angle)
@@ -565,7 +586,7 @@ void addExtensionController(Model& model)
 	model.addController( controller);
 }
 
-void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees)
+void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees, bool lock_knee_angle)
 {
 	const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
 	if (angle_degrees == -120)
@@ -661,7 +682,7 @@ void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees)
 		knee_r_cs.get("knee_medial_lateral_r").setValue(si, knee_r_cs.get("knee_medial_lateral_r").getDefaultValue());
 	}
 
-	knee_r_cs.get("knee_angle_r").setLocked(si, true);
+	knee_r_cs.get("knee_angle_r").setLocked(si, lock_knee_angle);
 	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.05235);   // ant load at -90 degrees flexion (+10 degrees)
 	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.06981);   // ant load at -80 degrees flexion (+10 degrees)
 	//knee_r_cs.get("knee_adduction_r").setValue(si, -0.226892);   // ant load at -60 degrees flexion (+4 degrees)
@@ -676,4 +697,15 @@ void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees)
 	//knee_r_cs.get("knee_anterior_posterior_r").setLocked(si, true);
 	//knee_r_cs.get("knee_inferior_superior_r").setLocked(si, true);
 	//knee_r_cs.get("knee_medial_lateral_r").setLocked(si, true);
+}
+
+void setHipAngle(Model& model, SimTK::State &si, double angle_degrees)
+{
+	const CoordinateSet &hip_r_cs = model.getJointSet().get("hip_r").getCoordinateSet();
+	if (angle_degrees == 90)
+	{
+		hip_r_cs.get("hip_flexion_r").setLocked(si, false);
+		hip_r_cs.get("hip_flexion_r").setValue(si, 1.57079632);  // 90 degrees
+		hip_r_cs.get("hip_flexion_r").setLocked(si, true);
+	}
 }

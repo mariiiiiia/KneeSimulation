@@ -31,7 +31,8 @@ void performMCFD(Model model, int iterations)
     //double stiffness = meniscus_lat.getStiffness();
 	double stiffness;
     std::default_random_engine gen;
-	std::normal_distribution<double> random_stiff(500, 500);
+	//std::normal_distribution<double> random_stiff(500.0f, 500.0f);
+	std::normal_distribution<double> random_stiff(100.0f, 100.0f);
 
 	// flexion controller 
 	addFlexionController(model);
@@ -43,6 +44,8 @@ void performMCFD(Model model, int iterations)
 	result = std::time(nullptr);
 	std::cout << "\nAfter initSystem() " << std::asctime(std::localtime(&result)) << endl;
 	
+	setHipAngle(model, si, 90);
+
 	// disable muscles
 	string muscle_name;
 	for (int i=0; i<model.getActuators().getSize(); i++)
@@ -63,7 +66,8 @@ void performMCFD(Model model, int iterations)
     {
 		//Model model_temp = Model(model);
 		SimTK::State& si_temp = State(si);
-		setKneeAngle(model, si_temp, 0);
+		setKneeAngle(model, si_temp, 0, false);
+		si_temp = model.initSystem();
 		
 		// Add reporters
 		ForceReporter* forceReporter = new ForceReporter(&model);
@@ -72,25 +76,29 @@ void performMCFD(Model model, int iterations)
 		model.addAnalysis(customReporter);
 
         //string outputFile = changeToString(i) + "_fd_.sto";
-		double this_random_stiff = random_stiff(gen);
-		cout << "before: " << this_random_stiff;
-		this_random_stiff = std::ceil(this_random_stiff - 0.5);
-		while (this_random_stiff <= 0)
-		{
-			this_random_stiff = random_stiff(gen);
-			this_random_stiff = std::ceil(this_random_stiff - 0.5);
-		}
-		this_random_stiff *= 1.e8;
+		double this_random_stiff = random_stiff(gen) * 1.e7;
+		//cout << "before: " << this_random_stiff;
+		//this_random_stiff = std::ceil(this_random_stiff - 0.5);
+		//while (this_random_stiff <= 0)
+		//{
+		//	this_random_stiff = random_stiff(gen);
+		//	this_random_stiff = std::ceil(this_random_stiff - 0.5);
+		//}
+		//this_random_stiff *= 1.e7;
+		if (this_random_stiff < 0)
+			this_random_stiff *= -1;
 		static_cast<OpenSim::ElasticFoundationForce&>( model.updForceSet().get("femur_lat_meniscii_r")).setStiffness(this_random_stiff);
 		static_cast<OpenSim::ElasticFoundationForce&>( model.updForceSet().get("femur_med_meniscii_r")).setStiffness(this_random_stiff);
-		model.print("../outputs/MonteCarlo/NewModels/" + changeToString(i) + "newModel.osim");
+		//static_cast<OpenSim::ElasticFoundationForce&>( model.updForceSet().get("femur_lat_meniscii_r")).setDissipation(this_random_stiff);
+		//static_cast<OpenSim::ElasticFoundationForce&>( model.updForceSet().get("femur_med_meniscii_r")).setDissipation(this_random_stiff);
+		model.print("../outputs/MonteCarlo/NewModels/" + changeToString(i) + "_newModel.osim");
 
-		cout << " after: " << this_random_stiff << endl;
+		cout << "stiffness: " << this_random_stiff << endl;
 
 		// Create the integrator and manager for the simulation.
 		SimTK::RungeKuttaMersonIntegrator integrator(model.getMultibodySystem());
 		//integrator.setAccuracy(1.0e-3);
-		//integrator.setFixedStepSize(0.001);
+		//integrator.setFixedStepSize(0.0001);
 		Manager manager(model, integrator);
 
 		// Define the initial and final simulation times
@@ -103,21 +111,21 @@ void performMCFD(Model model, int iterations)
 		std::cout<<"\n\nIntegrating from "<<initialTime<<" to " <<finalTime<<". "<< i <<std::endl;
 
 		result = std::time(nullptr);
-		//std::cout << "\nBefore integrate(si) " << std::asctime(std::localtime(&result)) << endl;
+		std::cout << "\nBefore integrate(si) " << std::asctime(std::localtime(&result)) << endl;
 
 		manager.integrate(si_temp);
 
 		result = std::time(nullptr);
-		//std::cout << "\nAfter integrate(si) " << std::asctime(std::localtime(&result)) << endl;
+		std::cout << "\nAfter integrate(si) " << std::asctime(std::localtime(&result)) << endl;
 
 		// Save the simulation results
 		Storage statesDegrees(manager.getStateStorage());
-		//statesDegrees.print("../outputs/states_flexion.sto");
+		statesDegrees.print("../outputs/MonteCarlo/states_rads/" + changeToString(i) +  "_states_flexion.sto");
 		model.updSimbodyEngine().convertRadiansToDegrees(statesDegrees);
 		statesDegrees.setWriteSIMMHeader(true);
-		statesDegrees.print("../outputs/MonteCarlo/states/" + changeToString(i) + "states_degrees_flexion.mot");
+		statesDegrees.print("../outputs/MonteCarlo/states/" + changeToString(i) + "_states_degrees_flexion.mot");
 		// force reporter results
-		forceReporter->getForceStorage().print("../outputs/MonteCarlo/ForceReporter/" + changeToString(i) + "force_reporter_flexion.mot");
-		customReporter->print( "../outputs/MonteCarlo/CustomReporter/" + changeToString(i) + "custom_reporter_flexion.mot");
+		forceReporter->getForceStorage().print("../outputs/MonteCarlo/ForceReporter/" + changeToString(i) + "_force_reporter_flexion.mot");
+		customReporter->print( "../outputs/MonteCarlo/CustomReporter/" + changeToString(i) + "_custom_reporter_flexion.mot");
     }
 }
