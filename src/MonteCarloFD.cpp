@@ -31,8 +31,8 @@ void performMCFD(Model model, int iterations)
     //double stiffness = meniscus_lat.getStiffness();
 	double stiffness;
     std::default_random_engine gen;
-	//std::normal_distribution<double> random_stiff(500.0f, 500.0f);
-	std::normal_distribution<double> random_stiff(100.0f, 100.0f);
+	std::normal_distribution<double> random_stiff(10.0f, 5.0f);
+	//std::normal_distribution<double> random_stiff(100.0f, 100.0f);
 
 	// flexion controller 
 	addFlexionController(model);
@@ -62,7 +62,7 @@ void performMCFD(Model model, int iterations)
 	}
 	model.equilibrateMuscles( si);
 
-    for (int i = 0; i < iterations; i++)
+    for (int i = 77; i < iterations; i++)
     {
 		//Model model_temp = Model(model);
 		SimTK::State& si_temp = State(si);
@@ -76,7 +76,7 @@ void performMCFD(Model model, int iterations)
 		model.addAnalysis(customReporter);
 
         //string outputFile = changeToString(i) + "_fd_.sto";
-		double this_random_stiff = random_stiff(gen) * 1.e7;
+		double this_random_stiff = random_stiff(gen) * 1.e8;
 		//cout << "before: " << this_random_stiff;
 		//this_random_stiff = std::ceil(this_random_stiff - 0.5);
 		//while (this_random_stiff <= 0)
@@ -103,7 +103,7 @@ void performMCFD(Model model, int iterations)
 
 		// Define the initial and final simulation times
 		double initialTime = 0.0;
-		double finalTime = 0.2;
+		double finalTime = 0.25;
 
 		// Integrate from initial time to final time
 		manager.setInitialTime(initialTime);

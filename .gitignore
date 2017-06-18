@@ -2,6 +2,7 @@
 ## Eclipse
 #################
 
+outputs/MonteCarlo/NewModels/*
 *.pydevproject
 .project
 .metadata

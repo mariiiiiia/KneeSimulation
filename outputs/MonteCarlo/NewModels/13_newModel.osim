@@ -5282,7 +5282,7 @@
 									<coordinate>knee_angle_r</coordinate>
 								</ConditionalPathPoint>
 								<MovingPathPoint name="rect_fem_r-P3">
-									<location> 0.0163025 0.0235133 0.0014</location>
+									<location> 0.0229333 0.0245169 0.0014</location>
 									<body>tibia_r</body>
 									<x_location>
 										<SimmSpline>
@@ -5393,7 +5393,7 @@
 									<coordinate>knee_angle_r</coordinate>
 								</ConditionalPathPoint>
 								<MovingPathPoint name="vas_med_r-P5">
-									<location> 0.010533 0.022517 -0.0146</location>
+									<location> 0.0171632 0.0235244 -0.0146</location>
 									<body>tibia_r</body>
 									<x_location>
 										<SimmSpline>
@@ -5498,7 +5498,7 @@
 									<coordinate>knee_angle_r</coordinate>
 								</ConditionalPathPoint>
 								<MovingPathPoint name="vas_int_r-P4">
-									<location> 0.00899526 0.0257006 0.0018</location>
+									<location> 0.0156275 0.0267089 0.0018</location>
 									<body>tibia_r</body>
 									<x_location>
 										<SimmSpline>
@@ -5609,7 +5609,7 @@
 									<coordinate>knee_angle_r</coordinate>
 								</ConditionalPathPoint>
 								<MovingPathPoint name="vas_lat_r-P5">
-									<location> 0.0150118 0.0216335 0.0165</location>
+									<location> 0.0216413 0.0226379 0.0165</location>
 									<body>tibia_r</body>
 									<x_location>
 										<SimmSpline>
@@ -10734,9 +10734,9 @@
 							<ElasticFoundationForce::ContactParameters>
 								<!--Names of geometry objects affected by these parameters.-->
 								<geometry>femur_lat_r_CM meniscus_lat_r_CM</geometry>
-								<stiffness>4714572561.17157</stiffness>
-								<dissipation>3</dissipation>
-								<static_friction>1</static_friction>
+								<stiffness>1042295057.40596</stiffness>
+								<dissipation>10</dissipation>
+								<static_friction>0.8</static_friction>
 								<dynamic_friction>0.03</dynamic_friction>
 								<viscous_friction>0.03</viscous_friction>
 							</ElasticFoundationForce::ContactParameters>
@@ -10753,9 +10753,9 @@
 							<ElasticFoundationForce::ContactParameters>
 								<!--Names of geometry objects affected by these parameters.-->
 								<geometry>femur_med_r_CM meniscus_med_r_CM</geometry>
-								<stiffness>4714572561.17157</stiffness>
-								<dissipation>3</dissipation>
-								<static_friction>1</static_friction>
+								<stiffness>1042295057.40596</stiffness>
+								<dissipation>10</dissipation>
+								<static_friction>0.8</static_friction>
 								<dynamic_friction>0.03</dynamic_friction>
 								<viscous_friction>0.03</viscous_friction>
 							</ElasticFoundationForce::ContactParameters>
@@ -10772,9 +10772,9 @@
 							<ElasticFoundationForce::ContactParameters>
 								<!--Names of geometry objects affected by these parameters.-->
 								<geometry>tibia_upper_r_CM femur_med_r_CM</geometry>
-								<stiffness>20000000000</stiffness>
+								<stiffness>100000000000</stiffness>
 								<dissipation>1</dissipation>
-								<static_friction>1</static_friction>
+								<static_friction>0.5</static_friction>
 								<dynamic_friction>0.03</dynamic_friction>
 								<viscous_friction>0.03</viscous_friction>
 							</ElasticFoundationForce::ContactParameters>
@@ -10782,7 +10782,7 @@
 						<groups />
 					</ElasticFoundationForce::ContactParametersSet>
 					<!--Slip velocity (creep) at which peak static friction occurs.-->
-					<transition_velocity>0.5</transition_velocity>
+					<transition_velocity>0.8</transition_velocity>
 				</ElasticFoundationForce>
 				<ElasticFoundationForce name="femur_lat_tibia_r">
 					<!--Material properties.-->
@@ -10791,9 +10791,9 @@
 							<ElasticFoundationForce::ContactParameters>
 								<!--Names of geometry objects affected by these parameters.-->
 								<geometry>tibia_upper_r_CM femur_lat_r_CM</geometry>
-								<stiffness>20000000000</stiffness>
+								<stiffness>100000000000</stiffness>
 								<dissipation>1</dissipation>
-								<static_friction>1</static_friction>
+								<static_friction>0.5</static_friction>
 								<dynamic_friction>0.03</dynamic_friction>
 								<viscous_friction>0.03</viscous_friction>
 							</ElasticFoundationForce::ContactParameters>
@@ -10801,7 +10801,7 @@
 						<groups />
 					</ElasticFoundationForce::ContactParametersSet>
 					<!--Slip velocity (creep) at which peak static friction occurs.-->
-					<transition_velocity>0.5</transition_velocity>
+					<transition_velocity>0.8</transition_velocity>
 				</ElasticFoundationForce>
 				<CustomLigament name="aACL_R">
 					<!--the set of points defining the path of the CustomLigament-->
