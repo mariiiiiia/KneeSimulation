@@ -10727,44 +10727,6 @@
 					<!--maximum normalized lengthening force-->
 					<Flen>1.8</Flen>
 				</Thelen2003Muscle>
-				<ElasticFoundationForce name="femur_lat_meniscii_l">
-					<!--Material properties.-->
-					<ElasticFoundationForce::ContactParametersSet name="contact_parameters">
-						<objects>
-							<ElasticFoundationForce::ContactParameters>
-								<!--Names of geometry objects affected by these parameters.-->
-								<geometry>femur_lat_l_CM meniscus_lat_l_CM</geometry>
-								<stiffness>10000000000</stiffness>
-								<dissipation>1</dissipation>
-								<static_friction>0.8</static_friction>
-								<dynamic_friction>0.04</dynamic_friction>
-								<viscous_friction>0.04</viscous_friction>
-							</ElasticFoundationForce::ContactParameters>
-						</objects>
-						<groups />
-					</ElasticFoundationForce::ContactParametersSet>
-					<!--Slip velocity (creep) at which peak static friction occurs.-->
-					<transition_velocity>0.2</transition_velocity>
-				</ElasticFoundationForce>
-				<ElasticFoundationForce name="femur_med_meniscii_l">
-					<!--Material properties.-->
-					<ElasticFoundationForce::ContactParametersSet name="contact_parameters">
-						<objects>
-							<ElasticFoundationForce::ContactParameters>
-								<!--Names of geometry objects affected by these parameters.-->
-								<geometry>femur_med_l_CM meniscus_med_l_CM</geometry>
-								<stiffness>10000000000</stiffness>
-								<dissipation>1</dissipation>
-								<static_friction>0.8</static_friction>
-								<dynamic_friction>0.04</dynamic_friction>
-								<viscous_friction>0.04</viscous_friction>
-							</ElasticFoundationForce::ContactParameters>
-						</objects>
-						<groups />
-					</ElasticFoundationForce::ContactParametersSet>
-					<!--Slip velocity (creep) at which peak static friction occurs.-->
-					<transition_velocity>0.2</transition_velocity>
-				</ElasticFoundationForce>
 				<ElasticFoundationForce name="femur_lat_meniscii_r">
 					<!--Material properties.-->
 					<ElasticFoundationForce::ContactParametersSet name="contact_parameters">
@@ -10802,44 +10764,6 @@
 					</ElasticFoundationForce::ContactParametersSet>
 					<!--Slip velocity (creep) at which peak static friction occurs.-->
 					<transition_velocity>0.5</transition_velocity>
-				</ElasticFoundationForce>
-				<ElasticFoundationForce name="femur_med_tibia_l">
-					<!--Material properties.-->
-					<ElasticFoundationForce::ContactParametersSet name="contact_parameters">
-						<objects>
-							<ElasticFoundationForce::ContactParameters>
-								<!--Names of geometry objects affected by these parameters.-->
-								<geometry>tibia_upper_l_CM femur_med_l_CM</geometry>
-								<stiffness>1000000000000</stiffness>
-								<dissipation>1</dissipation>
-								<static_friction>0.8</static_friction>
-								<dynamic_friction>0.04</dynamic_friction>
-								<viscous_friction>0.04</viscous_friction>
-							</ElasticFoundationForce::ContactParameters>
-						</objects>
-						<groups />
-					</ElasticFoundationForce::ContactParametersSet>
-					<!--Slip velocity (creep) at which peak static friction occurs.-->
-					<transition_velocity>0.2</transition_velocity>
-				</ElasticFoundationForce>
-				<ElasticFoundationForce name="femur_lat_tibia_l">
-					<!--Material properties.-->
-					<ElasticFoundationForce::ContactParametersSet name="contact_parameters">
-						<objects>
-							<ElasticFoundationForce::ContactParameters>
-								<!--Names of geometry objects affected by these parameters.-->
-								<geometry>tibia_upper_l_CM femur_lat_l_CM</geometry>
-								<stiffness>1000000000000</stiffness>
-								<dissipation>1</dissipation>
-								<static_friction>0.8</static_friction>
-								<dynamic_friction>0.04</dynamic_friction>
-								<viscous_friction>0.04</viscous_friction>
-							</ElasticFoundationForce::ContactParameters>
-						</objects>
-						<groups />
-					</ElasticFoundationForce::ContactParametersSet>
-					<!--Slip velocity (creep) at which peak static friction occurs.-->
-					<transition_velocity>0.2</transition_velocity>
 				</ElasticFoundationForce>
 				<ElasticFoundationForce name="femur_med_tibia_r">
 					<!--Material properties.-->
@@ -11066,11 +10990,11 @@
 						<PathPointSet>
 							<objects>
 								<PathPoint name="aMCL_R_femur">
-									<location> 0.0166515 -0.403897 -0.0318416</location>
+									<location> 0.0166584 -0.404516 -0.0311046</location>
 									<body>femur_r</body>
 								</PathPoint>
 								<PathPoint name="aMCL_R_tibia">
-									<location> 0.0116091 -0.0737816 -0.0285447</location>
+									<location> 0.0140011 -0.0723078 -0.0168075</location>
 									<body>tibia_r</body>
 								</PathPoint>
 							</objects>
@@ -11096,11 +11020,11 @@
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.059027</resting_length>
+					<resting_length>0.060027</resting_length>
 					<!--damping of the ligament-->
 					<damping>727.127575003531</damping>
 					<!--stiffness of the ligament-->
-					<stiffness>700</stiffness>
+					<stiffness>800</stiffness>
 					<!--el rigion from non-linear to linear-->
 					<el>0.03</el>
 				</CustomLigament>
@@ -11111,11 +11035,11 @@
 						<PathPointSet>
 							<objects>
 								<PathPoint name="aMCL_R_femur">
-									<location> 0.0112741 -0.405276 -0.03459</location>
+									<location> 0.00922478 -0.405015 -0.0315943</location>
 									<body>femur_r</body>
 								</PathPoint>
 								<PathPoint name="aMCL_R_tibia">
-									<location> 0.00512223 -0.0794134 -0.0299563</location>
+									<location> 0.00655689 -0.078341 -0.0159121</location>
 									<body>tibia_r</body>
 								</PathPoint>
 							</objects>
@@ -11156,11 +11080,11 @@
 						<PathPointSet>
 							<objects>
 								<PathPoint name="aMCL_R_femur">
-									<location> 0.00728148 -0.406474 -0.0354486</location>
+									<location> 0.00142567 -0.406464 -0.0313543</location>
 									<body>femur_r</body>
 								</PathPoint>
 								<PathPoint name="aMCL_R_tibia">
-									<location> 0.000639448 -0.0832359 -0.0293308</location>
+									<location> 0.00232202 -0.0821789 -0.013579</location>
 									<body>tibia_r</body>
 								</PathPoint>
 							</objects>
@@ -11186,11 +11110,11 @@
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.060728</resting_length>
+					<resting_length>0.058728</resting_length>
 					<!--damping of the ligament-->
 					<damping>727.127575003531</damping>
 					<!--stiffness of the ligament-->
-					<stiffness>800</stiffness>
+					<stiffness>900</stiffness>
 					<!--el rigion from non-linear to linear-->
 					<el>0.03</el>
 				</CustomLigament>
@@ -11611,50 +11535,6 @@
 		<!--ContactGeometries  in the model.-->
 		<ContactGeometrySet>
 			<objects>
-				<ContactMesh name="meniscus_lat_l_CM">
-					<!--Body name to connect the contact geometry to-->
-					<body_name>meniscus_lat_l</body_name>
-					<!--Location of geometry center in the body frame-->
-					<location>0 0 0</location>
-					<!--Orientation of geometry in the body frame-->
-					<orientation>0 0 0</orientation>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
-					<display_preference>0</display_preference>
-					<filename>meniscus_lat_l.obj</filename>
-				</ContactMesh>
-				<ContactMesh name="meniscus_med_l_CM">
-					<!--Body name to connect the contact geometry to-->
-					<body_name>meniscus_med_l</body_name>
-					<!--Location of geometry center in the body frame-->
-					<location>0 0 0</location>
-					<!--Orientation of geometry in the body frame-->
-					<orientation>0 0 0</orientation>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
-					<display_preference>0</display_preference>
-					<filename>meniscus_med_l.obj</filename>
-				</ContactMesh>
-				<ContactMesh name="femur_lat_l_CM">
-					<!--Body name to connect the contact geometry to-->
-					<body_name>femur_lat_l</body_name>
-					<!--Location of geometry center in the body frame-->
-					<location>0 0 0</location>
-					<!--Orientation of geometry in the body frame-->
-					<orientation>0 0 0</orientation>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
-					<display_preference>0</display_preference>
-					<filename>femur_lat_l.obj</filename>
-				</ContactMesh>
-				<ContactMesh name="femur_med_l_CM">
-					<!--Body name to connect the contact geometry to-->
-					<body_name>femur_med_l</body_name>
-					<!--Location of geometry center in the body frame-->
-					<location>0 0 0</location>
-					<!--Orientation of geometry in the body frame-->
-					<orientation>0 0 0</orientation>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
-					<display_preference>0</display_preference>
-					<filename>femur_med_l.obj</filename>
-				</ContactMesh>
 				<ContactMesh name="meniscus_lat_r_CM">
 					<!--Body name to connect the contact geometry to-->
 					<body_name>meniscus_lat_r</body_name>
@@ -11698,17 +11578,6 @@
 					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
 					<display_preference>0</display_preference>
 					<filename>femur_med_r.obj</filename>
-				</ContactMesh>
-				<ContactMesh name="tibia_upper_l_CM">
-					<!--Body name to connect the contact geometry to-->
-					<body_name>tibia_upper_l</body_name>
-					<!--Location of geometry center in the body frame-->
-					<location>0 0 0</location>
-					<!--Orientation of geometry in the body frame-->
-					<orientation>0 0 0</orientation>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
-					<display_preference>0</display_preference>
-					<filename>tibia_upper_l.obj</filename>
 				</ContactMesh>
 				<ContactMesh name="tibia_upper_r_CM">
 					<!--Body name to connect the contact geometry to-->

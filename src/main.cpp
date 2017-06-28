@@ -59,10 +59,14 @@ int main(int argc, char *argv[])
 		//printLigamentLengths(model);
 
 		// simulate
-		//anteriorTibialLoadsFD(model);
+		//double kneeAngle [6] = {0, -15, -20, -40, -60, -90};
+		//for (int i=0; i<6; i++){
+			//anteriorTibialLoadsFD(model, kneeAngle[i]);
+		//}
+		performMCFD_atl(model, 20);
 		//flexionFDSimulation(model);
 		//flexionFDSimulationWithHitMap(model);
-		performMCFD(model, 100);
+		//performMCFD(model, 50);
 
 		 //Save the model to a file
 		//model.setUseVisualizer(1);

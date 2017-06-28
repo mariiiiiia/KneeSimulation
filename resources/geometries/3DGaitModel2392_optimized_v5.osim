@@ -10735,7 +10735,7 @@
 								<!--Names of geometry objects affected by these parameters.-->
 								<geometry>femur_lat_r_CM meniscus_lat_r_CM</geometry>
 								<stiffness>1000000000</stiffness>
-								<dissipation>10</dissipation>
+								<dissipation>20</dissipation>
 								<static_friction>0.8</static_friction>
 								<dynamic_friction>0.03</dynamic_friction>
 								<viscous_friction>0.03</viscous_friction>
@@ -10754,7 +10754,7 @@
 								<!--Names of geometry objects affected by these parameters.-->
 								<geometry>femur_med_r_CM meniscus_med_r_CM</geometry>
 								<stiffness>1000000000</stiffness>
-								<dissipation>10</dissipation>
+								<dissipation>20</dissipation>
 								<static_friction>0.8</static_friction>
 								<dynamic_friction>0.03</dynamic_friction>
 								<viscous_friction>0.03</viscous_friction>
@@ -11433,6 +11433,44 @@
 					<!--el rigion from non-linear to linear-->
 					<el>0.0158833582567827</el>
 				</CustomLigament>
+				<PrescribedForce name="prescribedForce">
+					<!--Name of the body the force is applied to.-->
+					<body>tibia_upper_r</body>
+					<!--Flag indicating whether the point (specified in pointFunctions) is in global frame.-->
+					<pointIsGlobal>false</pointIsGlobal>
+					<!--Flag indicating whether the quantities (specified in force/torqueFunctions) is in global frame.-->
+					<forceIsGlobal>true</forceIsGlobal>
+					<!--Three functions describing the force to be applied.-->
+					<FunctionSet name="forceFunctions">
+						<objects>
+							<Constant>
+								<value>0</value>
+							</Constant>
+							<Constant>
+								<value>0</value>
+							</Constant>
+							<Constant>
+								<value>0</value>
+							</Constant>
+						</objects>
+						<groups />
+					</FunctionSet>
+					<!--Three functions describing the location at which the force is applied.-->
+					<FunctionSet name="pointFunctions">
+						<objects>
+							<Constant>
+								<value>0</value>
+							</Constant>
+							<Constant>
+								<value>0</value>
+							</Constant>
+							<Constant>
+								<value>0</value>
+							</Constant>
+						</objects>
+						<groups />
+					</FunctionSet>
+				</PrescribedForce>
 			</objects>
 			<groups>
 				<ObjectGroup name="R_hip_abd">

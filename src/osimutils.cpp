@@ -172,7 +172,6 @@ void OsimUtils::writeLengthsToFile(string filename, const Array<Array<double>> l
     file.close();
 }
 
-
 void printLigamentLengths(Model model)
 {
 	//Object::registerType(CustomLigament());
@@ -323,4 +322,19 @@ void printLigamentLengths(Model model)
 	angle.append( -90);
 	angle.append( -120); 
 	OsimUtils::writeLengthsToFile("../outputs/flexion_lengths.txt", lengths, angle);
+}
+
+void writeArrayToFile(string filename, const Array<double> myArray)
+{
+	// Write result forces to file
+    ofstream file(filename.c_str());
+
+    // Labels
+    file << "values: " << endl;
+    for (int i = 0; i < myArray.getSize(); i++) {
+        file << myArray[i] << endl;
+    }
+
+    file.close();
+
 }

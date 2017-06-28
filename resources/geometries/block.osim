@@ -2925,7 +2925,7 @@
 						<!--Whether to show a coordinate frame-->
 						<show_axes>false</show_axes>
 						<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-						<display_preference>4</display_preference>
+						<display_preference>0</display_preference>
 					</VisibleObject>
 					<WrapObjectSet>
 						<objects />
@@ -3151,7 +3151,7 @@
 							<!--Name of the parent body to which this joint connects its owner body.-->
 							<parent_body>tibia_upper_r</parent_body>
 							<!--Location of the joint in the parent body specified in the parent reference frame. Default is (0,0,0).-->
-							<location_in_parent>0 -0.05 -0.5</location_in_parent>
+							<location_in_parent>0.03 -0.03 0</location_in_parent>
 							<!--Orientation of the joint in the parent body specified in the parent reference frame. Euler XYZ body-fixed rotation angles are used to express the orientation. Default is (0,0,0).-->
 							<orientation_in_parent>0 0 0</orientation_in_parent>
 							<!--Location of the joint in the child body specified in the child reference frame. For SIMM models, this vector is always the zero vector (i.e., the body reference frame coincides with the joint). -->
@@ -3175,13 +3175,13 @@
 									<!--Name of geometry file .vtp, .stl, .obj-->
 									<geometry_file>blockMesh.obj</geometry_file>
 									<!--Color used to display the geometry when visible-->
-									<color> 1 1 1</color>
+									<color> 1 0.7 0.7</color>
 									<!--Name of texture file .jpg, .bmp-->
 									<texture_file />
 									<!--in body transform specified as 3 rotations (rad) followed by 3 translations rX rY rZ tx ty tz-->
 									<transform> -0 0 -0 0 0 0</transform>
 									<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-									<scale_factors> 1 1 1</scale_factors>
+									<scale_factors> 0.3 0.3 0.3</scale_factors>
 									<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
 									<display_preference>4</display_preference>
 									<!--Display opacity between 0.0 and 1.0-->
@@ -3191,75 +3191,7 @@
 							<groups />
 						</GeometrySet>
 						<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-						<scale_factors> 1 1 1</scale_factors>
-						<!--transform relative to owner specified as 3 rotations (rad) followed by 3 translations rX rY rZ tx ty tz-->
-						<transform> -0 0 -0 0 0 0</transform>
-						<!--Whether to show a coordinate frame-->
-						<show_axes>false</show_axes>
-						<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-						<display_preference>4</display_preference>
-					</VisibleObject>
-					<WrapObjectSet>
-						<objects />
-						<groups />
-					</WrapObjectSet>
-				</Body>
-				<Body name="block">
-					<mass>1</mass>
-					<mass_center> 0 0 0</mass_center>
-					<inertia_xx>0</inertia_xx>
-					<inertia_yy>0</inertia_yy>
-					<inertia_zz>0</inertia_zz>
-					<inertia_xy>0</inertia_xy>
-					<inertia_xz>0</inertia_xz>
-					<inertia_yz>0</inertia_yz>
-					<!--Joint that connects this body with the parent body.-->
-					<Joint>
-						<WeldJoint name="block_joint_">
-							<!--Name of the parent body to which this joint connects its owner body.-->
-							<parent_body>tibia_upper_r</parent_body>
-							<!--Location of the joint in the parent body specified in the parent reference frame. Default is (0,0,0).-->
-							<location_in_parent>0 -0.25 0.5</location_in_parent>
-							<!--Orientation of the joint in the parent body specified in the parent reference frame. Euler XYZ body-fixed rotation angles are used to express the orientation. Default is (0,0,0).-->
-							<orientation_in_parent>0 0 0</orientation_in_parent>
-							<!--Location of the joint in the child body specified in the child reference frame. For SIMM models, this vector is always the zero vector (i.e., the body reference frame coincides with the joint). -->
-							<location>0 0 0</location>
-							<!--Orientation of the joint in the owing body specified in the owning body reference frame.  Euler XYZ body-fixed rotation angles are used to express the orientation. -->
-							<orientation>0 0 0</orientation>
-							<!--Set holding the generalized coordinates (q's) that parmeterize this joint.-->
-							<CoordinateSet>
-								<objects />
-								<groups />
-							</CoordinateSet>
-							<!--Whether the joint transform defines parent->child or child->parent.-->
-							<reverse>true</reverse>
-						</WeldJoint>
-					</Joint>
-					<VisibleObject>
-						<!--Set of geometry files and associated attributes, allow .vtp, .stl, .obj-->
-						<GeometrySet>
-							<objects>
-								<DisplayGeometry>
-									<!--Name of geometry file .vtp, .stl, .obj-->
-									<geometry_file>blockMesh.obj</geometry_file>
-									<!--Color used to display the geometry when visible-->
-									<color> 1 1 1</color>
-									<!--Name of texture file .jpg, .bmp-->
-									<texture_file />
-									<!--in body transform specified as 3 rotations (rad) followed by 3 translations rX rY rZ tx ty tz-->
-									<transform> -0 0 -0 0 0 0</transform>
-									<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-									<scale_factors> 1 1 1</scale_factors>
-									<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
-									<display_preference>4</display_preference>
-									<!--Display opacity between 0.0 and 1.0-->
-									<opacity>1</opacity>
-								</DisplayGeometry>
-							</objects>
-							<groups />
-						</GeometrySet>
-						<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-						<scale_factors> 1 1 1</scale_factors>
+						<scale_factors> 0.5 0.5 0.5</scale_factors>
 						<!--transform relative to owner specified as 3 rotations (rad) followed by 3 translations rX rY rZ tx ty tz-->
 						<transform> -0 0 -0 0 0 0</transform>
 						<!--Whether to show a coordinate frame-->
@@ -10863,44 +10795,6 @@
 					<!--maximum normalized lengthening force-->
 					<Flen>1.8</Flen>
 				</Thelen2003Muscle>
-				<ElasticFoundationForce name="femur_lat_meniscii_l">
-					<!--Material properties.-->
-					<ElasticFoundationForce::ContactParametersSet name="contact_parameters">
-						<objects>
-							<ElasticFoundationForce::ContactParameters>
-								<!--Names of geometry objects affected by these parameters.-->
-								<geometry>femur_lat_l_CM meniscus_lat_l_CM</geometry>
-								<stiffness>10000000000</stiffness>
-								<dissipation>1</dissipation>
-								<static_friction>0.8</static_friction>
-								<dynamic_friction>0.04</dynamic_friction>
-								<viscous_friction>0.04</viscous_friction>
-							</ElasticFoundationForce::ContactParameters>
-						</objects>
-						<groups />
-					</ElasticFoundationForce::ContactParametersSet>
-					<!--Slip velocity (creep) at which peak static friction occurs.-->
-					<transition_velocity>0.2</transition_velocity>
-				</ElasticFoundationForce>
-				<ElasticFoundationForce name="femur_med_meniscii_l">
-					<!--Material properties.-->
-					<ElasticFoundationForce::ContactParametersSet name="contact_parameters">
-						<objects>
-							<ElasticFoundationForce::ContactParameters>
-								<!--Names of geometry objects affected by these parameters.-->
-								<geometry>femur_med_l_CM meniscus_med_l_CM</geometry>
-								<stiffness>10000000000</stiffness>
-								<dissipation>1</dissipation>
-								<static_friction>0.8</static_friction>
-								<dynamic_friction>0.04</dynamic_friction>
-								<viscous_friction>0.04</viscous_friction>
-							</ElasticFoundationForce::ContactParameters>
-						</objects>
-						<groups />
-					</ElasticFoundationForce::ContactParametersSet>
-					<!--Slip velocity (creep) at which peak static friction occurs.-->
-					<transition_velocity>0.2</transition_velocity>
-				</ElasticFoundationForce>
 				<ElasticFoundationForce name="femur_lat_meniscii_r">
 					<!--Material properties.-->
 					<ElasticFoundationForce::ContactParametersSet name="contact_parameters">
@@ -10938,44 +10832,6 @@
 					</ElasticFoundationForce::ContactParametersSet>
 					<!--Slip velocity (creep) at which peak static friction occurs.-->
 					<transition_velocity>0.5</transition_velocity>
-				</ElasticFoundationForce>
-				<ElasticFoundationForce name="femur_med_tibia_l">
-					<!--Material properties.-->
-					<ElasticFoundationForce::ContactParametersSet name="contact_parameters">
-						<objects>
-							<ElasticFoundationForce::ContactParameters>
-								<!--Names of geometry objects affected by these parameters.-->
-								<geometry>tibia_upper_l_CM femur_med_l_CM</geometry>
-								<stiffness>1000000000000</stiffness>
-								<dissipation>1</dissipation>
-								<static_friction>0.8</static_friction>
-								<dynamic_friction>0.04</dynamic_friction>
-								<viscous_friction>0.04</viscous_friction>
-							</ElasticFoundationForce::ContactParameters>
-						</objects>
-						<groups />
-					</ElasticFoundationForce::ContactParametersSet>
-					<!--Slip velocity (creep) at which peak static friction occurs.-->
-					<transition_velocity>0.2</transition_velocity>
-				</ElasticFoundationForce>
-				<ElasticFoundationForce name="femur_lat_tibia_l">
-					<!--Material properties.-->
-					<ElasticFoundationForce::ContactParametersSet name="contact_parameters">
-						<objects>
-							<ElasticFoundationForce::ContactParameters>
-								<!--Names of geometry objects affected by these parameters.-->
-								<geometry>tibia_upper_l_CM femur_lat_l_CM</geometry>
-								<stiffness>1000000000000</stiffness>
-								<dissipation>1</dissipation>
-								<static_friction>0.8</static_friction>
-								<dynamic_friction>0.04</dynamic_friction>
-								<viscous_friction>0.04</viscous_friction>
-							</ElasticFoundationForce::ContactParameters>
-						</objects>
-						<groups />
-					</ElasticFoundationForce::ContactParametersSet>
-					<!--Slip velocity (creep) at which peak static friction occurs.-->
-					<transition_velocity>0.2</transition_velocity>
 				</ElasticFoundationForce>
 				<ElasticFoundationForce name="femur_med_tibia_r">
 					<!--Material properties.-->
@@ -11567,50 +11423,6 @@
 		<!--ContactGeometries  in the model.-->
 		<ContactGeometrySet>
 			<objects>
-				<ContactMesh name="meniscus_lat_l_CM">
-					<!--Body name to connect the contact geometry to-->
-					<body_name>meniscus_lat_l</body_name>
-					<!--Location of geometry center in the body frame-->
-					<location>0 0 0</location>
-					<!--Orientation of geometry in the body frame-->
-					<orientation>0 0 0</orientation>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
-					<display_preference>0</display_preference>
-					<filename>meniscus_lat_l.obj</filename>
-				</ContactMesh>
-				<ContactMesh name="meniscus_med_l_CM">
-					<!--Body name to connect the contact geometry to-->
-					<body_name>meniscus_med_l</body_name>
-					<!--Location of geometry center in the body frame-->
-					<location>0 0 0</location>
-					<!--Orientation of geometry in the body frame-->
-					<orientation>0 0 0</orientation>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
-					<display_preference>0</display_preference>
-					<filename>meniscus_med_l.obj</filename>
-				</ContactMesh>
-				<ContactMesh name="femur_lat_l_CM">
-					<!--Body name to connect the contact geometry to-->
-					<body_name>femur_lat_l</body_name>
-					<!--Location of geometry center in the body frame-->
-					<location>0 0 0</location>
-					<!--Orientation of geometry in the body frame-->
-					<orientation>0 0 0</orientation>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
-					<display_preference>0</display_preference>
-					<filename>femur_lat_l.obj</filename>
-				</ContactMesh>
-				<ContactMesh name="femur_med_l_CM">
-					<!--Body name to connect the contact geometry to-->
-					<body_name>femur_med_l</body_name>
-					<!--Location of geometry center in the body frame-->
-					<location>0 0 0</location>
-					<!--Orientation of geometry in the body frame-->
-					<orientation>0 0 0</orientation>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
-					<display_preference>0</display_preference>
-					<filename>femur_med_l.obj</filename>
-				</ContactMesh>
 				<ContactMesh name="meniscus_lat_r_CM">
 					<!--Body name to connect the contact geometry to-->
 					<body_name>meniscus_lat_r</body_name>
@@ -11654,17 +11466,6 @@
 					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
 					<display_preference>0</display_preference>
 					<filename>femur_med_r.obj</filename>
-				</ContactMesh>
-				<ContactMesh name="tibia_upper_l_CM">
-					<!--Body name to connect the contact geometry to-->
-					<body_name>tibia_upper_l</body_name>
-					<!--Location of geometry center in the body frame-->
-					<location>0 0 0</location>
-					<!--Orientation of geometry in the body frame-->
-					<orientation>0 0 0</orientation>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
-					<display_preference>0</display_preference>
-					<filename>tibia_upper_l.obj</filename>
 				</ContactMesh>
 				<ContactMesh name="tibia_upper_r_CM">
 					<!--Body name to connect the contact geometry to-->
