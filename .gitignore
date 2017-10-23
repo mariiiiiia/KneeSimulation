@@ -2,7 +2,11 @@
 ## Eclipse
 #################
 
-outputs/MonteCarlo/NewModels/*
+outputs/MC_anterior_loads/*
+outputs/MC_flexion/*
+outputs/MC_v5/*
+outputs/scheburn*/*
+
 *.pydevproject
 .project
 .metadata
