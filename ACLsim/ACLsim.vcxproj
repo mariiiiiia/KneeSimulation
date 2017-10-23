@@ -25,7 +25,6 @@
     <ClInclude Include="..\src\ACLsimulatorimpl.h" />
     <ClInclude Include="..\src\addBodies.h" />
     <ClInclude Include="..\src\addKneeContacts.h" />
-    <ClInclude Include="..\src\cxxopts.hpp" />
     <ClInclude Include="..\src\MonteCarloFD.h" />
     <ClInclude Include="..\src\osimutils.h" />
   </ItemGroup>

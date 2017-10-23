@@ -43,13 +43,16 @@ public:
 			//	continue;
 			ContactSnapshot cs = m_compliant.getContactTrackerSubsystem().getActiveContacts(state);
 			//cout <<  "contact: " << id << endl;
-			ContactId idFemur = cs.getContactIdForSurfacePair( ContactSurfaceIndex(2), ContactSurfaceIndex(3));
-			ContactId idMeniscFemur1 = cs.getContactIdForSurfacePair( ContactSurfaceIndex(0), ContactSurfaceIndex(2));
-			ContactId idMeniscTibia1 = cs.getContactIdForSurfacePair( ContactSurfaceIndex(0), ContactSurfaceIndex(4));
-			ContactId idMeniscFemur2 = cs.getContactIdForSurfacePair( ContactSurfaceIndex(1), ContactSurfaceIndex(3));
-			ContactId idMeniscTibia2 = cs.getContactIdForSurfacePair( ContactSurfaceIndex(1), ContactSurfaceIndex(4));
+			//ContactId idFemur = cs.getContactIdForSurfacePair( ContactSurfaceIndex(2), ContactSurfaceIndex(3));
+			//ContactId idMeniscFemur1 = cs.getContactIdForSurfacePair( ContactSurfaceIndex(0), ContactSurfaceIndex(2));
+			//ContactId idMeniscTibia1 = cs.getContactIdForSurfacePair( ContactSurfaceIndex(0), ContactSurfaceIndex(4));
+			//ContactId idMeniscFemur2 = cs.getContactIdForSurfacePair( ContactSurfaceIndex(1), ContactSurfaceIndex(3));
+			//ContactId idMeniscTibia2 = cs.getContactIdForSurfacePair( ContactSurfaceIndex(1), ContactSurfaceIndex(4));
+			ContactId idLatFemurTibia = cs.getContactIdForSurfacePair( ContactSurfaceIndex(0), ContactSurfaceIndex(2));
+			ContactId idMedFemurTibia = cs.getContactIdForSurfacePair( ContactSurfaceIndex(1), ContactSurfaceIndex(2));
+			ContactId idFemur = cs.getContactIdForSurfacePair( ContactSurfaceIndex(0), ContactSurfaceIndex(1));
 
-			if (id == idFemur || id == idMeniscFemur1 || id==idMeniscTibia1 || id==idMeniscFemur2 || id==idMeniscTibia2 )
+			if (id == idFemur)
 				continue;
 
 			const SimbodyMatterSubsystem& matter = m_compliant.getMultibodySystem().getMatterSubsystem();
@@ -57,9 +60,9 @@ public:
 			MobilizedBody mobod = matter.getMobilizedBody( MobilizedBodyIndex(22));
 			//for (int numContacts=0; numContacts<cs.getNumContacts(); numContacts++)
 			//{
-			//	ContactSurfaceIndex csi1 = cs.getContact(numContacts).getSurface1();
-			//	ContactSurfaceIndex csi2 = cs.getContact(numContacts).getSurface2();
-			//	cout << "surf1: " << csi1 << " surf2: " << csi2 << endl;
+				//ContactSurfaceIndex csi1 = cs.getContact(numContacts).getSurface1();
+				//ContactSurfaceIndex csi2 = cs.getContact(numContacts).getSurface2();
+				//cout << "surf1: " << csi1 << " surf2: " << csi2 << endl;
 			//}
 			if (cs.getNumContacts()>0)
 			{
@@ -147,28 +150,28 @@ private:
 class UserInputHandler : public PeriodicEventHandler {
 public:
     UserInputHandler(Visualizer::InputSilo& silo, Real interval) 
-    :   PeriodicEventHandler(interval), m_silo(silo) {}
+    :   PeriodicEventHandler(interval), m_silo(silo) {};
 
     virtual void handleEvent(State& state, Real accuracy, 
                              bool& shouldTerminate) const override 
     {
         int menuId, item;
-		//cout << "hello " << m_silo.isAnyUserInput << " " << item;
-        if (m_silo.takeMenuPick(menuId, item) && menuId==RunMenuId && item==QuitItem)
+		//cout << "hello " << m_silo.isAnyUserInput() << " " << menuId << " " << item;
+        if (m_silo.takeMenuPick(menuId, item) && item==QuitItem)
             shouldTerminate = true;
 		//while (m_silo.isAnyUserInput()) {
-		//	//while (silo.takeKeyHit(key,modifier)) {
-		//		// Process the key that was hit
-		//		//cout << "Key: " << key << endl;
-		//	//}
+		//	while (silo.takeKeyHit(key,modifier)) {
+		//		 Process the key that was hit
+		//		cout << "Key: " << key << endl;
+		//	}
 		//	while (m_silo.takeMenuPick(menuId, item)) {
-		//		// Process the picked menu item
+		//		 Process the picked menu item
 		//		cout << "Menu item: " << item << endl;
 		//	}
-		//	//while (silo.takeSliderMove(which, value)) {
-		//		// Process the new value for slider "which"
-		//		//cout << "Slider: " << which << endl;
-		//	//}
+		//	while (silo.takeSliderMove(which, value)) {
+		//		 Process the new value for slider "which"
+		//		cout << "Slider: " << which << endl;
+		//	}
 		//}
 	}
 
@@ -178,10 +181,6 @@ private:
 
 void anteriorTibialLoadsFD(Model& model, double knee_angle)
 {
-	// add external force
-	//addExternalForce(model, -0.05, -0.5)
-
-	//double knee_angle = -60;
 	addTibialLoads(model, knee_angle);
 	
 	// init system
@@ -195,6 +194,21 @@ void anteriorTibialLoadsFD(Model& model, double knee_angle)
 	model.updGravityForce().setGravityVector(si, Vec3(0,0,0));
 
 	setKneeAngle(model, si, knee_angle, true, true);
+	//setATT(model,si, knee_angle);
+	// disable muscles
+	//string muscle_name;
+	//for (int i=0; i<model.getActuators().getSize(); i++)
+	//{
+	//	muscle_name = model.getActuators().get(i).getName();
+
+	//	model.getActuators().get(i).setDisabled(si, true);
+
+		//if (muscle_name == "bifemlh_r" || muscle_name == "bifemsh_r" || muscle_name == "grac_r" \
+		//	|| muscle_name == "lat_gas_r" || muscle_name == "med_gas_r" || muscle_name == "sar_r" \
+		//	|| muscle_name == "semimem_r" || muscle_name == "semiten_r" \
+		//	|| muscle_name == "rect_fem_r" || muscle_name == "vas_med_r" || muscle_name == "vas_int_r" || muscle_name == "vas_lat_r" )
+		//		model.getActuators().get(i).setDisabled(si, false);
+	//}
 	model.equilibrateMuscles( si);
 
 	// Add reporters
@@ -213,7 +227,7 @@ void anteriorTibialLoadsFD(Model& model, double knee_angle)
 
 	// Define the initial and final simulation times
 	double initialTime = 0.0;
-	double finalTime = 0.5;
+	double finalTime = 1.0;
 
 	// Integrate from initial time to final time
 	manager.setInitialTime(initialTime);
@@ -323,12 +337,12 @@ void flexionFDSimulationWithHitMap(Model& model)
 	std::cout << "\nAfter initSystem() " << std::asctime(std::localtime(&result)) << endl;
 	
 	// set gravity
-	model.updGravityForce().setGravityVector(si, Vec3(-9.80665,0,0));
+	//model.updGravityForce().setGravityVector(si, Vec3(-9.80665,0,0));
 	//model.updGravityForce().setGravityVector(si, Vec3(0,0,0));
 	
-	setHipAngle(model, si, 90);
-	setKneeAngle(model, si, 0, false, false);
-	model.equilibrateMuscles( si);
+	//setHipAngle(model, si, 90);
+	//setKneeAngle(model, si, 0, false, false);
+	//model.equilibrateMuscles( si);
 
 	MultibodySystem& system = model.updMultibodySystem();
 	SimbodyMatterSubsystem& matter = system.updMatterSubsystem();
@@ -340,7 +354,7 @@ void flexionFDSimulationWithHitMap(Model& model)
 
 	for (int i=0; i < matter.getNumBodies(); ++i) {
 		MobilizedBodyIndex mbx(i);
-		if (i==19 || i==20 || i==22 || i==15 || i==16)
+		if (i==19 || i==20 || i==22)// || i==15 || i==16)
 		{
 			MobilizedBody& mobod = matter.updMobilizedBody(mbx);
 			std::filebuf fb;
@@ -351,10 +365,10 @@ void flexionFDSimulationWithHitMap(Model& model)
 				fb.open ( "../resources/geometries/femur_med_r.obj",std::ios::in);
 			else if (i==22)
 				fb.open ( "../resources/geometries/tibia_upper_r.obj",std::ios::in);
-			else if (i==15)
-				fb.open ( "../resources/geometries/meniscus_lat_r.obj",std::ios::in);
-			else if (i==16)
-				fb.open ( "../resources/geometries/meniscus_med_r.obj",std::ios::in);
+			//else if (i==15)
+				//fb.open ( "../resources/geometries/meniscus_lat_r.obj",std::ios::in);
+			//else if (i==16)
+				//fb.open ( "../resources/geometries/meniscus_med_r.obj",std::ios::in);
 			std::istream is(&fb);
 			PolygonalMesh polMesh;
 			polMesh.loadObjFile(is);
@@ -363,8 +377,8 @@ void flexionFDSimulationWithHitMap(Model& model)
 			ContactSurface contSurf;//(mesh, ContactMaterial(1.0e6, 1, 1, 0.03, 0.03), 0.001);
 			if (i==19 || i==20 || i==22)
 				contSurf = ContactSurface(mesh, ContactMaterial(10, 1, 1, 0.03, 0.03), 0.001);
-			else if (i==15 || i==16)
-				contSurf = ContactSurface(mesh, ContactMaterial(10, 3, 1, 0.03, 0.03), 0.001);
+			//else if (i==15 || i==16)
+				//contSurf = ContactSurface(mesh, ContactMaterial(10, 3, 1, 0.03, 0.03), 0.001);
 			DecorativeMesh showMesh(mesh.createPolygonalMesh());
 			showMesh.setOpacity(0.5);
 			mobod.updBody().addDecoration( showMesh);
@@ -394,25 +408,25 @@ void flexionFDSimulationWithHitMap(Model& model)
     viz.updSimbodyVisualizer().addMenu("Help", HelpMenuId, helpMenuItems);
 
     system.addEventReporter(new MyReporter(system,contactForces,ReportInterval));
-	system.addEventReporter(new Visualizer::Reporter(viz.updSimbodyVisualizer(), ReportInterval));
+	//system.addEventReporter(new Visualizer::Reporter(viz.updSimbodyVisualizer(), ReportInterval));
 	
     // Check for a Run->Quit menu pick every <x> second.
-    system.addEventHandler(new UserInputHandler(*silo, 0.01));
+	system.addEventHandler(new UserInputHandler(*silo, 0.001));
 
 	system.realizeTopology();
 
 	//Show ContactSurfaceIndex for each contact surface
-    for (int i=0; i < matter.getNumBodies(); ++i) {
-		MobilizedBodyIndex mbx(i);
-        const MobilizedBody& mobod = matter.getMobilizedBody(mbx);
-        const int nsurfs = mobod.getBody().getNumContactSurfaces();
-        printf("mobod %d has %d contact surfaces\n", (int)mbx, nsurfs);
-		//cout << "mobod with mass: " << (float)mobod.getBodyMass(si) << " has " << nsurfs << " contact surfaces" << endl;
-		 //for (int i=0; i<nsurfs; ++i) {
-            //printf("%2d: index %d\n", i, 
-                   //(int)tracker.getContactSurfaceIndex(mbx,i)); 
-        //}
-    }
+  //  for (int i=0; i < matter.getNumBodies(); ++i) {
+		//MobilizedBodyIndex mbx(i);
+  //      const MobilizedBody& mobod = matter.getMobilizedBody(mbx);
+  //      const int nsurfs = mobod.getBody().getNumContactSurfaces();
+        //printf("mobod %d has %d contact surfaces\n", (int)mbx, nsurfs);
+		////cout << "mobod with mass: " << (float)mobod.getBodyMass(si) << " has " << nsurfs << " contact surfaces" << endl;
+		// //for (int i=0; i<nsurfs; ++i) {
+  //          //printf("%2d: index %d\n", i, 
+  //                 //(int)tracker.getContactSurfaceIndex(mbx,i)); 
+  //      //}
+  //  }
 
 	//cout << "tracker num of surfaces: " << tracker.getNumSurfaces() << endl;
 
@@ -421,13 +435,13 @@ void flexionFDSimulationWithHitMap(Model& model)
 	State& state = model.initializeState();
 	viz.updSimbodyVisualizer().report(state);
 
-	cout << "\nChoose 'Go' from Run menu to simulate:\n";
+	//cout << "\nChoose 'Go' from Run menu to simulate:\n" << endl;
     int menuId, item;
     //do { silo->waitForMenuPick(menuId, item);
-	do { viz.updInputSilo().waitForMenuPick(menuId, item);
-         if (menuId != RunMenuId || item != GoItem) 
-             cout << "\aDude ... follow instructions!\n";
-    } while (menuId != RunMenuId || item != GoItem);
+	//do { viz.updInputSilo().waitForMenuPick(menuId, item);
+         //if (menuId != RunMenuId || item != GoItem) 
+             //cout << "\aDude ... follow instructions!\n";
+    //} while (menuId != RunMenuId || item != GoItem);
 
 	// Add reporters
     ForceReporter* forceReporter = new ForceReporter(&model);
@@ -446,7 +460,7 @@ void flexionFDSimulationWithHitMap(Model& model)
 
 	// Define the initial and final simulation times
 	double initialTime = 0.0;
-	double finalTime = 0.1;
+	double finalTime = 0.2;
 
 	// Integrate from initial time to final time
 	manager.setInitialTime(initialTime);
@@ -470,6 +484,21 @@ void flexionFDSimulationWithHitMap(Model& model)
 	// force reporter results
 	forceReporter->getForceStorage().print("../outputs/force_reporter_flex.mot");
 	//customReporter->print( "../outputs/custom_reporter_flex.mot");
+
+	cout << "You can choose 'Replay'" << endl;
+	do { viz.updInputSilo().waitForMenuPick(menuId, item);
+         if (menuId != RunMenuId || item != ReplayItem) 
+             cout << "\aDude ... follow instructions!\n";
+		 if (menuId == RunMenuId || item == ReplayItem)
+		 {
+			 //cout << "saveEm size: " << saveEm.size() << endl;
+			 for (unsigned int i=0; i<saveEm.size(); i++)
+			{
+				viz.updSimbodyVisualizer().drawFrameNow(saveEm.getElt(i));
+				usleep(100000);
+			}
+		 }
+	} while (menuId != RunMenuId || item != QuitItem);
 }
 
 void addTibialLoads(Model& model, double knee_angle)
@@ -490,6 +519,8 @@ void addTibialLoads(Model& model, double knee_angle)
 		prescribedForce.setForceFunctions(new Constant(106.25), new Constant(-28.47), new Constant(0.0));	// at -15 degrees
 	else if (knee_angle == -20)
 		prescribedForce.setForceFunctions(new Constant(103.366188), new Constant(-37.6222), new Constant(0.0));	// at -20 degrees (knee_angle)
+	else if (knee_angle == -30)
+		prescribedForce.setForceFunctions(new Constant(95.26279), new Constant(-55), new Constant(0.0));	// at -20 degrees (knee_angle)
 	else if (knee_angle == -40)
 		prescribedForce.setForceFunctions(new Constant(84.26488), new Constant(-70.7066), new Constant(0.0));	// at -40 degrees (knee_angle)
 	else if (knee_angle == -60)
@@ -516,7 +547,6 @@ void addFlexionController(Model& model)
 	
 	double control_time[2] = {0, 0.05}; // time nodes for linear function
 	double control_acts[2] = {1.0, 0}; // force values at t1 and t2
-	//control_func->setName( "constant_control_func");
 
 	string muscle_name;
 	for (int i=0; i<model.getActuators().getSize(); i++)
@@ -570,7 +600,42 @@ void addExtensionController(Model& model)
 	model.addController( controller);
 }
 
-void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees, bool lock_knee_angle, bool lock_adduction)
+void setATT(Model& model, SimTK::State &si, double angle_degrees)
+{
+	const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
+    if (angle_degrees == -90)
+	{
+		knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.0275 + 0.0065);
+		
+	}
+	else if (angle_degrees == -60)
+	{
+		knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.02092232 + 0.0075);
+	}
+	else if (angle_degrees == -40)
+	{
+		knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.012679 + 0.0065);
+	}
+	else if (angle_degrees == -20)
+	{
+		knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.00522225 + 0.005);
+	}
+	else if (angle_degrees == -15)
+	{
+		knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.004 + 0.0045);
+	}
+	else if (angle_degrees == 0)
+	{
+		knee_r_cs.get("knee_anterior_posterior_r").setValue(si, knee_r_cs.get("knee_anterior_posterior_r").getDefaultValue() + 0.003);
+	}
+
+	knee_r_cs.get("knee_anterior_posterior_r").setLocked(si, true);
+	knee_r_cs.get("knee_inferior_superior_r").setLocked(si, true);
+	knee_r_cs.get("knee_medial_lateral_r").setLocked(si, true);
+	knee_r_cs.get("knee_rotation_r").setLocked(si, true);
+}
+
+void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees, bool lock_knee_angle, bool constrain_adduction)
 {
 	const CoordinateSet &knee_r_cs = model.getJointSet().get("knee_r").getCoordinateSet();
 	if (angle_degrees == -120)
@@ -603,9 +668,12 @@ void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees, bool loc
 		knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.396);
 		knee_r_cs.get("knee_medial_lateral_r").setValue(si, -0.005);
 
-		if (lock_adduction)
+		if (constrain_adduction)
 			knee_r_cs.get("knee_adduction_r").setValue(si, -0.05235);   // ant load at -90 degrees flexion (+10 degrees)
-
+			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.2574532);   // ant load at -90 degrees flexion (-1 degrees)
+			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.1353);   // ant load at -90 degrees flexion (+6 degrees)
+			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.1706);   // ant load at -90 degrees flexion (+4 degrees)
+			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.1004);   // ant load at -90 degrees flexion (+8 degrees)
 	}
 	else if (angle_degrees == -80)
 	{
@@ -617,7 +685,7 @@ void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees, bool loc
 		knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.39351699 );
 		knee_r_cs.get("knee_medial_lateral_r").setValue(si, -0.00483042);
 
-		if (lock_adduction)
+		if (constrain_adduction)
 			knee_r_cs.get("knee_adduction_r").setValue(si, -0.06981);   // ant load at -80 degrees flexion (+10 degrees)
 	}
 	else if (angle_degrees == -60)
@@ -630,11 +698,12 @@ void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees, bool loc
 		knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.38597298);
 		knee_r_cs.get("knee_medial_lateral_r").setValue(si, -0.00403978);
 
-		if (lock_adduction)
-			knee_r_cs.get("knee_adduction_r").setValue(si, -0.264511);   // ant load at -60 degrees flexion (+2 degrees)
-		//knee_r_cs.get("knee_adduction_r").setValue(si, -0.226892);   // ant load at -60 degrees flexion (+4 degrees)
-		//knee_r_cs.get("knee_adduction_r").setValue(si, -0.191986);   // ant load at -60 degrees flexion (+6 degrees)
-		//knee_r_cs.get("knee_adduction_r").setValue(si, -0.157079);   // ant load at -60 degrees flexion (+8 degrees)
+		//if (constrain_adduction)
+			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.264511);   // ant load at -60 degrees flexion (+2 degrees)
+			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.0648476);   // ant load at -60 degrees flexion (-2 degrees)
+			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.157079);   // ant load at -60 degrees flexion (+8 degrees)
+			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.191986);   // ant load at -60 degrees flexion (+6 degrees)
+			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.226892);   // ant load at -60 degrees flexion (+4 degrees)
 
 	}
 	else if (angle_degrees == -40)
@@ -647,9 +716,25 @@ void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees, bool loc
 		knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.38227168);
 		knee_r_cs.get("knee_medial_lateral_r").setValue(si, -0.00403308);
 
-		if (lock_adduction)
+		if (constrain_adduction)
 			knee_r_cs.get("knee_adduction_r").setValue(si, -0.16667);   // ant load at -40 degrees flexion (+5 degrees)
+			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.27142576);   // ant load at -40 degrees flexion (-1 degrees)
 			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.148352);   // ant load at -40 degrees flexion (+6 degrees)
+			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.13179956);   // ant load at -40 degrees flexion (+7 degrees)
+	}
+	else if (angle_degrees == -30)
+	{
+		knee_r_cs.get("knee_angle_r").setValue(si, -0.5235987);  // -30 degrees
+		
+		knee_r_cs.get("knee_adduction_r").setValue(si, -0.27474878);
+		knee_r_cs.get("knee_rotation_r").setValue(si, 0.01870684);
+		knee_r_cs.get("knee_anterior_posterior_r").setValue(si, 0.008950625);
+		knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.38234884);
+		knee_r_cs.get("knee_medial_lateral_r").setValue(si, -0.00444654);
+
+		if (constrain_adduction)
+			knee_r_cs.get("knee_adduction_r").setValue(si, -0.13512278);   // ant load at -30 degrees flexion (+8 degrees)
+
 	}
 	else if (angle_degrees == -20)
 	{
@@ -661,9 +746,12 @@ void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees, bool loc
 		knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.382426);
 		knee_r_cs.get("knee_medial_lateral_r").setValue(si, -0.00486);
 
-		if (lock_adduction)
+		if (constrain_adduction)
 			knee_r_cs.get("knee_adduction_r").setValue(si, -0.15708);   // ant load at -20 degrees flexion (+8 degrees)
+			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.330431);   // ant load at -20 degrees flexion (-2 degrees)
+			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.225715);   // ant load at -20 degrees flexion (+4 degrees)
 			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.20943);   // ant load at -20 degrees flexion (+5 degrees)
+			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.243225);   // ant load at -20 degrees flexion (+3 degrees)
 			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.17453);   // ant load at -20 degrees flexion (+7 degrees)
 
 	}
@@ -677,8 +765,11 @@ void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees, bool loc
 		knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.384);
 		knee_r_cs.get("knee_medial_lateral_r").setValue(si, -0.00391863);
 		
-		if (lock_adduction)
+		if (constrain_adduction)
 			knee_r_cs.get("knee_adduction_r").setValue(si, -0.191992);   // ant load at -15 degrees flexion (+5 degrees)
+			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.314152);   // ant load at -15 degrees flexion (-2 degrees)
+			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.226952);   // ant load at -15 degrees flexion (+3 degrees)
+			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.209442);   // ant load at -15 degrees flexion (+4 degrees)
 			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.157152);   // ant load at -15 degrees flexion (+7 degrees)
 
 	}
@@ -694,13 +785,15 @@ void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees, bool loc
 		//knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.385578);
 		knee_r_cs.get("knee_medial_lateral_r").setValue(si, knee_r_cs.get("knee_medial_lateral_r").getDefaultValue());
 
-		if (lock_adduction)
-			knee_r_cs.get("knee_adduction_r").setValue(si, -0.29408);   // ant load at 0 degrees flexion
+		if (constrain_adduction)
+			knee_r_cs.get("knee_adduction_r").setValue(si, -0.29408);   // ant load at 0 degrees flexion (0)
+			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.259174);   // ant load at 0 degrees flexion (+2)
+			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.31153);   // ant load at 0 degrees flexion (-1)
 	}
 
 	knee_r_cs.get("knee_angle_r").setLocked(si, lock_knee_angle);
 
-	knee_r_cs.get("knee_adduction_r").setLocked(si, lock_adduction);
+	knee_r_cs.get("knee_adduction_r").setLocked(si, constrain_adduction);
 	//knee_r_cs.get("knee_rotation_r").setLocked(si, true);
 	//knee_r_cs.get("knee_anterior_posterior_r").setLocked(si, true);
 	//knee_r_cs.get("knee_inferior_superior_r").setLocked(si, true);
@@ -710,10 +803,8 @@ void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees, bool loc
 void setHipAngle(Model& model, SimTK::State &si, double angle_degrees)
 {
 	const CoordinateSet &hip_r_cs = model.getJointSet().get("hip_r").getCoordinateSet();
-	if (angle_degrees == 90)
-	{
-		hip_r_cs.get("hip_flexion_r").setLocked(si, false);
-		hip_r_cs.get("hip_flexion_r").setValue(si, 1.57079632);  // 90 degrees
-		hip_r_cs.get("hip_flexion_r").setLocked(si, true);
-	}
+
+	hip_r_cs.get("hip_flexion_r").setLocked(si, false);
+	hip_r_cs.get("hip_flexion_r").setValue(si, angle_degrees * 3.1459 / 180);  
+	hip_r_cs.get("hip_flexion_r").setLocked(si, true);
 }

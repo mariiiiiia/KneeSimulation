@@ -10885,11 +10885,11 @@
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.0250587</resting_length>
+					<resting_length>0.0253587</resting_length>
 					<!--damping of the ligament-->
 					<damping>403.742492190257</damping>
 					<!--stiffness of the ligament-->
-					<stiffness>1500</stiffness>
+					<stiffness>1900</stiffness>
 					<!--el rigion from non-linear to linear-->
 					<el>0.05</el>
 				</CustomLigament>
@@ -11020,7 +11020,7 @@
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.060027</resting_length>
+					<resting_length>0.058027</resting_length>
 					<!--damping of the ligament-->
 					<damping>727.127575003531</damping>
 					<!--stiffness of the ligament-->
@@ -11110,7 +11110,7 @@
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.058728</resting_length>
+					<resting_length>0.060728</resting_length>
 					<!--damping of the ligament-->
 					<damping>727.127575003531</damping>
 					<!--stiffness of the ligament-->

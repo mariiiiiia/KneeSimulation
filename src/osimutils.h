@@ -33,11 +33,15 @@ public:
     void static writeForcesToFile(Model &model,
         const string filename,
         const Array<Vector> &forces, const Vector &times);
-	
-	void static writeLengthsToFile(string filename, const Array<Array<double>> lengths, const Array<double> angle);
 };
 
-
-void printLigamentLengths(Model model);
+/*
+*	Print ligament lengths during knee extension
+*/
+void printLigamentLengthsInExtension(Model model);
+/*
+*	Write <myArray> values to file with name <filename>
+*/
+void writeArrayToFile(string filename, const Array<double> myArray);
 
 #endif

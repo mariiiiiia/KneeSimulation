@@ -8,14 +8,30 @@ using namespace std;
 using namespace OpenSim;
 using namespace SimTK;
 
-/*	add meniscus bodies to knee and create joint
-	bool LeftOrRight:	true for left body
- 						false for right body
+/*	
+*	Add meniscii bodies to model and 
+*	join to tibia with Weld Joints
+*
+*	bool left_knee:	true for left body
+* 						false for right body
 */
-void addMeniscusWeldJoints(Model& model, bool LeftOrRight);
+void addMeniscusWeldJoints(Model& model, bool left_knee);
 
-void addFemurWeldJoints(Model& model, bool LeftOrRight);
+/*	
+*	Add lower femur bodies to model and 
+*	join to upper femur with Weld Joints
+*
+*	bool left_knee:	true for left body
+* 						false for right body
+*/
+void addFemurWeldJoints(Model& model, bool left_knee);
 
-void addTibiaWeldJoints(Model& model, bool LeftOrRight);
+/*	
+*	Add upper tibia bodies to model and 
+*	join to lower tibia with Weld Joints
+*
+*	bool left_knee:	true for left body
+* 						false for right body
+*/
+void addTibiaWeldJoints(Model& model, bool left_knee);
 
-void addUpperTibiaFreeJoints(Model& model, bool LeftOrRight);

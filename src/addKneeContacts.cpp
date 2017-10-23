@@ -1,13 +1,13 @@
 #include "addKneeContacts.h"
 
-void addKneeContactGeometries(Model& model, bool LeftOrRight){
+void addKneeContactGeometries(Model& model, bool left_knee){
 	string LorR = "r";
-	if (LeftOrRight) LorR = "l";
+	if (left_knee) LorR = "l";
 
-	//addContactGeometry(model, "meniscus_lat_" + LorR, "meniscus_lat_" + LorR + ".obj");
-	//addContactGeometry(model, "meniscus_med_" + LorR, "meniscus_med_" + LorR + ".obj");
-	//addContactGeometry(model, "femur_lat_" + LorR, "femur_lat_" + LorR + ".obj");
-	//addContactGeometry(model, "femur_med_" + LorR, "femur_med_" + LorR + ".obj");
+	addContactGeometry(model, "meniscus_lat_" + LorR, "meniscus_lat_" + LorR + ".obj");
+	addContactGeometry(model, "meniscus_med_" + LorR, "meniscus_med_" + LorR + ".obj");
+	addContactGeometry(model, "femur_lat_" + LorR, "femur_lat_" + LorR + ".obj");
+	addContactGeometry(model, "femur_med_" + LorR, "femur_med_" + LorR + ".obj");
 	addContactGeometry(model, "tibia_upper_" + LorR, "tibia_upper_" + LorR + ".obj");
 
 	model.buildSystem();
@@ -25,30 +25,33 @@ void addContactGeometry(Model& model, string bodyName, string objName){
 	model.addContactGeometry(contactMesh);
 };
 
-void addEFForce(Model& model, double stiff, double diss, double us, double ud, double uv, bool LeftOrRight)
+void addEFForces(Model& model, double men_stiff, double men_diss, double men_us, double men_ud, double men_uv,
+	double art_stiff, double art_diss, double art_us, double art_ud, double art_uv, bool left_knee)
 {
 	string LorR = "r";
-	if (LeftOrRight) LorR = "l";
+	if (left_knee) LorR = "l";
 
-	//OpenSim::ElasticFoundationForce::ContactParameters *contactParamsLat = new OpenSim::ElasticFoundationForce::ContactParameters(stiff, diss, us, ud, uv);
-	//contactParamsLat->addGeometry("femur_lat_" + LorR + "_CM");
-	//contactParamsLat->addGeometry("meniscus_lat_" + LorR + "_CM");
+	OpenSim::ElasticFoundationForce::ContactParameters *contactParamsLat = new OpenSim::ElasticFoundationForce::ContactParameters(men_stiff, men_diss, men_us, men_ud, men_uv);
+	contactParamsLat->addGeometry("femur_lat_" + LorR + "_CM");
+	contactParamsLat->addGeometry("meniscus_lat_" + LorR + "_CM");
 
-	//OpenSim::ElasticFoundationForce *contactForceLat = new OpenSim::ElasticFoundationForce(contactParamsLat);
-	//contactForceLat->setTransitionVelocity(0.2);
-	//contactForceLat->setName("contactForce_femur_lat_meniscii_" + LorR);
+	OpenSim::ElasticFoundationForce *contactForceLat = new OpenSim::ElasticFoundationForce(contactParamsLat);
+	contactForceLat->setTransitionVelocity(0.2);
+	contactForceLat->setName("contactForce_femur_lat_meniscii_" + LorR);
 
-	//model.addForce(contactForceLat);
+	model.addForce(contactForceLat);
 
-	//OpenSim::ElasticFoundationForce::ContactParameters *contactParamsMed = new OpenSim::ElasticFoundationForce::ContactParameters(stiff, diss, us, ud, uv);
-	//contactParamsMed->addGeometry("femur_med_" + LorR + "_CM");
-	//contactParamsMed->addGeometry("meniscus_med_" + LorR + "_CM");
+	OpenSim::ElasticFoundationForce::ContactParameters *contactParamsMed = new OpenSim::ElasticFoundationForce::ContactParameters(men_stiff, men_diss, men_us, men_ud, men_uv);
+	contactParamsMed->addGeometry("femur_med_" + LorR + "_CM");
+	contactParamsMed->addGeometry("meniscus_med_" + LorR + "_CM");
 
-	//OpenSim::ElasticFoundationForce *contactForceMed = new OpenSim::ElasticFoundationForce(contactParamsMed);
-	//contactForceMed->setTransitionVelocity(0.2);
-	//contactForceMed->setName("contactForce_femur_med_meniscii_" + LorR);
+	OpenSim::ElasticFoundationForce *contactForceMed = new OpenSim::ElasticFoundationForce(contactParamsMed);
+	contactForceMed->setTransitionVelocity(0.2);
+	contactForceMed->setName("contactForce_femur_med_meniscii_" + LorR);
+
+	model.addForce(contactForceMed);
 	
-	OpenSim::ElasticFoundationForce::ContactParameters *contactParamsTibMed = new OpenSim::ElasticFoundationForce::ContactParameters(stiff, diss, us, ud, uv);
+	OpenSim::ElasticFoundationForce::ContactParameters *contactParamsTibMed = new OpenSim::ElasticFoundationForce::ContactParameters(art_stiff, art_diss, art_us, art_ud, art_uv);
 	contactParamsTibMed->addGeometry("tibia_upper_" + LorR + "_CM");
 	contactParamsTibMed->addGeometry("femur_med_" + LorR + "_CM");
 
@@ -58,7 +61,7 @@ void addEFForce(Model& model, double stiff, double diss, double us, double ud, d
 
 	model.addForce(contactForceTibMed);
 
-	OpenSim::ElasticFoundationForce::ContactParameters *contactParamsTibLat = new OpenSim::ElasticFoundationForce::ContactParameters(stiff, diss, us, ud, uv);
+	OpenSim::ElasticFoundationForce::ContactParameters *contactParamsTibLat = new OpenSim::ElasticFoundationForce::ContactParameters(art_stiff, art_diss, art_us, art_ud, art_uv);
 	contactParamsTibLat->addGeometry("tibia_upper_" + LorR + "_CM");
 	contactParamsTibLat->addGeometry("femur_lat_" + LorR + "_CM");
 
@@ -68,63 +71,3 @@ void addEFForce(Model& model, double stiff, double diss, double us, double ud, d
 
 	model.addForce(contactForceTibLat);
 }
-
-
-//
-//void KneeAdjustment::add_contact_geometry()
-//{
-//   ContactMesh* femur_r = new ContactMesh( "data/geometry/femur.obj", Vec3(0), Vec3(0), \
-//	   m_model->updBodySet().get("femur_r"), "contact_femur_r");
-//   m_model->addContactGeometry(femur_r);
-//
-//   ContactMesh* tibia_r = new ContactMesh( "data/geometry/tibia.obj", Vec3(0), Vec3(0), \
-//      m_model->updBodySet().get("tibia_r"), "contact_tibia_r");
-//   m_model->addContactGeometry(tibia_r);
-//
-//   m_model->buildSystem();
-//
-//
-//   double stiffness       = 1.E6;
-//    double dissipation     = 1.0;
-//    double staticFriction  = 0.8;
-//    double dynamicFriction = 0.4;
-//    double viscousFriction = 0.4;
-// 
-//   OpenSim::ElasticFoundationForce::ContactParameters right_knee_param;
-//    right_knee_param.addGeometry("contact_femur_r");
-//    right_knee_param.addGeometry("contact_tibia_r");
-//   right_knee_param.setStiffness(stiffness);
-//   right_knee_param.setDissipation(dissipation);
-//   right_knee_param.setStaticFriction(staticFriction);
-//   right_knee_param.setDynamicFriction(dynamicFriction);
-//   right_knee_param.setViscousFriction(viscousFriction);
-//
-//   right_knee_param.print("data/out/param.xml");
-//
-//   OpenSim::ElasticFoundationForce* right_knee_force = new OpenSim::ElasticFoundationForce();
-//   right_knee_force->setName("right_knee_contact");
-//   right_knee_force->addContactParameters(&right_knee_param);
-//    right_knee_force->setTransitionVelocity(0.2);
-//   
-//   right_knee_force->print("data/out/contact.xml");
-//
-//    m_model->addForce(right_knee_force);
-//   
-//   /* OpenSim::HuntCrossleyForce* right_knee_contact = new OpenSim::HuntCrossleyForce(right_knee_param);
-//    right_knee_contact->setName("right_knee_contact");
-//    right_knee_contact->setTransitionVelocity(0.2);
-//   
-//    m_model->addForce(right_knee_contact);*/
-//
-//   /*ContactMesh* femur_l = new ContactMesh(
-//      "C:/OpenSim 3.2/Geometry/l_femur.vtp", Vec3(0), Vec3(0),
-//      m_model->updBodySet().get("femur_l"), "contact_femur_l");
-//   femur_l->setDisplayPreference(4);
-//   m_model->addContactGeometry(femur_l);
-//
-//   ContactMesh* tibia_l = new ContactMesh(
-//      "C:/OpenSim 3.2/Geometry/l_tibia.vtp", Vec3(0), Vec3(0),
-//      m_model->updBodySet().get("tibia_l"), "contact_tibia_l");
-//   tibia_l->setDisplayPreference(4);
-//   m_model->addContactGeometry(tibia_l);*/
-//}

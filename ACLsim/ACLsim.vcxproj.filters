@@ -55,8 +55,5 @@
     <ClInclude Include="..\src\MonteCarloFD.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\cxxopts.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>

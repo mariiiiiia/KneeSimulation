@@ -1,8 +1,8 @@
 #include "addBodies.h"
 
-void addMeniscusWeldJoints(Model& model, bool LeftOrRight){
+void addMeniscusWeldJoints(Model& model, bool left_knee){
 	string LorR = "r";
-	if (LeftOrRight) LorR = "l";
+	if (left_knee) LorR = "l";
 
 	// create body instance of tibia
 	OpenSim::Body* tibia = &model.updBodySet().get("tibia_" + LorR);
@@ -29,7 +29,7 @@ void addMeniscusWeldJoints(Model& model, bool LeftOrRight){
 	lat_meniscus_body->updDisplayer()->updGeometrySet().cloneAndAppend(*Lat_Meniscus_dg);
 	med_meniscus_body->updDisplayer()->updGeometrySet().cloneAndAppend(*Med_Meniscus_dg);
 
-	// create meniscus - tibia pin jointS
+	// create meniscus - tibia weld joints
 	WeldJoint *latMenicscus_tibia_j = new WeldJoint("latMeniscus_tibia_joint_" + LorR, *tibia, SimTK::Vec3(0.0), 
 		SimTK::Vec3(0), *lat_meniscus_body, SimTK::Vec3(0), SimTK::Vec3(0), true); 
 	WeldJoint *medMenicscus_tibia_j = new WeldJoint("medMeniscus_tibia_joint_" + LorR, *tibia, SimTK::Vec3(0.0), 
@@ -40,10 +40,10 @@ void addMeniscusWeldJoints(Model& model, bool LeftOrRight){
 	model.addBody(med_meniscus_body);	
 }
 
-void addFemurWeldJoints(Model& model, bool LeftOrRight)
+void addFemurWeldJoints(Model& model, bool left_knee)
 {
 	string LorR = "r";
-	if (LeftOrRight) LorR = "l";
+	if (left_knee) LorR = "l";
 
 	// create body instance of femur
 	OpenSim::Body* femur = &model.updBodySet().get("femur_" + LorR);
@@ -56,7 +56,7 @@ void addFemurWeldJoints(Model& model, bool LeftOrRight)
 	OpenSim::Body* med_femur_body =  new OpenSim::Body("femur_med_" + LorR, med_femur_mass, SimTK::Vec3(0), 
 		med_femur_mass*SimTK::Inertia(0.0));
 
-	// Create meniscus display geometries
+	// Create femur display geometries
 	DisplayGeometry * Lat_Femur_dg = new DisplayGeometry("femur_lat_"+LorR+".obj");
 	Lat_Femur_dg->setOpacity(1.0);
 	Lat_Femur_dg->setColor(Vec3(0.3, 0.8, 0.9));
@@ -66,7 +66,7 @@ void addFemurWeldJoints(Model& model, bool LeftOrRight)
 	Med_Femur_dg->setColor(Vec3(0.5, 0.7, 0.2));
 	Med_Femur_dg->setScaleFactors(SimTK::Vec3(1.0));
 	
-	// Add meniscus display geometries to bodies
+	// Add femur display geometries to bodies
 	lat_femur_body->updDisplayer()->updGeometrySet().cloneAndAppend(*Lat_Femur_dg);
 	med_femur_body->updDisplayer()->updGeometrySet().cloneAndAppend(*Med_Femur_dg);
 
@@ -81,10 +81,10 @@ void addFemurWeldJoints(Model& model, bool LeftOrRight)
 	model.addBody(med_femur_body);	
 }
 
-void addTibiaWeldJoints(Model& model, bool LeftOrRight)
+void addTibiaWeldJoints(Model& model, bool left_knee)
 {
 	string LorR = "r";
-	if (LeftOrRight) LorR = "l";
+	if (left_knee) LorR = "l";
 
 	// create body instance of tibia
 	OpenSim::Body* tibia = &model.updBodySet().get("tibia_" + LorR);
@@ -94,49 +94,19 @@ void addTibiaWeldJoints(Model& model, bool LeftOrRight)
 	OpenSim::Body* upper_tibia_body =  new OpenSim::Body("tibia_upper_" + LorR, upper_tibia_mass, SimTK::Vec3(0), 
 		upper_tibia_mass*SimTK::Inertia(0.0));
 
-	// Create meniscus display geometries
+	// Create upper tibia display geometries
 	DisplayGeometry * upper_tibia_dg = new DisplayGeometry("tibia_upper_"+LorR+".obj");
 	upper_tibia_dg->setOpacity(1.0);
 	upper_tibia_dg->setColor(Vec3(0.6, 0.4, 0.9));
 	upper_tibia_dg->setScaleFactors(SimTK::Vec3(1.0));
 	
-	// Add meniscus display geometries to bodies
+	// Add upper tibia display geometries to bodies
 	upper_tibia_body->updDisplayer()->updGeometrySet().cloneAndAppend(*upper_tibia_dg);
 
-	// create meniscus - tibia pin jointS
+	// create upper tibia - lower tibia weld joint
 	WeldJoint *upper_tibia_j = new WeldJoint("tibia_weldJoint_" + LorR, *tibia, SimTK::Vec3(0.0), 
 		SimTK::Vec3(0), *upper_tibia_body, SimTK::Vec3(0), SimTK::Vec3(0), true); 
 
-	// add meniscus bodies to the model
-	model.addBody(upper_tibia_body);
-}
-
-void addUpperTibiaFreeJoints(Model& model, bool LeftOrRight)
-{
-	string LorR = "r";
-	if (LeftOrRight) LorR = "l";
-
-	// create body instance of tibia
-	OpenSim::Body* tibia = &model.updBodySet().get("tibia_" + LorR);
-
-	// create upper tibia bodies
-	double upper_tibia_mass = 0.1;
-	OpenSim::Body* upper_tibia_body =  new OpenSim::Body("tibia_upper_" + LorR, upper_tibia_mass, SimTK::Vec3(0), 
-		upper_tibia_mass*SimTK::Inertia(0.0));
-
-	// Create meniscus display geometries
-	DisplayGeometry * upper_tibia_dg = new DisplayGeometry("tibia_upper_"+LorR+".obj");
-	upper_tibia_dg->setOpacity(1.0);
-	upper_tibia_dg->setColor(Vec3(0.6, 0.4, 0.9));
-	upper_tibia_dg->setScaleFactors(SimTK::Vec3(1.0));
-	
-	// Add meniscus display geometries to bodies
-	upper_tibia_body->updDisplayer()->updGeometrySet().cloneAndAppend(*upper_tibia_dg);
-
-	// create meniscus - tibia pin jointS 
-	FreeJoint *free_upper_tibia_j = new FreeJoint("tibia_freeJoint_" + LorR, *tibia, SimTK::Vec3(0.0), 
-		SimTK::Vec3(0), *upper_tibia_body, SimTK::Vec3(0), SimTK::Vec3(0), true);
-
-	// add meniscus bodies to the model
+	// add upper tibia bodies to the model
 	model.addBody(upper_tibia_body);
 }
