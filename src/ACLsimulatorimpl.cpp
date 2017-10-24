@@ -460,7 +460,7 @@ void flexionFDSimulationWithHitMap(Model& model)
 
 	// Define the initial and final simulation times
 	double initialTime = 0.0;
-	double finalTime = 0.2;
+	double finalTime = 0.1;
 
 	// Integrate from initial time to final time
 	manager.setInitialTime(initialTime);
@@ -485,19 +485,34 @@ void flexionFDSimulationWithHitMap(Model& model)
 	forceReporter->getForceStorage().print("../outputs/force_reporter_flex.mot");
 	//customReporter->print( "../outputs/custom_reporter_flex.mot");
 
-	cout << "You can choose 'Replay'" << endl;
-	do { viz.updInputSilo().waitForMenuPick(menuId, item);
-         if (menuId != RunMenuId || item != ReplayItem) 
-             cout << "\aDude ... follow instructions!\n";
-		 if (menuId == RunMenuId || item == ReplayItem)
-		 {
-			 //cout << "saveEm size: " << saveEm.size() << endl;
-			 for (unsigned int i=0; i<saveEm.size(); i++)
+	//cout << "You can choose 'Replay'" << endl;
+	unsigned int frameRate = 5;
+	do { 
+		cout << "Please choose 'Replay' or 'Quit'" << endl;
+		viz.updInputSilo().waitForMenuPick(menuId, item);
+
+        if (item != ReplayItem && item != QuitItem) 
+            cout << "\aDude... follow instructions!\n";
+		if (item == ReplayItem)
+		{
+			cout << "Type desired frame rate for playback and press Enter (default = 1) : ";
+			//frameRate = cin.get();		
+			cin >> frameRate;
+			if (cin.fail()) 
+			{
+				cout << "Not an int. Setting default frame rate." << endl;
+				cin.clear();
+				cin.ignore(std::numeric_limits<int>::max(),'\n');
+				frameRate = 1;
+			}
+
+			//cout << "saveEm size: " << saveEm.size() << endl;
+			for (unsigned int i=0; i<saveEm.size(); i++)
 			{
 				viz.updSimbodyVisualizer().drawFrameNow(saveEm.getElt(i));
-				usleep(100000);
+				usleep(1000000/frameRate);
 			}
-		 }
+		}
 	} while (menuId != RunMenuId || item != QuitItem);
 }
 

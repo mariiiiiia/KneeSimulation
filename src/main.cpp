@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 	{
 		Object::registerType(CustomLigament());
 		// Create an OpenSim model and set its name
-		OpenSim::Model model("../resources/3DGaitModel2392_optimized_v6.osim");
+		OpenSim::Model model("../resources/model_optimized (4-ligaments).osim");
 
 		//// add meniscus bodies to left and right knee
 		//cout << "Adding meniscus" << endl;
