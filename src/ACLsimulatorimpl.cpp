@@ -360,15 +360,15 @@ void flexionFDSimulationWithHitMap(Model& model)
 			std::filebuf fb;
 			//cout << mobod.updBody().
 			if (i==19)
-				fb.open ( "../resources/geometries/femur_lat_r.obj",std::ios::in);
+				fb.open ( "../resources/femur_lat_r.obj",std::ios::in);
 			else if (i==20)
-				fb.open ( "../resources/geometries/femur_med_r.obj",std::ios::in);
+				fb.open ( "../resources/femur_med_r.obj",std::ios::in);
 			else if (i==22)
-				fb.open ( "../resources/geometries/tibia_upper_r.obj",std::ios::in);
+				fb.open ( "../resources/tibia_upper_r.obj",std::ios::in);
 			//else if (i==15)
-				//fb.open ( "../resources/geometries/meniscus_lat_r.obj",std::ios::in);
+				//fb.open ( "../resources/meniscus_lat_r.obj",std::ios::in);
 			//else if (i==16)
-				//fb.open ( "../resources/geometries/meniscus_med_r.obj",std::ios::in);
+				//fb.open ( "../resources/meniscus_med_r.obj",std::ios::in);
 			std::istream is(&fb);
 			PolygonalMesh polMesh;
 			polMesh.loadObjFile(is);

@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
 	{
 		Object::registerType(CustomLigament());
 		// Create an OpenSim model and set its name
-		OpenSim::Model model("../resources/geometries/3DGaitModel2392_optimized_v6.osim");
+		OpenSim::Model model("../resources/3DGaitModel2392_optimized_v6.osim");
 
 		//// add meniscus bodies to left and right knee
 		//cout << "Adding meniscus" << endl;
@@ -55,8 +55,8 @@ int main(int argc, char *argv[])
 			//anteriorTibialLoadsFD(model, kneeAngle[i]);
 		//}
 		//performMCFD_atl(model, 40);
-		flexionFDSimulation(model);
-		//flexionFDSimulationWithHitMap(model);
+		//flexionFDSimulation(model);
+		flexionFDSimulationWithHitMap(model);
 		//performMCFD_flexion(model, 100);
 
 		//OpenSim::Body* tibia = &model.updBodySet().get("tibia_r");
