@@ -373,7 +373,7 @@
 										<!--Coordinate can describe rotational, translational, or coupled motion. Defaults to rotational.-->
 										<motion_type>rotational</motion_type>
 										<!--The value of this coordinate before any value has been set. Rotational coordinate value is in radians and Translational in meters.-->
-										<default_value>1.5707963267949</default_value>
+										<default_value>0</default_value>
 										<!--The speed value of this coordinate before any value has been set. Rotational coordinate value is in rad/s and Translational in m/s.-->
 										<default_speed_value>0</default_speed_value>
 										<!--The minimum and maximum values that the coordinate can range between. Rotational coordinate range in radians and Translational in meters.-->
@@ -10727,44 +10727,6 @@
 					<!--maximum normalized lengthening force-->
 					<Flen>1.8</Flen>
 				</Thelen2003Muscle>
-				<ElasticFoundationForce name="femur_lat_meniscii_l">
-					<!--Material properties.-->
-					<ElasticFoundationForce::ContactParametersSet name="contact_parameters">
-						<objects>
-							<ElasticFoundationForce::ContactParameters>
-								<!--Names of geometry objects affected by these parameters.-->
-								<geometry>femur_lat_l_CM meniscus_lat_l_CM</geometry>
-								<stiffness>10000000000</stiffness>
-								<dissipation>1</dissipation>
-								<static_friction>0.8</static_friction>
-								<dynamic_friction>0.04</dynamic_friction>
-								<viscous_friction>0.04</viscous_friction>
-							</ElasticFoundationForce::ContactParameters>
-						</objects>
-						<groups />
-					</ElasticFoundationForce::ContactParametersSet>
-					<!--Slip velocity (creep) at which peak static friction occurs.-->
-					<transition_velocity>0.2</transition_velocity>
-				</ElasticFoundationForce>
-				<ElasticFoundationForce name="femur_med_meniscii_l">
-					<!--Material properties.-->
-					<ElasticFoundationForce::ContactParametersSet name="contact_parameters">
-						<objects>
-							<ElasticFoundationForce::ContactParameters>
-								<!--Names of geometry objects affected by these parameters.-->
-								<geometry>femur_med_l_CM meniscus_med_l_CM</geometry>
-								<stiffness>10000000000</stiffness>
-								<dissipation>1</dissipation>
-								<static_friction>0.8</static_friction>
-								<dynamic_friction>0.04</dynamic_friction>
-								<viscous_friction>0.04</viscous_friction>
-							</ElasticFoundationForce::ContactParameters>
-						</objects>
-						<groups />
-					</ElasticFoundationForce::ContactParametersSet>
-					<!--Slip velocity (creep) at which peak static friction occurs.-->
-					<transition_velocity>0.2</transition_velocity>
-				</ElasticFoundationForce>
 				<ElasticFoundationForce name="femur_lat_meniscii_r">
 					<!--Material properties.-->
 					<ElasticFoundationForce::ContactParametersSet name="contact_parameters">
@@ -10772,9 +10734,9 @@
 							<ElasticFoundationForce::ContactParameters>
 								<!--Names of geometry objects affected by these parameters.-->
 								<geometry>femur_lat_r_CM meniscus_lat_r_CM</geometry>
-								<stiffness>50000000000</stiffness>
-								<dissipation>3</dissipation>
-								<static_friction>1</static_friction>
+								<stiffness>10000000000</stiffness>
+								<dissipation>20</dissipation>
+								<static_friction>0.1</static_friction>
 								<dynamic_friction>0.03</dynamic_friction>
 								<viscous_friction>0.03</viscous_friction>
 							</ElasticFoundationForce::ContactParameters>
@@ -10791,9 +10753,9 @@
 							<ElasticFoundationForce::ContactParameters>
 								<!--Names of geometry objects affected by these parameters.-->
 								<geometry>femur_med_r_CM meniscus_med_r_CM</geometry>
-								<stiffness>50000000000</stiffness>
-								<dissipation>3</dissipation>
-								<static_friction>1</static_friction>
+								<stiffness>10000000000</stiffness>
+								<dissipation>20</dissipation>
+								<static_friction>0.1</static_friction>
 								<dynamic_friction>0.03</dynamic_friction>
 								<viscous_friction>0.03</viscous_friction>
 							</ElasticFoundationForce::ContactParameters>
@@ -10802,44 +10764,6 @@
 					</ElasticFoundationForce::ContactParametersSet>
 					<!--Slip velocity (creep) at which peak static friction occurs.-->
 					<transition_velocity>0.5</transition_velocity>
-				</ElasticFoundationForce>
-				<ElasticFoundationForce name="femur_med_tibia_l">
-					<!--Material properties.-->
-					<ElasticFoundationForce::ContactParametersSet name="contact_parameters">
-						<objects>
-							<ElasticFoundationForce::ContactParameters>
-								<!--Names of geometry objects affected by these parameters.-->
-								<geometry>tibia_upper_l_CM femur_med_l_CM</geometry>
-								<stiffness>1000000000000</stiffness>
-								<dissipation>1</dissipation>
-								<static_friction>0.8</static_friction>
-								<dynamic_friction>0.04</dynamic_friction>
-								<viscous_friction>0.04</viscous_friction>
-							</ElasticFoundationForce::ContactParameters>
-						</objects>
-						<groups />
-					</ElasticFoundationForce::ContactParametersSet>
-					<!--Slip velocity (creep) at which peak static friction occurs.-->
-					<transition_velocity>0.2</transition_velocity>
-				</ElasticFoundationForce>
-				<ElasticFoundationForce name="femur_lat_tibia_l">
-					<!--Material properties.-->
-					<ElasticFoundationForce::ContactParametersSet name="contact_parameters">
-						<objects>
-							<ElasticFoundationForce::ContactParameters>
-								<!--Names of geometry objects affected by these parameters.-->
-								<geometry>tibia_upper_l_CM femur_lat_l_CM</geometry>
-								<stiffness>1000000000000</stiffness>
-								<dissipation>1</dissipation>
-								<static_friction>0.8</static_friction>
-								<dynamic_friction>0.04</dynamic_friction>
-								<viscous_friction>0.04</viscous_friction>
-							</ElasticFoundationForce::ContactParameters>
-						</objects>
-						<groups />
-					</ElasticFoundationForce::ContactParametersSet>
-					<!--Slip velocity (creep) at which peak static friction occurs.-->
-					<transition_velocity>0.2</transition_velocity>
 				</ElasticFoundationForce>
 				<ElasticFoundationForce name="femur_med_tibia_r">
 					<!--Material properties.-->
@@ -10848,9 +10772,9 @@
 							<ElasticFoundationForce::ContactParameters>
 								<!--Names of geometry objects affected by these parameters.-->
 								<geometry>tibia_upper_r_CM femur_med_r_CM</geometry>
-								<stiffness>20000000000</stiffness>
-								<dissipation>2</dissipation>
-								<static_friction>1</static_friction>
+								<stiffness>10000000000</stiffness>
+								<dissipation>10</dissipation>
+								<static_friction>0.1</static_friction>
 								<dynamic_friction>0.03</dynamic_friction>
 								<viscous_friction>0.03</viscous_friction>
 							</ElasticFoundationForce::ContactParameters>
@@ -10858,7 +10782,7 @@
 						<groups />
 					</ElasticFoundationForce::ContactParametersSet>
 					<!--Slip velocity (creep) at which peak static friction occurs.-->
-					<transition_velocity>0.5</transition_velocity>
+					<transition_velocity>0.8</transition_velocity>
 				</ElasticFoundationForce>
 				<ElasticFoundationForce name="femur_lat_tibia_r">
 					<!--Material properties.-->
@@ -10867,9 +10791,9 @@
 							<ElasticFoundationForce::ContactParameters>
 								<!--Names of geometry objects affected by these parameters.-->
 								<geometry>tibia_upper_r_CM femur_lat_r_CM</geometry>
-								<stiffness>20000000000</stiffness>
-								<dissipation>2</dissipation>
-								<static_friction>1</static_friction>
+								<stiffness>10000000000</stiffness>
+								<dissipation>10</dissipation>
+								<static_friction>0.1</static_friction>
 								<dynamic_friction>0.03</dynamic_friction>
 								<viscous_friction>0.03</viscous_friction>
 							</ElasticFoundationForce::ContactParameters>
@@ -10877,7 +10801,7 @@
 						<groups />
 					</ElasticFoundationForce::ContactParametersSet>
 					<!--Slip velocity (creep) at which peak static friction occurs.-->
-					<transition_velocity>0.5</transition_velocity>
+					<transition_velocity>0.8</transition_velocity>
 				</ElasticFoundationForce>
 				<CustomLigament name="aACL_R">
 					<!--the set of points defining the path of the CustomLigament-->
@@ -10886,11 +10810,11 @@
 						<PathPointSet>
 							<objects>
 								<PathPoint name="aACL_R_femur">
-									<location> 0.00152864 -0.401241 0.0123851</location>
+									<location> 0.00427722 -0.404609 0.0116371</location>
 									<body>femur_r</body>
 								</PathPoint>
 								<PathPoint name="aACL_R_tibia">
-									<location> 0.0180473 -0.044134 -0.000160075</location>
+									<location> 0.0227563 -0.0471042 0.000484759</location>
 									<body>tibia_r</body>
 								</PathPoint>
 							</objects>
@@ -10910,19 +10834,19 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>0</display_preference>
+							<display_preference>4</display_preference>
 						</VisibleObject>
 						<!--Used to initialize the colour cache variable-->
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.0330055</resting_length>
+					<resting_length>0.0320055</resting_length>
 					<!--damping of the ligament-->
 					<damping>390.921987102286</damping>
 					<!--stiffness of the ligament-->
-					<stiffness>1600</stiffness>
+					<stiffness>1500</stiffness>
 					<!--el rigion from non-linear to linear-->
-					<el>0.03</el>
+					<el>0.05</el>
 				</CustomLigament>
 				<CustomLigament name="pACL_R">
 					<!--the set of points defining the path of the CustomLigament-->
@@ -10931,11 +10855,11 @@
 						<PathPointSet>
 							<objects>
 								<PathPoint name="pACL_R_femur">
-									<location> -0.00106436 -0.40653 0.012486</location>
+									<location> 0.00200603 -0.408992 0.0132047</location>
 									<body>femur_r</body>
 								</PathPoint>
 								<PathPoint name="pACL_R_tibia">
-									<location> 0.01389 -0.0431224 0.00188206</location>
+									<location> 0.0172605 -0.0465166 0.00250377</location>
 									<body>tibia_r</body>
 								</PathPoint>
 							</objects>
@@ -10955,19 +10879,19 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>0</display_preference>
+							<display_preference>4</display_preference>
 						</VisibleObject>
 						<!--Used to initialize the colour cache variable-->
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.0265587</resting_length>
+					<resting_length>0.0263587</resting_length>
 					<!--damping of the ligament-->
 					<damping>403.742492190257</damping>
 					<!--stiffness of the ligament-->
-					<stiffness>1500</stiffness>
+					<stiffness>1900</stiffness>
 					<!--el rigion from non-linear to linear-->
-					<el>0.03</el>
+					<el>0.05</el>
 				</CustomLigament>
 				<CustomLigament name="aPCL_R">
 					<!--the set of points defining the path of the CustomLigament-->
@@ -11000,7 +10924,7 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 						<!--Used to initialize the colour cache variable-->
 						<default_color>0.9 0.9 0.9</default_color>
@@ -11012,7 +10936,7 @@
 					<!--stiffness of the ligament-->
 					<stiffness>5500</stiffness>
 					<!--el rigion from non-linear to linear-->
-					<el>0.0227372051149022</el>
+					<el>0.02</el>
 				</CustomLigament>
 				<CustomLigament name="pPCL_R">
 					<!--the set of points defining the path of the CustomLigament-->
@@ -11045,19 +10969,19 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
+							<display_preference>0</display_preference>
 						</VisibleObject>
 						<!--Used to initialize the colour cache variable-->
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.0298878</resting_length>
+					<resting_length>0.0300878</resting_length>
 					<!--damping of the ligament-->
 					<damping>948.765015575893</damping>
 					<!--stiffness of the ligament-->
-					<stiffness>4600</stiffness>
+					<stiffness>4500</stiffness>
 					<!--el rigion from non-linear to linear-->
-					<el>0.010588702047792</el>
+					<el>0.01</el>
 				</CustomLigament>
 				<CustomLigament name="aMCL_R">
 					<!--the set of points defining the path of the CustomLigament-->
@@ -11066,11 +10990,11 @@
 						<PathPointSet>
 							<objects>
 								<PathPoint name="aMCL_R_femur">
-									<location> 0.000843992 -0.403042 -0.0359478</location>
+									<location> 0.0166584 -0.404516 -0.0311046</location>
 									<body>femur_r</body>
 								</PathPoint>
 								<PathPoint name="aMCL_R_tibia">
-									<location> 0.00768 -0.0796 -0.02762</location>
+									<location> 0.0140011 -0.0723078 -0.0168075</location>
 									<body>tibia_r</body>
 								</PathPoint>
 							</objects>
@@ -11096,13 +11020,103 @@
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.0647022</resting_length>
+					<resting_length>0.058027</resting_length>
 					<!--damping of the ligament-->
 					<damping>727.127575003531</damping>
 					<!--stiffness of the ligament-->
-					<stiffness>3000</stiffness>
+					<stiffness>800</stiffness>
 					<!--el rigion from non-linear to linear-->
-					<el>0.0578524124881741</el>
+					<el>0.03</el>
+				</CustomLigament>
+				<CustomLigament name="mMCL_R">
+					<!--the set of points defining the path of the CustomLigament-->
+					<GeometryPath>
+						<!--The set of points defining the path-->
+						<PathPointSet>
+							<objects>
+								<PathPoint name="aMCL_R_femur">
+									<location> 0.00922478 -0.405015 -0.0315943</location>
+									<body>femur_r</body>
+								</PathPoint>
+								<PathPoint name="aMCL_R_tibia">
+									<location> 0.00655689 -0.078341 -0.0159121</location>
+									<body>tibia_r</body>
+								</PathPoint>
+							</objects>
+							<groups />
+						</PathPointSet>
+						<!--Used to display the path in the 3D window-->
+						<VisibleObject name="display">
+							<!--Set of geometry files and associated attributes, allow .vtp, .stl, .obj-->
+							<GeometrySet>
+								<objects />
+								<groups />
+							</GeometrySet>
+							<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
+							<scale_factors> 1 1 1</scale_factors>
+							<!--transform relative to owner specified as 3 rotations (rad) followed by 3 translations rX rY rZ tx ty tz-->
+							<transform> -0 0 -0 0 0 0</transform>
+							<!--Whether to show a coordinate frame-->
+							<show_axes>false</show_axes>
+							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
+							<display_preference>4</display_preference>
+						</VisibleObject>
+						<!--Used to initialize the colour cache variable-->
+						<default_color>0.9 0.9 0.9</default_color>
+					</GeometryPath>
+					<!--resting length of the ligament-->
+					<resting_length>0.0597935</resting_length>
+					<!--damping of the ligament-->
+					<damping>727.127575003531</damping>
+					<!--stiffness of the ligament-->
+					<stiffness>800</stiffness>
+					<!--el rigion from non-linear to linear-->
+					<el>0.03</el>
+				</CustomLigament>
+				<CustomLigament name="pMCL_R">
+					<!--the set of points defining the path of the CustomLigament-->
+					<GeometryPath>
+						<!--The set of points defining the path-->
+						<PathPointSet>
+							<objects>
+								<PathPoint name="aMCL_R_femur">
+									<location> 0.00142567 -0.406464 -0.0313543</location>
+									<body>femur_r</body>
+								</PathPoint>
+								<PathPoint name="aMCL_R_tibia">
+									<location> 0.00232202 -0.0821789 -0.013579</location>
+									<body>tibia_r</body>
+								</PathPoint>
+							</objects>
+							<groups />
+						</PathPointSet>
+						<!--Used to display the path in the 3D window-->
+						<VisibleObject name="display">
+							<!--Set of geometry files and associated attributes, allow .vtp, .stl, .obj-->
+							<GeometrySet>
+								<objects />
+								<groups />
+							</GeometrySet>
+							<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
+							<scale_factors> 1 1 1</scale_factors>
+							<!--transform relative to owner specified as 3 rotations (rad) followed by 3 translations rX rY rZ tx ty tz-->
+							<transform> -0 0 -0 0 0 0</transform>
+							<!--Whether to show a coordinate frame-->
+							<show_axes>false</show_axes>
+							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
+							<display_preference>4</display_preference>
+						</VisibleObject>
+						<!--Used to initialize the colour cache variable-->
+						<default_color>0.9 0.9 0.9</default_color>
+					</GeometryPath>
+					<!--resting length of the ligament-->
+					<resting_length>0.060728</resting_length>
+					<!--damping of the ligament-->
+					<damping>727.127575003531</damping>
+					<!--stiffness of the ligament-->
+					<stiffness>900</stiffness>
+					<!--el rigion from non-linear to linear-->
+					<el>0.03</el>
 				</CustomLigament>
 				<CustomLigament name="aLCL_R">
 					<!--the set of points defining the path of the CustomLigament-->
@@ -11111,11 +11125,11 @@
 						<PathPointSet>
 							<objects>
 								<PathPoint name="aLCL_R_femur">
-									<location> 0.001804 -0.400319 0.0325147</location>
+									<location> 0.006208 -0.400542 0.0331536</location>
 									<body>femur_r</body>
 								</PathPoint>
 								<PathPoint name="aLCL_R_tibia">
-									<location> 0.000615013 -0.0715147 0.0413672</location>
+									<location> 0.00365786 -0.0709826 0.0379556</location>
 									<body>tibia_r</body>
 								</PathPoint>
 							</objects>
@@ -11135,33 +11149,33 @@
 							<!--Whether to show a coordinate frame-->
 							<show_axes>false</show_axes>
 							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>0</display_preference>
+							<display_preference>4</display_preference>
 						</VisibleObject>
 						<!--Used to initialize the colour cache variable-->
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.0574639</resting_length>
+					<resting_length>0.0559772</resting_length>
 					<!--damping of the ligament-->
 					<damping>915.909859480219</damping>
 					<!--stiffness of the ligament-->
-					<stiffness>2000</stiffness>
+					<stiffness>700</stiffness>
 					<!--el rigion from non-linear to linear-->
-					<el>0.0158833582567827</el>
+					<el>0.03</el>
 				</CustomLigament>
-				<CustomLigament name="aPCL_L">
+				<CustomLigament name="mLCL_R">
 					<!--the set of points defining the path of the CustomLigament-->
 					<GeometryPath>
 						<!--The set of points defining the path-->
 						<PathPointSet>
 							<objects>
-								<PathPoint name="aPCL_L_femur">
-									<location> -0.00867 -0.41342 0.00925</location>
-									<body>femur_l</body>
+								<PathPoint name="aLCL_R_femur">
+									<location> 0.00167001 -0.40029 0.03295</location>
+									<body>femur_r</body>
 								</PathPoint>
-								<PathPoint name="aPCL_L_tibia">
-									<location> -0.02045 -0.03314 -0.00333</location>
-									<body>tibia_l</body>
+								<PathPoint name="aLCL_R_tibia">
+									<location> 0.00148679 -0.0698867 0.0386925</location>
+									<body>tibia_r</body>
 								</PathPoint>
 							</objects>
 							<groups />
@@ -11186,149 +11200,97 @@
 						<default_color>0.9 0.9 0.9</default_color>
 					</GeometryPath>
 					<!--resting length of the ligament-->
-					<resting_length>0.0152585</resting_length>
-					<!--damping of the ligament-->
-					<damping>363.526370236543</damping>
-					<!--stiffness of the ligament-->
-					<stiffness>1297.12820825831</stiffness>
-					<!--el rigion from non-linear to linear-->
-					<el>0.0827372051149022</el>
-				</CustomLigament>
-				<CustomLigament name="pPCL_L">
-					<!--the set of points defining the path of the CustomLigament-->
-					<GeometryPath>
-						<!--The set of points defining the path-->
-						<PathPointSet>
-							<objects>
-								<PathPoint name="pPCL_L_femur">
-									<location> -0.01588 -0.40574 0.01629</location>
-									<body>femur_l</body>
-								</PathPoint>
-								<PathPoint name="pPCL_L_tibia">
-									<location> -0.01471 -0.03175 -0.00407</location>
-									<body>tibia_l</body>
-								</PathPoint>
-							</objects>
-							<groups />
-						</PathPointSet>
-						<!--Used to display the path in the 3D window-->
-						<VisibleObject name="display">
-							<!--Set of geometry files and associated attributes, allow .vtp, .stl, .obj-->
-							<GeometrySet>
-								<objects />
-								<groups />
-							</GeometrySet>
-							<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-							<scale_factors> 1 1 1</scale_factors>
-							<!--transform relative to owner specified as 3 rotations (rad) followed by 3 translations rX rY rZ tx ty tz-->
-							<transform> -0 0 -0 0 0 0</transform>
-							<!--Whether to show a coordinate frame-->
-							<show_axes>false</show_axes>
-							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
-						</VisibleObject>
-						<!--Used to initialize the colour cache variable-->
-						<default_color>0.9 0.9 0.9</default_color>
-					</GeometryPath>
-					<!--resting length of the ligament-->
-					<resting_length>0.0245886786384826</resting_length>
-					<!--damping of the ligament-->
-					<damping>948.765015575893</damping>
-					<!--stiffness of the ligament-->
-					<stiffness>8835.44419690542</stiffness>
-					<!--el rigion from non-linear to linear-->
-					<el>0.070588702047792</el>
-				</CustomLigament>
-				<CustomLigament name="aMCL_L">
-					<!--the set of points defining the path of the CustomLigament-->
-					<GeometryPath>
-						<!--The set of points defining the path-->
-						<PathPointSet>
-							<objects>
-								<PathPoint name="aMCL_L_femur">
-									<location> -0.00741 -0.40435 0.034</location>
-									<body>femur_l</body>
-								</PathPoint>
-								<PathPoint name="aMCL_L_tibia">
-									<location> 0.00768 -0.0796 0.02762</location>
-									<body>tibia_l</body>
-								</PathPoint>
-							</objects>
-							<groups />
-						</PathPointSet>
-						<!--Used to display the path in the 3D window-->
-						<VisibleObject name="display">
-							<!--Set of geometry files and associated attributes, allow .vtp, .stl, .obj-->
-							<GeometrySet>
-								<objects />
-								<groups />
-							</GeometrySet>
-							<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-							<scale_factors> 1 1 1</scale_factors>
-							<!--transform relative to owner specified as 3 rotations (rad) followed by 3 translations rX rY rZ tx ty tz-->
-							<transform> -0 0 -0 0 0 0</transform>
-							<!--Whether to show a coordinate frame-->
-							<show_axes>false</show_axes>
-							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
-						</VisibleObject>
-						<!--Used to initialize the colour cache variable-->
-						<default_color>0.9 0.9 0.9</default_color>
-					</GeometryPath>
-					<!--resting length of the ligament-->
-					<resting_length>0.0655015</resting_length>
-					<!--damping of the ligament-->
-					<damping>727.127575003531</damping>
-					<!--stiffness of the ligament-->
-					<stiffness>5189.58098086489</stiffness>
-					<!--el rigion from non-linear to linear-->
-					<el>0.0578524124881741</el>
-				</CustomLigament>
-				<CustomLigament name="aLCL_L">
-					<!--the set of points defining the path of the CustomLigament-->
-					<GeometryPath>
-						<!--The set of points defining the path-->
-						<PathPointSet>
-							<objects>
-								<PathPoint name="aLCL_L_femur">
-									<location> -0.00978 -0.40056 -0.0345</location>
-									<body>femur_l</body>
-								</PathPoint>
-								<PathPoint name="aLCL_L_tibia">
-									<location> -0.0071 -0.06056 -0.03725</location>
-									<body>tibia_l</body>
-								</PathPoint>
-							</objects>
-							<groups />
-						</PathPointSet>
-						<!--Used to display the path in the 3D window-->
-						<VisibleObject name="display">
-							<!--Set of geometry files and associated attributes, allow .vtp, .stl, .obj-->
-							<GeometrySet>
-								<objects />
-								<groups />
-							</GeometrySet>
-							<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
-							<scale_factors> 1 1 1</scale_factors>
-							<!--transform relative to owner specified as 3 rotations (rad) followed by 3 translations rX rY rZ tx ty tz-->
-							<transform> -0 0 -0 0 0 0</transform>
-							<!--Whether to show a coordinate frame-->
-							<show_axes>false</show_axes>
-							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
-							<display_preference>4</display_preference>
-						</VisibleObject>
-						<!--Used to initialize the colour cache variable-->
-						<default_color>0.9 0.9 0.9</default_color>
-					</GeometryPath>
-					<!--resting length of the ligament-->
-					<resting_length>0.0448962</resting_length>
+					<resting_length>0.0563186</resting_length>
 					<!--damping of the ligament-->
 					<damping>915.909859480219</damping>
 					<!--stiffness of the ligament-->
-					<stiffness>8234.10748619037</stiffness>
+					<stiffness>700</stiffness>
 					<!--el rigion from non-linear to linear-->
-					<el>0.0158833582567827</el>
+					<el>0.03</el>
 				</CustomLigament>
+				<CustomLigament name="pLCL_R">
+					<!--the set of points defining the path of the CustomLigament-->
+					<GeometryPath>
+						<!--The set of points defining the path-->
+						<PathPointSet>
+							<objects>
+								<PathPoint name="aLCL_R_femur">
+									<location> -0.00298117 -0.400987 0.0322376</location>
+									<body>femur_r</body>
+								</PathPoint>
+								<PathPoint name="aLCL_R_tibia">
+									<location> -0.0023255 -0.0690543 0.0391216</location>
+									<body>tibia_r</body>
+								</PathPoint>
+							</objects>
+							<groups />
+						</PathPointSet>
+						<!--Used to display the path in the 3D window-->
+						<VisibleObject name="display">
+							<!--Set of geometry files and associated attributes, allow .vtp, .stl, .obj-->
+							<GeometrySet>
+								<objects />
+								<groups />
+							</GeometrySet>
+							<!--Three scale factors for display purposes: scaleX scaleY scaleZ-->
+							<scale_factors> 1 1 1</scale_factors>
+							<!--transform relative to owner specified as 3 rotations (rad) followed by 3 translations rX rY rZ tx ty tz-->
+							<transform> -0 0 -0 0 0 0</transform>
+							<!--Whether to show a coordinate frame-->
+							<show_axes>false</show_axes>
+							<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded Can be overriden for individual geometries-->
+							<display_preference>4</display_preference>
+						</VisibleObject>
+						<!--Used to initialize the colour cache variable-->
+						<default_color>0.9 0.9 0.9</default_color>
+					</GeometryPath>
+					<!--resting length of the ligament-->
+					<resting_length>0.0523427</resting_length>
+					<!--damping of the ligament-->
+					<damping>915.909859480219</damping>
+					<!--stiffness of the ligament-->
+					<stiffness>700</stiffness>
+					<!--el rigion from non-linear to linear-->
+					<el>0.03</el>
+				</CustomLigament>
+				<PrescribedForce name="prescribedForce">
+					<!--Name of the body the force is applied to.-->
+					<body>tibia_upper_r</body>
+					<!--Flag indicating whether the point (specified in pointFunctions) is in global frame.-->
+					<pointIsGlobal>false</pointIsGlobal>
+					<!--Flag indicating whether the quantities (specified in force/torqueFunctions) is in global frame.-->
+					<forceIsGlobal>true</forceIsGlobal>
+					<!--Three functions describing the force to be applied.-->
+					<FunctionSet name="forceFunctions">
+						<objects>
+							<Constant>
+								<value>0</value>
+							</Constant>
+							<Constant>
+								<value>0</value>
+							</Constant>
+							<Constant>
+								<value>0</value>
+							</Constant>
+						</objects>
+						<groups />
+					</FunctionSet>
+					<!--Three functions describing the location at which the force is applied.-->
+					<FunctionSet name="pointFunctions">
+						<objects>
+							<Constant>
+								<value>0</value>
+							</Constant>
+							<Constant>
+								<value>0</value>
+							</Constant>
+							<Constant>
+								<value>0</value>
+							</Constant>
+						</objects>
+						<groups />
+					</FunctionSet>
+				</PrescribedForce>
 			</objects>
 			<groups>
 				<ObjectGroup name="R_hip_abd">
@@ -11431,50 +11393,6 @@
 		<!--ContactGeometries  in the model.-->
 		<ContactGeometrySet>
 			<objects>
-				<ContactMesh name="meniscus_lat_l_CM">
-					<!--Body name to connect the contact geometry to-->
-					<body_name>meniscus_lat_l</body_name>
-					<!--Location of geometry center in the body frame-->
-					<location>0 0 0</location>
-					<!--Orientation of geometry in the body frame-->
-					<orientation>0 0 0</orientation>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
-					<display_preference>0</display_preference>
-					<filename>meniscus_lat_l.obj</filename>
-				</ContactMesh>
-				<ContactMesh name="meniscus_med_l_CM">
-					<!--Body name to connect the contact geometry to-->
-					<body_name>meniscus_med_l</body_name>
-					<!--Location of geometry center in the body frame-->
-					<location>0 0 0</location>
-					<!--Orientation of geometry in the body frame-->
-					<orientation>0 0 0</orientation>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
-					<display_preference>0</display_preference>
-					<filename>meniscus_med_l.obj</filename>
-				</ContactMesh>
-				<ContactMesh name="femur_lat_l_CM">
-					<!--Body name to connect the contact geometry to-->
-					<body_name>femur_lat_l</body_name>
-					<!--Location of geometry center in the body frame-->
-					<location>0 0 0</location>
-					<!--Orientation of geometry in the body frame-->
-					<orientation>0 0 0</orientation>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
-					<display_preference>0</display_preference>
-					<filename>femur_lat_l.obj</filename>
-				</ContactMesh>
-				<ContactMesh name="femur_med_l_CM">
-					<!--Body name to connect the contact geometry to-->
-					<body_name>femur_med_l</body_name>
-					<!--Location of geometry center in the body frame-->
-					<location>0 0 0</location>
-					<!--Orientation of geometry in the body frame-->
-					<orientation>0 0 0</orientation>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
-					<display_preference>0</display_preference>
-					<filename>femur_med_l.obj</filename>
-				</ContactMesh>
 				<ContactMesh name="meniscus_lat_r_CM">
 					<!--Body name to connect the contact geometry to-->
 					<body_name>meniscus_lat_r</body_name>
@@ -11518,17 +11436,6 @@
 					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
 					<display_preference>0</display_preference>
 					<filename>femur_med_r.obj</filename>
-				</ContactMesh>
-				<ContactMesh name="tibia_upper_l_CM">
-					<!--Body name to connect the contact geometry to-->
-					<body_name>tibia_upper_l</body_name>
-					<!--Location of geometry center in the body frame-->
-					<location>0 0 0</location>
-					<!--Orientation of geometry in the body frame-->
-					<orientation>0 0 0</orientation>
-					<!--Display Pref. 0:Hide 1:Wire 3:Flat 4:Shaded-->
-					<display_preference>0</display_preference>
-					<filename>tibia_upper_l.obj</filename>
 				</ContactMesh>
 				<ContactMesh name="tibia_upper_r_CM">
 					<!--Body name to connect the contact geometry to-->
