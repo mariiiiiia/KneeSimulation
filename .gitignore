@@ -5,8 +5,6 @@
 outputs/MC_anterior_loads/*
 outputs/MC_flexion/*
 outputs/MC_v5/*
-outputs/scheburn*/*
-outputs/0_3*/*
 resources/other_models/*
 tags
 *.tags

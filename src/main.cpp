@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
 
 		// simulate
 		double kneeAngle [5] = {0, -15, -30, -60, -90};
-		for (int i=0; i<5; i++){
+		for (int i=4; i<5; i++){
 			anteriorTibialLoadsFD(model, kneeAngle[i]);
 		}
 		//performMCFD_atl(model, 40);

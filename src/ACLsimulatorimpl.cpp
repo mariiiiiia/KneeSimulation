@@ -713,12 +713,12 @@ void setKneeAngle(Model& model, SimTK::State &si, double angle_degrees, bool loc
 		knee_r_cs.get("knee_inferior_superior_r").setValue(si, -0.38597298);
 		knee_r_cs.get("knee_medial_lateral_r").setValue(si, -0.00403978);
 
-		//if (constrain_adduction)
+		if (constrain_adduction)
 			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.264511);   // ant load at -60 degrees flexion (+2 degrees)
 			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.0648476);   // ant load at -60 degrees flexion (-2 degrees)
 			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.157079);   // ant load at -60 degrees flexion (+8 degrees)
 			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.191986);   // ant load at -60 degrees flexion (+6 degrees)
-			//knee_r_cs.get("knee_adduction_r").setValue(si, -0.226892);   // ant load at -60 degrees flexion (+4 degrees)
+			knee_r_cs.get("knee_adduction_r").setValue(si, -0.226892);   // ant load at -60 degrees flexion (+4 degrees)
 
 	}
 	else if (angle_degrees == -40)
