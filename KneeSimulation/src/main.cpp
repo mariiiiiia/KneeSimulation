@@ -27,8 +27,9 @@ int main(int argc, char *argv[])
 	try 
 	{
 		Object::registerType(CustomLigament());
+
 		// Create an OpenSim model and set its name
-		OpenSim::Model model("../resources/3DGaitModel2392_optimized_v6_1.osim");
+		OpenSim::Model model("../resources/3DGaitModel2392_optimized_v6.osim");
 
 		//// add meniscus bodies to left and right knee
 		//cout << "Adding meniscus" << endl;
@@ -51,7 +52,7 @@ int main(int argc, char *argv[])
 
 		// simulate
 		double kneeAngle [5] = {0, -15, -30, -60, -90};
-		for (int i=4; i<5; i++){
+		for (int i=0; i<5; i++){
 			anteriorTibialLoadsFD(model, kneeAngle[i]);
 		}
 		//performMCFD_atl(model, 40);

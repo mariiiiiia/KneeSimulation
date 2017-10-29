@@ -2,10 +2,11 @@
 ## Eclipse
 #################
 
-outputs/MC_anterior_loads/*
-outputs/MC_flexion/*
-outputs/MC_v5/*
-resources/other_models/*
+KneeSimulation/outputs/MC_anterior_loads/*
+KneeSimulation/outputs/MC_flexion/*
+KneeSimulation/outputs/MC_v5/*
+KneeSimulation/outputs/*
+KneeSimulation/resources/other_models/*
 tags
 *.tags
 *.tags_sorted_by_file
