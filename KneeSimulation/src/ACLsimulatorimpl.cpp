@@ -7,7 +7,7 @@
 Array_<State> saveEm;
 
 static const Real TimeScale = 1;
-static const Real FrameRate = 30;
+static const Real FrameRate = 100;
 static const Real ReportInterval = TimeScale/FrameRate;
 
 // These are the item numbers for the entries on the Run menu.
@@ -57,7 +57,10 @@ public:
 
 			const SimbodyMatterSubsystem& matter = m_compliant.getMultibodySystem().getMatterSubsystem();
 			// get tibia's mobilized body
-			MobilizedBody mobod = matter.getMobilizedBody( MobilizedBodyIndex(22));
+			MobilizedBody tibiaMobod = matter.getMobilizedBody(MobilizedBodyIndex(22));
+			MobilizedBody femurLatmobod = matter.getMobilizedBody(MobilizedBodyIndex(19));
+			MobilizedBody femurMedmobod = matter.getMobilizedBody(MobilizedBodyIndex(20));
+
 			//for (int numContacts=0; numContacts<cs.getNumContacts(); numContacts++)
 			//{
 				//ContactSurfaceIndex csi1 = cs.getContact(numContacts).getSurface1();
@@ -66,24 +69,61 @@ public:
 			//}
 			if (cs.getNumContacts()>0)
 			{
-				DecorativeGeometry decContactGeometry = mobod.getBody().updDecoration(0);
-				decContactGeometry.setOpacity( 0.05);
-				decContactGeometry.setColor( Gray);
-				//decContactGeometry.setRepresentation( DecorativeGeometry::Representation::DrawPoints);
+				DecorativeGeometry decTibiaContactGeometry = tibiaMobod.getBody().updDecoration(0);
+				decTibiaContactGeometry.setOpacity( 0.9);
+				decTibiaContactGeometry.setColor( Gray);
 
-				const Transform& X_BM = mobod.getOutboardFrame(state); // M frame in B
-				const Transform& X_GB = mobod.getBodyTransform(state); // B in Ground
-				const Transform& X_PF = mobod.getInboardFrame(state);
+				DecorativeGeometry decFemurLatContactGeometry = femurLatmobod.getBody().updDecoration(0);
+				decFemurLatContactGeometry.setOpacity(1);
+				decFemurLatContactGeometry.setColor(Gray);
+
+				DecorativeGeometry decFemurMedContactGeometry = femurMedmobod.getBody().updDecoration(0);
+				decFemurMedContactGeometry.setOpacity(1);
+				decFemurMedContactGeometry.setColor(Gray);
+
+				// Tibia transformation
+				const Transform& X_BM = tibiaMobod.getOutboardFrame(state); // M frame in B
+				const Transform& X_GB = tibiaMobod.getBodyTransform(state); // B in Ground
+				const Transform& X_PF = tibiaMobod.getInboardFrame(state);
 				Transform X_GM = X_GB*X_BM; // M frame in Ground
-				//cout << "location of Mo in Ground: " << X_GM.p() << endl;
 				// rotate 
-				Rotation newRot = X_GM.updR();
-				Rotation parentRot = X_PF.R();
-				newRot.operator=( newRot.operator*=( parentRot));
+				//Rotation& newRot = X_GM.updR();
+				//Rotation parentRot = X_PF.R();
+				//newRot.operator*=( parentRot.invert());
 				// translate in front of the whole body
-				X_GM.setP( X_GM.operator+=( Vec3(0.5,0,0)).p());
+				X_GM.setP( X_GM.operator+=( Vec3(0.3,0,0)).p());
 				// set new transform
-				decContactGeometry.setTransform( X_GM);
+				decTibiaContactGeometry.setTransform( X_GM);
+
+				// Medial Femur Transformation
+				const Transform& X_BM_medFemur = femurMedmobod.getOutboardFrame(state); // M frame in B
+				const Transform& X_GB_medFemur = femurMedmobod.getBodyTransform(state); // B in Ground
+				const Transform& X_PF_medFemur = femurMedmobod.getInboardFrame(state);
+				Transform X_GM_medFemur = X_GB_medFemur*X_BM_medFemur; // M frame in Ground
+				// rotate 
+				//Rotation& newRot_medFemur = X_GM_medFemur.updR();
+				//Rotation parentRot_medFemur = X_PF_medFemur.R();
+				//newRot_medFemur.operator*=(parentRot_medFemur).operator*=(Rotation(1.57079, CoordinateAxis::ZCoordinateAxis()));
+				//newRot_medFemur.setRotationFromAngleAboutZ(1.570796326794897);
+				// translate in front of the whole body
+				X_GM_medFemur.setP(X_GM_medFemur.operator+=(Vec3(0.3, 0.1, 0)).p());
+				// set new transform
+				decFemurMedContactGeometry.setTransform(X_GM_medFemur);
+
+				// Lateral Femur Transformation
+				const Transform& X_BM_latFemur = femurLatmobod.getOutboardFrame(state); // M frame in B
+				const Transform& X_GB_latFemur = femurLatmobod.getBodyTransform(state); // B in Ground
+				const Transform& X_PF_latFemur = femurLatmobod.getInboardFrame(state);
+				Transform X_GM_latFemur = X_GB_latFemur*X_BM_latFemur; // M frame in Ground
+				// rotate 
+				//Rotation& newRot_latFemur = X_GM_latFemur.updR();
+				//Rotation parentRot_latFemur = X_PF_latFemur.R();
+				//newRot_latFemur.operator*=(parentRot_latFemur).operator*=(Rotation(1.57079, CoordinateAxis::ZCoordinateAxis()));
+				//newRot_latFemur.setRotationFromAngleAboutZ(1.570796326794897);
+				// translate in front of the whole body
+				X_GM_latFemur.setP(X_GM_latFemur.operator+=(Vec3(0.3, 0.1, 0)).p());
+				// set new transform
+				decFemurLatContactGeometry.setTransform(X_GM_latFemur);
 
 				ContactPatch patch;
 				const bool found = m_compliant.calcContactPatchDetailsById(state,id,patch);
@@ -92,18 +132,42 @@ public:
 				//cout << "num details=" << patch.getNumDetails() << endl;
 				for (int k=0; k < patch.getNumDetails(); ++k) {
 					const ContactDetail& detail = patch.getContactDetail(k);
-					//const Real peakPressure = detail.getPeakPressure();			
+					//const Real peakPressure = detail.getPeakPressure();		
 					const Vec3 cp = detail.getContactPoint();
 					Vec3 newcp = Vec3(cp);
-					Transform newTransf = Transform(newcp);
-					newTransf.setP( newTransf.operator+=( Vec3(0.5,0,0)).p());
 
-					DecorativeSphere decContP;
-					decContP.setScale( 0.0005);
-					decContP.setTransform( newTransf);
-					decContP.setColor(Red);
-					geometry.push_back(decContP);
-					geometry.push_back( decContactGeometry);
+					// transform point to attach tibia surface
+					Transform cpToTibiaTransf = Transform(newcp);
+					cpToTibiaTransf.setP(cpToTibiaTransf.operator+=( Vec3(0.3,0,0)).p());
+
+					DecorativeSphere decCpToTibia;
+					decCpToTibia.setScale(0.0005);
+					decCpToTibia.setTransform(cpToTibiaTransf);
+					decCpToTibia.setColor(Red);
+
+					// transform point to attach femur surface
+					Transform cpToFemurTransf = Transform(newcp);
+					//Rotation& newRotCpToFemur = cpToFemurTransf.updR();
+					//newRotCpToFemur.setRotationFromAngleAboutZ(1.570796326794897);
+					//cpToFemurTransf.set(X_GM_latFemur.R(), X_GM_latFemur.p());
+					//newRotCpToFemur.operator*=(parentRot_latFemur);
+					//cpToFemurTransf.setP( X_PF_latFemur.p());
+					//newRotCpToFemur.setRotationFromAngleAboutZ(1.570796326794897);
+					cpToFemurTransf.setP(cpToFemurTransf.operator+=(Vec3(0.3, 0.1, 0)).p());
+
+					DecorativeSphere decCpToFemur;
+					decCpToFemur.setScale(0.0005);
+					decCpToFemur.setTransform(cpToFemurTransf);
+					decCpToFemur.setColor(Red);
+
+					geometry.push_back(decCpToTibia);
+					geometry.push_back(decCpToFemur);
+					if (k == 0)
+					{
+						geometry.push_back(decTibiaContactGeometry);
+						geometry.push_back(decFemurLatContactGeometry);
+						geometry.push_back(decFemurMedContactGeometry);
+					}
 				}
 			}
         }		
@@ -126,17 +190,17 @@ public:
 
     void handleEvent(const State& state) const override {
         m_system.realize(state, Stage::Dynamics);
-        cout << state.getTime() << ": E = " << m_system.calcEnergy(state)
-             << " Ediss=" << m_compliant.getDissipatedEnergy(state)
-             << " E+Ediss=" << m_system.calcEnergy(state)
-                               +m_compliant.getDissipatedEnergy(state)
-             << endl;
-        const int ncont = m_compliant.getNumContactForces(state);
+        //cout << state.getTime() << ": E = " << m_system.calcEnergy(state)
+        //     << " Ediss=" << m_compliant.getDissipatedEnergy(state)
+        //     << " E+Ediss=" << m_system.calcEnergy(state)
+        //                       +m_compliant.getDissipatedEnergy(state)
+        //     << endl;
+        //const int ncont = m_compliant.getNumContactForces(state);
         //cout << "Num contacts: " << ncont << endl;
-        for (int i=0; i < ncont; ++i) {
-            const ContactForce& force = m_compliant.getContactForce(state,i);
+        //for (int i=0; i < ncont; ++i) {
+            //const ContactForce& force = m_compliant.getContactForce(state,i);
             //cout << force;
-        }
+        //}
         saveEm.push_back(state);
     }
 private:
@@ -435,14 +499,6 @@ void flexionFDSimulationWithHitMap(Model& model)
 	State& state = model.initializeState();
 	viz.updSimbodyVisualizer().report(state);
 
-	//cout << "\nChoose 'Go' from Run menu to simulate:\n" << endl;
-    int menuId, item;
-    //do { silo->waitForMenuPick(menuId, item);
-	//do { viz.updInputSilo().waitForMenuPick(menuId, item);
-         //if (menuId != RunMenuId || item != GoItem) 
-             //cout << "\aDude ... follow instructions!\n";
-    //} while (menuId != RunMenuId || item != GoItem);
-
 	// Add reporters
     ForceReporter* forceReporter = new ForceReporter(&model);
     model.addAnalysis(forceReporter);
@@ -460,7 +516,7 @@ void flexionFDSimulationWithHitMap(Model& model)
 
 	// Define the initial and final simulation times
 	double initialTime = 0.0;
-	double finalTime = 0.1;
+	double finalTime = 0.2;
 
 	// Integrate from initial time to final time
 	manager.setInitialTime(initialTime);
@@ -486,6 +542,7 @@ void flexionFDSimulationWithHitMap(Model& model)
 	//customReporter->print( "../outputs/custom_reporter_flex.mot");
 
 	//cout << "You can choose 'Replay'" << endl;
+	int menuId, item;
 	unsigned int frameRate = 5;
 	do { 
 		cout << "Please choose 'Replay' or 'Quit'" << endl;
@@ -495,7 +552,7 @@ void flexionFDSimulationWithHitMap(Model& model)
             cout << "\aDude... follow instructions!\n";
 		if (item == ReplayItem)
 		{
-			cout << "Type desired frame rate for playback and press Enter (default = 1) : ";
+			cout << "Type desired frame rate (integer) for playback and press Enter (default = 1) : ";
 			//frameRate = cin.get();		
 			cin >> frameRate;
 			if (cin.fail()) 
@@ -510,6 +567,8 @@ void flexionFDSimulationWithHitMap(Model& model)
 			for (unsigned int i=0; i<saveEm.size(); i++)
 			{
 				viz.updSimbodyVisualizer().drawFrameNow(saveEm.getElt(i));
+				if (frameRate == 0)
+					frameRate = 1;
 				usleep(1000000/frameRate);
 			}
 		}
