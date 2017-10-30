@@ -5,4 +5,4 @@ Requirements:
 OpenSim library
 Simbody library
 
-![alt text](https://gifs.com/gif/knee-model-and-simulation-RogZGE "This is a Presentation .gif")
+![<Here is a Presentation .gif>](https://j.gifs.com/RogZGE.gif "This is a Presentation .gif")
