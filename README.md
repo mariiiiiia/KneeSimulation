@@ -1,7 +1,7 @@
 # Knee Simulation
 
 
-This project contains the code used for the project presented ![here](https://www.youtube.com/watch?v=55KIqKJ46kc "here").
+This project contains the code used for the project presented [here](https://www.youtube.com/watch?v=55KIqKJ46kc "here").
 
 ![<Here is a Presentation .gif>](https://j.gifs.com/RogZGE.gif "This is a Presentation .gif")
 
