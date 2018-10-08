@@ -10,7 +10,9 @@ Objective is to estimate the mechanical behavior of knee structures during the e
 • Estimation of joint parameters
 
 
-This project is presented [here](https://www.youtube.com/watch?v=55KIqKJ46kc "here").
+It was implemented as a Diploma Thesis in Electrical and Computer Engineering Department in University of Patras [VVR Lab](http://www.vvr.ece.upatras.gr/index.php/el/studies/theses/completed/133-human-knee-simulation-based-on-realistic-musculoskeletal-models). 
+
+Video presentation: [youtube link](https://www.youtube.com/watch?v=55KIqKJ46kc "here"). 
 
 ![<Here is a Presentation .gif>](https://j.gifs.com/RogZGE.gif "This is a Presentation .gif")
 
