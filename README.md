@@ -1,7 +1,16 @@
 # Knee Simulation
 
+Modeling and simulation of human knee joint, using rigid and deformable bodies for ligaments, meniscii and articular cartilage.
+Objective is to estimate the mechanical behavior of knee structures during the execution of some tasks.
 
-This project contains the code used for the project presented [here](https://www.youtube.com/watch?v=55KIqKJ46kc "here").
+• Modeling of knee structures
+
+• Simulation of some tasks
+
+• Estimation of joint parameters
+
+
+This project is presented [here](https://www.youtube.com/watch?v=55KIqKJ46kc "here").
 
 ![<Here is a Presentation .gif>](https://j.gifs.com/RogZGE.gif "This is a Presentation .gif")
 
